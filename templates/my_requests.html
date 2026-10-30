@@ -1,0 +1,50 @@
+
+{% extends "base.html" %}
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1>My Requests</h1>
+        <p>Track the progress of your service requests.</p>
+    </div>
+    <a href="{{ url_for('new_request') }}" class="btn btn-primary">
+        + New Request
+    </a>
+</div>
+
+<div class="content-card">
+    {% if requests %}
+    <div class="table-responsive">
+        <table>
+            <thead>
+                <tr>
+                    <th>Request</th>
+                    <th>Service</th>
+                    <th>Status</th>
+                    <th>Quoted Price</th>
+                    <th>Amount Paid</th>
+                    <th>Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in requests %}
+                <tr>
+                    <td>{{ item.title }}</td>
+                    <td>{{ item.service.name if item.service else 'General Service' }}</td>
+                    <td>{{ item.status }}</td>
+                    <td>{{ item.quoted_price or 0 }} RWF</td>
+                    <td>{{ item.amount_paid or 0 }} RWF</td>
+                    <td>{{ item.created_at }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <h3>No requests yet</h3>
+    <p>Your submitted service requests will appear here.</p>
+    <a href="{{ url_for('new_request') }}" class="btn btn-primary">
+        Submit Your First Request
+    </a>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,134 @@
+
+{% extends "base.html" %}
+
+{% block title %}Customer Requests | Pacifique Digital Services{% endblock %}
+{% block page_name %}Customer Requests{% endblock %}
+
+{% block content %}
+<section class="page-heading">
+    <div>
+        <h1>Customer Requests</h1>
+        <p>Manage, review, and track all customer service requests.</p>
+    </div>
+
+    <a href="{{ url_for('new_request') }}" class="btn btn-primary">
+        + New Request
+    </a>
+</section>
+
+<section class="card">
+    <div class="card-header">
+        <div>
+            <h2>All Requests</h2>
+            <p>Review customer requests and update their progress.</p>
+        </div>
+
+        <form method="GET" action="{{ url_for('requests_page') }}"
+              class="filter-form">
+            <select name="status" onchange="this.form.submit()">
+                <option value="">All Statuses</option>
+                <option value="New"
+                    {% if selected_status == 'New' %}selected{% endif %}>
+                    New
+                </option>
+                <option value="In Progress"
+                    {% if selected_status == 'In Progress' %}selected{% endif %}>
+                    In Progress
+                </option>
+                <option value="Waiting for Customer"
+                    {% if selected_status == 'Waiting for Customer' %}selected{% endif %}>
+                    Waiting for Customer
+                </option>
+                <option value="Completed"
+                    {% if selected_status == 'Completed' %}selected{% endif %}>
+                    Completed
+                </option>
+                <option value="Cancelled"
+                    {% if selected_status == 'Cancelled' %}selected{% endif %}>
+                    Cancelled
+                </option>
+            </select>
+        </form>
+    </div>
+
+    {% if requests %}
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Request</th>
+                    <th>Customer</th>
+                    <th>Service</th>
+                    <th>Priority</th>
+                    <th>Status</th>
+                    <th>Date Received</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for request in requests %}
+                <tr>
+                    <td>
+                        <strong>#{{ request.id }}</strong>
+                        <div class="table-subtitle">
+                            {{ request.title }}
+                        </div>
+                    </td>
+
+                    <td>
+                        <strong>{{ request.customer_name }}</strong>
+                        <div class="table-subtitle">
+                            {{ request.phone }}
+                        </div>
+                    </td>
+
+                    <td>{{ request.service_name }}</td>
+
+                    <td>
+                        <span class="status-badge
+                            {% if request.priority == 'Urgent' %}status-danger
+                            {% elif request.priority == 'High' %}status-warning
+                            {% else %}status-neutral{% endif %}">
+                            {{ request.priority }}
+                        </span>
+                    </td>
+
+                    <td>
+                        <span class="status-badge
+                            {% if request.status == 'Completed' %}status-success
+                            {% elif request.status == 'In Progress' %}status-info
+                            {% elif request.status == 'Cancelled' %}status-danger
+                            {% else %}status-neutral{% endif %}">
+                            {{ request.status }}
+                        </span>
+                    </td>
+
+                    <td>
+                        {{ request.created_at.strftime('%d %b %Y') if request.created_at else '—' }}
+                    </td>
+
+                    <td>
+                        <a class="btn btn-small btn-secondary"
+                           href="{{ url_for('request_detail', request_id=request.id) }}">
+                            View Details
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    {% else %}
+    <div class="empty-state">
+        <div class="empty-state-icon">📋</div>
+        <h3>No requests found</h3>
+        <p>Customer requests will appear here when they are submitted.</p>
+        <a href="{{ url_for('new_request') }}" class="btn btn-primary">
+            Create a Request
+        </a>
+    </div>
+    {% endif %}
+</section>
+{% endblock %}

@@ -1,0 +1,468 @@
+
+{% extends "base.html" %}
+
+{% block title %}Payments | Pacifique Digital Services{% endblock %}
+{% block page_name %}Payments{% endblock %}
+
+{% block content %}
+<style>
+    .payments-page {
+        display: grid;
+        gap: 22px;
+    }
+
+    .payments-heading {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 14px;
+    }
+
+    .payments-heading h1 {
+        margin: 0 0 7px;
+        font-size: clamp(24px, 3vw, 32px);
+    }
+
+    .payments-heading p {
+        margin: 0;
+        color: var(--cyber-muted);
+    }
+
+    .payment-stats {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 16px;
+    }
+
+    .payment-stat {
+        padding: 22px;
+        border: 1px solid var(--cyber-border);
+        border-radius: 17px;
+        background: linear-gradient(145deg, #151D38, #10162C);
+        min-width: 0;
+    }
+
+    .payment-stat .stat-label {
+        color: var(--cyber-muted);
+        font-size: 13px;
+        margin-bottom: 12px;
+    }
+
+    .payment-stat .stat-value {
+        color: var(--cyber-white);
+        font-size: clamp(21px, 2.5vw, 29px);
+        font-weight: 800;
+        overflow-wrap: anywhere;
+    }
+
+    .payment-stat .stat-note {
+        color: var(--cyber-cyan);
+        font-size: 12px;
+        margin-top: 8px;
+    }
+
+    .payment-panel {
+        padding: 24px;
+        border: 1px solid var(--cyber-border);
+        border-radius: 18px;
+        background: var(--cyber-panel);
+        min-width: 0;
+    }
+
+    .payment-panel-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        flex-wrap: wrap;
+        margin-bottom: 20px;
+    }
+
+    .payment-panel-header h2 {
+        font-size: 19px;
+        margin: 0;
+    }
+
+    .payment-panel-header p {
+        margin: 6px 0 0;
+        color: var(--cyber-muted);
+        font-size: 13px;
+    }
+
+    .payment-form {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 18px;
+    }
+
+    .payment-field {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        min-width: 0;
+    }
+
+    .payment-field.full {
+        grid-column: 1 / -1;
+    }
+
+    .payment-field label {
+        color: var(--cyber-muted);
+        font-size: 13px;
+        font-weight: 600;
+    }
+
+    .payment-field input,
+    .payment-field select {
+        width: 100%;
+        min-height: 45px;
+        padding: 11px 13px;
+        border: 1px solid var(--cyber-border);
+        border-radius: 10px;
+        box-sizing: border-box;
+    }
+
+    .payment-submit {
+        border: 0;
+        border-radius: 10px;
+        padding: 13px 20px;
+        cursor: pointer;
+        font-weight: 800;
+        min-height: 46px;
+    }
+
+    .payment-table-wrap {
+        overflow-x: auto;
+        width: 100%;
+    }
+
+    .payment-table {
+        width: 100%;
+        border-collapse: collapse;
+        min-width: 720px;
+    }
+
+    .payment-table th,
+    .payment-table td {
+        padding: 15px 13px;
+        text-align: left;
+        border-bottom: 1px solid var(--cyber-border);
+        vertical-align: middle;
+    }
+
+    .payment-table th {
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: .5px;
+        white-space: nowrap;
+    }
+
+    .payment-table td {
+        font-size: 13px;
+    }
+
+    .payment-customer {
+        font-weight: 700;
+        color: var(--cyber-white);
+    }
+
+    .payment-secondary {
+        color: var(--cyber-muted);
+        font-size: 12px;
+        margin-top: 4px;
+        overflow-wrap: anywhere;
+    }
+
+    .payment-method {
+        display: inline-block;
+        padding: 6px 10px;
+        border-radius: 20px;
+        background: #00F5D414;
+        color: var(--cyber-cyan);
+        font-size: 12px;
+        white-space: nowrap;
+    }
+
+    .payment-amount {
+        color: var(--cyber-cyan);
+        font-weight: 800;
+        white-space: nowrap;
+    }
+
+    .payment-search {
+        width: 100%;
+        max-width: 280px;
+        min-height: 40px;
+        padding: 10px 12px;
+        border-radius: 10px;
+        box-sizing: border-box;
+    }
+
+    .payment-empty {
+        text-align: center;
+        padding: 38px 15px;
+        color: var(--cyber-muted);
+    }
+
+    .payment-empty strong {
+        display: block;
+        color: var(--cyber-white);
+        margin-bottom: 8px;
+    }
+
+    .payment-form-note {
+        color: var(--cyber-muted);
+        font-size: 12px;
+        line-height: 1.6;
+    }
+
+    @media (max-width: 760px) {
+        .payment-stats {
+            grid-template-columns: 1fr;
+        }
+
+        .payment-form {
+            grid-template-columns: 1fr;
+        }
+
+        .payment-field.full {
+            grid-column: auto;
+        }
+
+        .payment-panel {
+            padding: 17px;
+        }
+
+        .payment-search {
+            max-width: 100%;
+        }
+    }
+</style>
+
+<div class="payments-page">
+    <div class="payments-heading">
+        <div>
+            <h1>Payments</h1>
+            <p>Record customer payments and track transactions.</p>
+        </div>
+    </div>
+
+    {% set ns = namespace(total=0, count=0) %}
+    {% for payment in payments %}
+        {% set ns.total = ns.total + (payment.amount or 0) %}
+        {% set ns.count = ns.count + 1 %}
+    {% endfor %}
+
+    {% set outstanding = namespace(total=0) %}
+    {% for item in requests %}
+        {% if item.status != 'Cancelled' %}
+            {% set due = (item.quoted_price or 0) - (item.amount_paid or 0) %}
+            {% if due > 0 %}
+                {% set outstanding.total = outstanding.total + due %}
+            {% endif %}
+        {% endif %}
+    {% endfor %}
+
+    <div class="payment-stats">
+        <div class="payment-stat">
+            <div class="stat-label">Total Payments Recorded</div>
+            <div class="stat-value">{{ "{:,.0f}".format(ns.total) }} Frw</div>
+            <div class="stat-note">All recorded transactions</div>
+        </div>
+
+        <div class="payment-stat">
+            <div class="stat-label">Transactions</div>
+            <div class="stat-value">{{ ns.count }}</div>
+            <div class="stat-note">Payment records</div>
+        </div>
+
+        <div class="payment-stat">
+            <div class="stat-label">Estimated Outstanding</div>
+            <div class="stat-value">{{ "{:,.0f}".format(outstanding.total) }} Frw</div>
+            <div class="stat-note">Based on quoted prices and recorded payments</div>
+        </div>
+    </div>
+
+    <section class="payment-panel">
+        <div class="payment-panel-header">
+            <div>
+                <h2>+ Record a Payment</h2>
+                <p>Enter the request and payment details below.</p>
+            </div>
+        </div>
+
+        {% if requests %}
+        <form method="POST" action="{{ url_for('payments') }}" class="payment-form">
+            <div class="payment-field full">
+                <label for="request_id">Customer Request *</label>
+                <select name="request_id" id="request_id" required>
+                    <option value="">Select a customer request</option>
+                    {% for item in requests %}
+                        {% if item.status != 'Cancelled' %}
+                        <option value="{{ item.id }}">
+                            #{{ item.id }} — {{ item.customer_name }}
+                            | {{ item.service_name }}
+                            | Due:
+                            {{ "{:,.0f}".format([((item.quoted_price or 0) - (item.amount_paid or 0)), 0]|max) }} Frw
+                        </option>
+                        {% endif %}
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="payment-field">
+                <label for="amount">Payment Amount (Frw) *</label>
+                <input
+                    type="number"
+                    name="amount"
+                    id="amount"
+                    min="1"
+                    step="1"
+                    placeholder="e.g. 5000"
+                    required
+                >
+            </div>
+
+            <div class="payment-field">
+                <label for="method">Payment Method *</label>
+                <select name="method" id="method" required>
+                    <option value="Cash">Cash</option>
+                    <option value="Mobile Money">Mobile Money</option>
+                    <option value="Bank Transfer">Bank Transfer</option>
+                    <option value="Other">Other</option>
+                </select>
+            </div>
+
+            <div class="payment-field full">
+                <label for="reference">Transaction Reference (Optional)</label>
+                <input
+                    type="text"
+                    name="reference"
+                    id="reference"
+                    maxlength="120"
+                    placeholder="Mobile Money transaction ID or receipt number"
+                >
+            </div>
+
+            <div class="payment-field full">
+                <button type="submit" class="payment-submit">
+                    Record Payment
+                </button>
+                <div class="payment-form-note">
+                    Please verify the amount and customer request before saving.
+                    Recording a payment updates the amount paid on that request.
+                </div>
+            </div>
+        </form>
+        {% else %}
+        <div class="payment-empty">
+            <strong>No customer requests available</strong>
+            Customer requests will appear here when they have been submitted.
+        </div>
+        {% endif %}
+    </section>
+
+    <section class="payment-panel">
+        <div class="payment-panel-header">
+            <div>
+                <h2>Payment History</h2>
+                <p>Review previously recorded payments.</p>
+            </div>
+            <input
+                type="search"
+                id="paymentSearch"
+                class="payment-search"
+                placeholder="Search customer, method, reference..."
+                aria-label="Search payment history"
+            >
+        </div>
+
+        {% if payments %}
+        <div class="payment-table-wrap">
+            <table class="payment-table" id="paymentTable">
+                <thead>
+                    <tr>
+                        <th>Transaction</th>
+                        <th>Customer</th>
+                        <th>Service</th>
+                        <th>Method</th>
+                        <th>Reference</th>
+                        <th>Amount</th>
+                        <th>Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for payment in payments %}
+                    <tr>
+                        <td>#{{ payment.id }}</td>
+                        <td>
+                            <div class="payment-customer">
+                                {{ payment.service_request.customer_name if payment.service_request else 'Unknown customer' }}
+                            </div>
+                            {% if payment.service_request %}
+                            <div class="payment-secondary">
+                                Request #{{ payment.request_id }}
+                            </div>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {{ payment.service_request.service_name if payment.service_request else '—' }}
+                        </td>
+                        <td>
+                            <span class="payment-method">
+                                {{ payment.method or 'Other' }}
+                            </span>
+                        </td>
+                        <td>
+                            {{ payment.reference or '—' }}
+                        </td>
+                        <td class="payment-amount">
+                            {{ "{:,.0f}".format(payment.amount or 0) }} Frw
+                        </td>
+                        <td>
+                            {{ payment.created_at.strftime('%d %b %Y, %H:%M') if payment.created_at else '—' }}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div id="paymentNoResults" class="payment-empty" style="display:none;">
+            No payments match your search.
+        </div>
+        {% else %}
+        <div class="payment-empty">
+            <strong>No payments recorded yet</strong>
+            Your recorded transactions will appear here.
+        </div>
+        {% endif %}
+    </section>
+</div>
+
+<script>
+    (function () {
+        const search = document.getElementById("paymentSearch");
+        const table = document.getElementById("paymentTable");
+        const noResults = document.getElementById("paymentNoResults");
+
+        if (!search || !table) return;
+
+        search.addEventListener("input", function () {
+            const term = this.value.toLowerCase().trim();
+            const rows = table.querySelectorAll("tbody tr");
+            let visible = 0;
+
+            rows.forEach(function (row) {
+                const matches = row.innerText.toLowerCase().includes(term);
+                row.style.display = matches ? "" : "none";
+                if (matches) visible++;
+            });
+
+            if (noResults) {
+                noResults.style.display = visible ? "none" : "block";
+            }
+        });
+    })();
+</script>
+{% endblock %}

@@ -1,0 +1,9 @@
+.env
+.env.txt
+__pycache__/
+*.py[cod]
+instance/
+venv/
+.venv/
+*_backup*
+app_before_*.py

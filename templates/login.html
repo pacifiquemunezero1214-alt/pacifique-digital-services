@@ -1,0 +1,180 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign In | Pacifique Digital Services</title>
+
+    <style>
+        :root {
+            --navy: #090D1F;
+            --cyan: #00F5D4;
+            --purple: #7B61FF;
+            --white: #F4F7FF;
+            --muted: #AAB4D0;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            padding: 20px 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: Arial, sans-serif;
+            color: var(--white);
+            background:
+                radial-gradient(circle at top left, #20265c, transparent 45%),
+                radial-gradient(circle at bottom right, #33205f, transparent 45%),
+                var(--navy);
+        }
+
+        .card {
+            width: 100%;
+            max-width: 440px;
+            padding: 32px;
+            border: 1px solid rgba(0,245,212,.25);
+            border-radius: 22px;
+            background: rgba(15,21,47,.95);
+            box-shadow: 0 20px 60px rgba(0,0,0,.35);
+        }
+
+        .logo {
+            text-align: center;
+            font-size: 28px;
+            font-weight: 800;
+            color: var(--cyan);
+        }
+
+        h1 {
+            text-align: center;
+            margin: 18px 0 8px;
+            font-size: 26px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: var(--muted);
+            line-height: 1.5;
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            margin: 16px 0 7px;
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        input {
+            width: 100%;
+            padding: 13px 14px;
+            color: var(--white);
+            background: #090f27;
+            border: 1px solid #343e67;
+            border-radius: 10px;
+            font-size: 15px;
+            outline: none;
+        }
+
+        input:focus {
+            border-color: var(--cyan);
+            box-shadow: 0 0 0 3px rgba(0,245,212,.10);
+        }
+
+        .btn {
+            width: 100%;
+            padding: 14px;
+            margin-top: 23px;
+            border: 0;
+            border-radius: 10px;
+            color: #061525;
+            background: linear-gradient(100deg, var(--cyan), #79ffe9);
+            font-weight: 800;
+            font-size: 15px;
+            cursor: pointer;
+        }
+
+        .links {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 14px;
+            line-height: 2;
+            color: var(--muted);
+        }
+
+        a {
+            color: var(--cyan);
+            text-decoration: none;
+        }
+
+        a:hover { text-decoration: underline; }
+
+        .flash {
+            padding: 11px;
+            margin: 10px 0;
+            border-radius: 9px;
+            background: rgba(255,100,124,.12);
+            color: #ff9cab;
+            font-size: 14px;
+        }
+
+        .flash.success {
+            background: rgba(49,233,155,.10);
+            color: #31e99b;
+        }
+
+        @media (max-width: 480px) {
+            .card { padding: 24px 18px; }
+        }
+    </style>
+</head>
+
+<body>
+    <main class="card">
+        <div class="logo">PDS<span style="color:#7B61FF">.</span></div>
+        <h1>Welcome Back</h1>
+        <p class="subtitle">Sign in to Pacifique Digital Services.</p>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% for category, message in messages %}
+                <div class="flash {{ category }}">{{ message }}</div>
+            {% endfor %}
+        {% endwith %}
+
+        <form method="POST" action="{{ url_for('login') }}">
+            <label for="phone">Phone Number</label>
+            <input
+                type="tel"
+                id="phone"
+                name="phone"
+                autocomplete="tel"
+                placeholder="Enter your registered phone number"
+                required
+            >
+
+            <label for="password">Password</label>
+            <input
+                type="password"
+                id="password"
+                name="password"
+                autocomplete="current-password"
+                placeholder="Enter your password"
+                required
+            >
+
+            <button type="submit" class="btn">Sign In</button>
+        </form>
+
+        <div class="links">
+            <a href="{{ url_for('forgot_password') }}">Forgot password?</a>
+            <br>
+            Don't have an account?
+            <a href="{{ url_for('register') }}">Create account</a>
+        </div>
+    </main>
+</body>
+</html>

@@ -1,0 +1,177 @@
+
+{% extends "base.html" %}
+
+{% block title %}About Us | Pacifique Digital Services{% endblock %}
+{% block page_heading %}About Pacifique Digital Services{% endblock %}
+
+{% block content %}
+
+<style>
+.about-container {
+    max-width: 1050px;
+    margin: auto;
+}
+
+.about-hero {
+    padding: 55px 30px;
+    border-radius: 20px;
+    text-align: center;
+    color: white;
+    background: linear-gradient(120deg, #172554, #2563eb, #06b6d4);
+}
+
+.about-hero h1 {
+    font-size: 34px;
+    margin: 0 0 15px;
+}
+
+.about-hero p {
+    max-width: 700px;
+    margin: auto;
+    line-height: 1.8;
+    color: #e0f2fe;
+}
+
+.about-section {
+    background: white;
+    padding: 28px;
+    border-radius: 15px;
+    margin-top: 22px;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 4px 15px rgba(15,23,42,.04);
+}
+
+.about-section h2 {
+    color: #172554;
+    margin-top: 0;
+}
+
+.about-section p {
+    color: #64748b;
+    line-height: 1.9;
+}
+
+.about-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
+    margin-top: 22px;
+}
+
+.about-card {
+    background: white;
+    padding: 22px;
+    border-radius: 14px;
+    border: 1px solid #e2e8f0;
+}
+
+.about-card h3 {
+    color: #1d4ed8;
+}
+
+.about-card p {
+    color: #64748b;
+    font-size: 13px;
+    line-height: 1.7;
+}
+
+.about-cta {
+    text-align: center;
+    padding: 35px 20px;
+    margin-top: 22px;
+    background: #eff6ff;
+    border-radius: 16px;
+}
+
+.about-cta a {
+    display: inline-block;
+    background: #2563eb;
+    color: white;
+    padding: 12px 22px;
+    border-radius: 9px;
+    font-weight: 700;
+    margin: 8px;
+}
+
+@media(max-width:700px) {
+    .about-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .about-hero h1 {
+        font-size: 25px;
+    }
+}
+</style>
+
+<div class="about-container">
+
+    <section class="about-hero">
+        <h1>About Pacifique Digital Services</h1>
+        <p>
+            Practical digital solutions designed to help individuals,
+            students and businesses access useful technology services
+            and create better opportunities.
+        </p>
+    </section>
+
+    <section class="about-section">
+        <h2>Who We Are</h2>
+        <p>
+            Pacifique Digital Services is a digital service platform
+            focused on providing practical technology solutions.
+            We aim to make digital services more accessible,
+            convenient and useful for our customers.
+        </p>
+    </section>
+
+    <section class="about-section">
+        <h2>Our Mission</h2>
+        <p>
+            Our mission is to help people and businesses solve everyday
+            digital challenges through accessible services, reliable
+            communication and practical technology.
+        </p>
+    </section>
+
+    <section class="about-section">
+        <h2>What We Aim to Provide</h2>
+
+        <div class="about-grid">
+            <div class="about-card">
+                <h3>💻 Digital Solutions</h3>
+                <p>
+                    Practical website and technology-related services
+                    for individuals and businesses.
+                </p>
+            </div>
+
+            <div class="about-card">
+                <h3>🤝 Customer Support</h3>
+                <p>
+                    A simple way for customers to submit requests,
+                    communicate and follow service progress.
+                </p>
+            </div>
+
+            <div class="about-card">
+                <h3>🚀 Better Opportunities</h3>
+                <p>
+                    Using technology to support productivity,
+                    creativity and business growth.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <section class="about-cta">
+        <h2>Ready to Work With Us?</h2>
+        <p>Explore our services or contact our team.</p>
+
+        <a href="{{ url_for('contact') }}">Contact Us</a>
+        <a href="{{ url_for('login') }}">Get Started</a>
+    </section>
+
+</div>
+
+{% endblock %}

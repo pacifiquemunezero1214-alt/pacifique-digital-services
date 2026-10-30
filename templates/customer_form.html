@@ -1,0 +1,526 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#10172a">
+    <title>Request a Service | Pacifique Digital Services</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #f3f5fb;
+            color: #1e293b;
+            min-height: 100vh;
+        }
+
+        header {
+            background: #10172a;
+            color: white;
+            padding: 20px 7%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo {
+            width: 43px;
+            height: 43px;
+            background: linear-gradient(135deg, #6366f1, #a855f7);
+            display: grid;
+            place-items: center;
+            border-radius: 12px;
+            font-size: 22px;
+            font-weight: bold;
+        }
+
+        .brand h2 {
+            font-size: 19px;
+        }
+
+        .brand small {
+            color: #a5b4fc;
+            letter-spacing: 2px;
+            font-size: 10px;
+        }
+
+        .back-link {
+            color: white;
+            text-decoration: none;
+            border: 1px solid #475569;
+            padding: 10px 17px;
+            border-radius: 9px;
+            font-size: 13px;
+        }
+
+        .container {
+            max-width: 1050px;
+            margin: 45px auto;
+            padding: 0 20px;
+        }
+
+        .intro {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .intro .tag {
+            color: #6366f1;
+            font-weight: bold;
+            font-size: 12px;
+            letter-spacing: 2px;
+        }
+
+        .intro h1 {
+            font-size: clamp(27px, 5vw, 38px);
+            margin: 12px 0;
+            color: #111827;
+        }
+
+        .intro p {
+            color: #64748b;
+            line-height: 1.7;
+        }
+
+        .content {
+            display: grid;
+            grid-template-columns: 0.8fr 1.5fr;
+            gap: 25px;
+            align-items: start;
+        }
+
+        .info-card {
+            background: linear-gradient(145deg, #312e81, #6d28d9);
+            color: white;
+            padding: 30px;
+            border-radius: 18px;
+        }
+
+        .info-card h2 {
+            font-size: 23px;
+            margin-bottom: 15px;
+        }
+
+        .info-card p {
+            color: #ddd6fe;
+            line-height: 1.8;
+            font-size: 14px;
+        }
+
+        .info-list {
+            margin-top: 25px;
+            list-style: none;
+        }
+
+        .info-list li {
+            margin: 18px 0;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .form-card {
+            background: white;
+            padding: 32px;
+            border-radius: 18px;
+            box-shadow: 0 8px 35px rgba(15, 23, 42, 0.06);
+        }
+
+        .form-card h2 {
+            font-size: 23px;
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            color: #64748b;
+            font-size: 13px;
+            margin-bottom: 25px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 18px;
+        }
+
+        .field {
+            margin-bottom: 18px;
+        }
+
+        .full {
+            grid-column: 1 / -1;
+        }
+
+        label {
+            display: block;
+            font-size: 13px;
+            font-weight: bold;
+            margin-bottom: 9px;
+            color: #334155;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 14px;
+            border: 1px solid #dbe1ed;
+            border-radius: 9px;
+            outline: none;
+            font-size: 14px;
+            font-family: inherit;
+            background: #fafbff;
+            color: #1e293b;
+            transition: 0.2s;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            border-color: #6366f1;
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.12);
+        }
+
+        textarea {
+            min-height: 140px;
+            resize: vertical;
+            line-height: 1.6;
+        }
+
+        .hint {
+            font-size: 11px;
+            color: #94a3b8;
+            margin-top: 7px;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #4f46e5, #9333ea);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(79, 70, 229, 0.25);
+        }
+
+        .alert {
+            padding: 13px;
+            border-radius: 9px;
+            margin-bottom: 20px;
+            font-size: 13px;
+        }
+
+        .alert.error {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .alert.success {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .success-box {
+            text-align: center;
+            padding: 30px 10px;
+        }
+
+        .success-icon {
+            width: 75px;
+            height: 75px;
+            margin: 0 auto 20px;
+            background: #dcfce7;
+            color: #16a34a;
+            display: grid;
+            place-items: center;
+            border-radius: 50%;
+            font-size: 35px;
+        }
+
+        .reference {
+            background: #f1f5f9;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 10px;
+            color: #334155;
+        }
+
+        footer {
+            text-align: center;
+            padding: 25px;
+            color: #94a3b8;
+            font-size: 12px;
+        }
+
+        @media(max-width: 750px) {
+            .content {
+                grid-template-columns: 1fr;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .full {
+                grid-column: auto;
+            }
+
+            .form-card {
+                padding: 23px 18px;
+            }
+
+            .container {
+                margin: 30px auto;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <div class="brand">
+        <div class="logo">P</div>
+        <div>
+            <h2>Pacifique Digital</h2>
+            <small>SERVICES PLATFORM</small>
+        </div>
+    </div>
+
+    <a href="/user-dashboard" class="back-link">
+        ← Back to Dashboard
+    </a>
+</header>
+
+<main class="container">
+
+    <div class="intro">
+        <span class="tag">LET'S WORK TOGETHER</span>
+        <h1>Request a Digital Service</h1>
+        <p>
+            Tell us what you need. Our team will review your request
+            and get back to you.
+        </p>
+    </div>
+
+    <div class="content">
+
+        <aside class="info-card">
+            <h2>Bring Your Ideas to Life.</h2>
+
+            <p>
+                Whether you need a website, software solution,
+                graphic design or digital support, we are ready
+                to help your business grow.
+            </p>
+
+            <ul class="info-list">
+                <li>✓ Professional digital solutions</li>
+                <li>✓ Personalized customer support</li>
+                <li>✓ Transparent communication</li>
+                <li>✓ Track your service requests</li>
+            </ul>
+        </aside>
+
+        <section class="form-card">
+
+            {% if submitted %}
+
+                <div class="success-box">
+                    <div class="success-icon">✓</div>
+
+                    <h2>Request Submitted!</h2>
+
+                    <p class="subtitle">
+                        Thank you for choosing Pacifique Digital Services.
+                        Your request has been received successfully.
+                    </p>
+
+                    <div class="reference">
+                        Reference Number:
+                        <strong>#{{ reference_id }}</strong>
+                    </div>
+
+                    <a href="{{ request.url }}"
+                       class="submit-btn"
+                       style="display:block;text-decoration:none;">
+                        Submit Another Request
+                    </a>
+                </div>
+
+            {% else %}
+
+                <h2>Service Request Form</h2>
+                <p class="subtitle">
+                    Complete the information below.
+                    Fields marked * are required.
+                </p>
+
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% for category, message in messages %}
+                        <div class="alert {{ category }}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endwith %}
+
+                {% if not services %}
+                    <div class="alert error">
+                        No services are currently available.
+                        Please contact our team.
+                    </div>
+                {% else %}
+
+                <form method="POST">
+
+                    <div class="form-grid">
+
+                        <div class="field">
+                            <label for="customer_name">
+                                Full Name *
+                            </label>
+                            <input
+                                type="text"
+                                id="customer_name"
+                                name="customer_name"
+                                placeholder="Enter your full name"
+                                required
+                            >
+                        </div>
+
+                        <div class="field">
+                            <label for="phone">
+                                Phone Number *
+                            </label>
+                            <input
+                                type="tel"
+                                id="phone"
+                                name="phone"
+                                placeholder="+250 7XX XXX XXX"
+                                required
+                            >
+                        </div>
+
+                        <div class="field full">
+                            <label for="email">
+                                Email Address
+                            </label>
+                            <input
+                                type="email"
+                                id="email"
+                                name="email"
+                                placeholder="example@email.com"
+                            >
+                        </div>
+
+                        <div class="field full">
+                            <label for="service_name">
+                                Select a Service *
+                            </label>
+
+                            <select
+                                id="service_name"
+                                name="service_name"
+                                required
+                            >
+                                <option value="">
+                                    Choose your desired service
+                                </option>
+
+                                {% for service in services %}
+                                    <option value="{{ service.name }}">
+                                        {{ service.name }}
+                                    </option>
+                                {% endfor %}
+
+                            </select>
+                        </div>
+
+                        <div class="field full">
+                            <label for="title">
+                                Request Title *
+                            </label>
+
+                            <input
+                                type="text"
+                                id="title"
+                                name="title"
+                                placeholder="Briefly describe what you need"
+                                required
+                            >
+                        </div>
+
+                        <div class="field full">
+                            <label for="details">
+                                Project Details *
+                            </label>
+
+                            <textarea
+                                id="details"
+                                name="details"
+                                placeholder="Describe your project, requirements and expectations..."
+                                required
+                            ></textarea>
+
+                            <p class="hint">
+                                Provide as much detail as possible
+                                to help us understand your needs.
+                            </p>
+                        </div>
+
+                        <div class="field full">
+                            <label for="priority">
+                                Request Priority
+                            </label>
+
+                            <select id="priority" name="priority">
+                                <option value="Low">Low</option>
+                                <option value="Normal" selected>Normal</option>
+                                <option value="High">High</option>
+                                <option value="Urgent">Urgent</option>
+                            </select>
+                        </div>
+
+                    </div>
+
+                    <button type="submit" class="submit-btn">
+                        Submit Service Request →
+                    </button>
+
+                </form>
+
+                {% endif %}
+
+            {% endif %}
+
+        </section>
+
+    </div>
+
+</main>
+
+<footer>
+    © 2026 Pacifique Digital Services.
+    All rights reserved.
+</footer>
+
+</body>
+</html>

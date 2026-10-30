@@ -1,0 +1,138 @@
+
+{% extends "base.html" %}
+
+{% block title %}Customers | Pacifique Digital Services{% endblock %}
+{% block page_name %}Customers{% endblock %}
+
+{% block content %}
+<section class="page-heading">
+    <div>
+        <h1>Customers</h1>
+        <p>View customer contact information and their service history.</p>
+    </div>
+
+    <a href="{{ url_for('new_request') }}" class="btn btn-primary">
+        + New Request
+    </a>
+</section>
+
+<section class="stats-grid">
+    <div class="stat-card">
+        <div class="stat-icon icon-blue">👥</div>
+        <div>
+            <p>Total Customers</p>
+            <h2>{{ customers|length }}</h2>
+            <span class="stat-note">Customers with recorded requests</span>
+        </div>
+    </div>
+</section>
+
+<section class="card">
+    <div class="card-header">
+        <div>
+            <h2>Customer Directory</h2>
+            <p>Contact details and number of requests submitted.</p>
+        </div>
+
+        <input
+            type="search"
+            id="customerSearch"
+            class="search-input"
+            placeholder="Search customers..."
+            aria-label="Search customers"
+        >
+    </div>
+
+    {% if customers %}
+    <div class="table-container">
+        <table id="customersTable">
+            <thead>
+                <tr>
+                    <th>Customer</th>
+                    <th>Phone</th>
+                    <th>Email</th>
+                    <th>Total Requests</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for customer in customers %}
+                <tr>
+                    <td>
+                        <div class="customer-cell">
+                            <div class="customer-avatar">
+                                {{ customer.customer_name[:1]|upper }}
+                            </div>
+                            <strong>{{ customer.customer_name }}</strong>
+                        </div>
+                    </td>
+
+                    <td>{{ customer.phone or '—' }}</td>
+                    <td>{{ customer.email or 'Not provided' }}</td>
+
+                    <td>
+                        <span class="status-badge status-info">
+                            {{ customer.request_count }}
+                        </span>
+                    </td>
+
+                    <td>
+                        <a
+                            href="{{ url_for('requests_page') }}"
+                            class="btn btn-small btn-secondary"
+                        >
+                            View Requests
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <p id="noCustomerResults" class="search-empty" hidden>
+        No customers match your search.
+    </p>
+
+    {% else %}
+    <div class="empty-state">
+        <div class="empty-state-icon">👥</div>
+        <h3>No customers yet</h3>
+        <p>Customers will appear here after they submit their first service request.</p>
+
+        <a href="{{ url_for('new_request') }}" class="btn btn-primary">
+            Open Customer Request Form
+        </a>
+    </div>
+    {% endif %}
+</section>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const searchInput = document.getElementById("customerSearch");
+    const table = document.getElementById("customersTable");
+    const noResults = document.getElementById("noCustomerResults");
+
+    if (!searchInput || !table) return;
+
+    const rows = Array.from(table.querySelectorAll("tbody tr"));
+
+    searchInput.addEventListener("input", function () {
+        const query = searchInput.value.trim().toLowerCase();
+        let visibleCount = 0;
+
+        rows.forEach(function (row) {
+            const matches = row.textContent.toLowerCase().includes(query);
+            row.hidden = !matches;
+
+            if (matches) visibleCount++;
+        });
+
+        if (noResults) {
+            noResults.hidden = visibleCount !== 0;
+        }
+    });
+});
+</script>
+{% endblock %}

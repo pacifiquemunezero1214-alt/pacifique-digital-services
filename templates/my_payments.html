@@ -1,0 +1,220 @@
+
+{% extends "base.html" %}
+
+{% block title %}My Payments | Pacifique Digital Services{% endblock %}
+
+{% block content %}
+
+<style>
+.my-payments-page {
+    max-width: 1100px;
+    margin: 25px auto;
+    padding: 10px;
+}
+.my-payments-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+    flex-wrap: wrap;
+    margin-bottom: 22px;
+}
+.my-payments-header h1 {
+    margin: 0 0 7px;
+    font-size: 27px;
+}
+.my-payments-header p {
+    color: #64748b;
+    margin: 0;
+}
+.payments-table-card {
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    padding: 20px;
+    box-shadow: 0 8px 25px rgba(15, 23, 42, .05);
+}
+.payments-table-wrap {
+    overflow-x: auto;
+}
+.payments-table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 700px;
+}
+.payments-table th,
+.payments-table td {
+    padding: 14px 12px;
+    border-bottom: 1px solid #e2e8f0;
+    text-align: left;
+    font-size: 14px;
+}
+.payments-table th {
+    background: #f8fafc;
+    color: #475569;
+    font-weight: 800;
+}
+.payment-status {
+    display: inline-block;
+    padding: 6px 11px;
+    border-radius: 30px;
+    font-size: 12px;
+    font-weight: 800;
+}
+.status-pending {
+    background: #fef3c7;
+    color: #92400e;
+}
+.status-approved {
+    background: #dcfce7;
+    color: #166534;
+}
+.status-rejected {
+    background: #fee2e2;
+    color: #991b1b;
+}
+.payment-empty {
+    text-align: center;
+    padding: 45px 15px;
+}
+.payment-empty h3 {
+    margin-bottom: 8px;
+}
+.payment-empty p {
+    color: #64748b;
+}
+.payment-action {
+    display: inline-block;
+    padding: 10px 15px;
+    border-radius: 9px;
+    background: #2563eb;
+    color: white;
+    text-decoration: none;
+    font-weight: 700;
+}
+.payment-note {
+    margin-top: 18px;
+    padding: 14px;
+    border-radius: 10px;
+    background: #eff6ff;
+    color: #1e40af;
+    font-size: 14px;
+}
+@media(max-width: 600px) {
+    .payments-table-card {
+        padding: 12px;
+    }
+}
+</style>
+
+<div class="my-payments-page">
+
+    <div class="my-payments-header">
+        <div>
+            <h1>My Payments</h1>
+            <p>Track your submitted payments and verification status.</p>
+        </div>
+
+        <a href="{{ url_for('my_requests') }}" class="payment-action">
+            My Requests
+        </a>
+    </div>
+
+    <div class="payments-table-card">
+
+        {% if payments %}
+
+        <div class="payments-table-wrap">
+            <table class="payments-table">
+                <thead>
+                    <tr>
+                        <th>Request</th>
+                        <th>Amount</th>
+                        <th>Method</th>
+                        <th>Transaction ID</th>
+                        <th>Date</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for payment in payments %}
+                    <tr>
+                        <td>
+                            <strong>
+                                #{{ payment.request_id }}
+                            </strong>
+                            {% if payment.service_request %}
+                            <br>
+                            <small>
+                                {{ payment.service_request.title }}
+                            </small>
+                            {% endif %}
+                        </td>
+
+                        <td>
+                            <strong>
+                                {{ "{:,.0f}".format(payment.amount) }} RWF
+                            </strong>
+                        </td>
+
+                        <td>{{ payment.method }}</td>
+
+                        <td>{{ payment.reference or "—" }}</td>
+
+                        <td>
+                            {{ payment.created_at.strftime("%d %b %Y") if payment.created_at else "—" }}
+                        </td>
+
+                        <td>
+                            {% if payment.status == "Approved" %}
+                                <span class="payment-status status-approved">
+                                    Approved
+                                </span>
+                            {% elif payment.status == "Rejected" %}
+                                <span class="payment-status status-rejected">
+                                    Rejected
+                                </span>
+                            {% else %}
+                                <span class="payment-status status-pending">
+                                    Pending
+                                </span>
+                            {% endif %}
+
+                            {% if payment.status == "Rejected" and payment.rejection_reason %}
+                            <br>
+                            <small style="color:#991b1b;">
+                                Reason: {{ payment.rejection_reason }}
+                            </small>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="payment-note">
+            <strong>Payment verification:</strong>
+            Pending payments are still being reviewed. Only approved payments
+            are counted toward your service balance.
+        </div>
+
+        {% else %}
+
+        <div class="payment-empty">
+            <h3>No Payments Yet</h3>
+            <p>Your submitted payments will appear here.</p>
+
+            <a href="{{ url_for('my_requests') }}" class="payment-action">
+                View My Requests
+            </a>
+        </div>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+{% endblock %}

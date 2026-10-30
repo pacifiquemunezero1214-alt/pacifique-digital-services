@@ -1,0 +1,338 @@
+
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+.settings-page {
+    color: var(--cyber-white, #f1f5f9);
+    padding: 8px 0 35px;
+}
+.settings-header {
+    margin-bottom: 25px;
+}
+.settings-header h1 {
+    margin: 0 0 8px;
+    font-size: 28px;
+    font-weight: 800;
+}
+.settings-header p {
+    margin: 0;
+    color: var(--cyber-muted, #94a3b8);
+}
+.settings-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 20px;
+}
+.settings-card {
+    background: var(--cyber-panel, #111827);
+    border: 1px solid var(--cyber-border, #263244);
+    border-radius: 16px;
+    padding: 24px;
+    min-width: 0;
+}
+.settings-card h2 {
+    margin: 0 0 7px;
+    font-size: 18px;
+}
+.settings-description {
+    color: var(--cyber-muted, #94a3b8);
+    font-size: 13px;
+    margin: 0 0 22px;
+    line-height: 1.6;
+}
+.settings-field {
+    margin-bottom: 18px;
+}
+.settings-field label {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 13px;
+    font-weight: 700;
+}
+.settings-field input,
+.settings-field textarea {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 12px 14px;
+    border-radius: 10px;
+    border: 1px solid var(--cyber-border, #334155);
+    background: var(--cyber-bg, #0b1120);
+    color: var(--cyber-white, #f1f5f9);
+    font: inherit;
+}
+.settings-field input:focus,
+.settings-field textarea:focus {
+    outline: 2px solid #06b6d4;
+    outline-offset: 1px;
+}
+.settings-field textarea {
+    min-height: 95px;
+    resize: vertical;
+}
+.settings-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 22px;
+}
+.settings-btn {
+    border: 0;
+    border-radius: 10px;
+    padding: 12px 18px;
+    background: linear-gradient(135deg, #06b6d4, #6366f1);
+    color: white;
+    font-weight: 750;
+    cursor: pointer;
+}
+.settings-btn-secondary {
+    display: inline-flex;
+    align-items: center;
+    text-decoration: none;
+    border: 1px solid var(--cyber-border, #334155);
+    border-radius: 10px;
+    padding: 11px 16px;
+    color: var(--cyber-white, #f1f5f9);
+}
+.settings-info {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 16px;
+    border-radius: 12px;
+    border: 1px solid var(--cyber-border, #334155);
+    margin-top: 14px;
+}
+.settings-info-icon {
+    font-size: 22px;
+}
+.settings-info strong {
+    display: block;
+    margin-bottom: 5px;
+}
+.settings-info p {
+    color: var(--cyber-muted, #94a3b8);
+    margin: 0;
+    font-size: 13px;
+    line-height: 1.6;
+}
+.settings-status {
+    padding: 12px 14px;
+    border-radius: 10px;
+    margin-bottom: 18px;
+    background: rgba(6, 182, 212, .12);
+    border: 1px solid rgba(6, 182, 212, .35);
+}
+.settings-footer {
+    text-align: center;
+    margin-top: 25px;
+    color: var(--cyber-muted, #94a3b8);
+    font-size: 12px;
+}
+@media (min-width: 900px) {
+    .settings-layout {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+</style>
+
+<div class="settings-page">
+    <div class="settings-header">
+        <h1>⚙️ Settings</h1>
+        <p>Manage your business profile and account preferences.</p>
+    </div>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="settings-status">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <div class="settings-layout">
+        <section class="settings-card">
+            <h2>🏢 Business Profile</h2>
+            <p class="settings-description">
+                Keep your business information ready for customers and
+                service requests.
+            </p>
+
+            <form method="POST" action="{{ url_for('settings') }}">
+                <div class="settings-field">
+                    <label for="business_name">Business name</label>
+                    <input id="business_name" name="business_name"
+                           type="text"
+                           value="{{ business_name|default('Pacifique Digital Services') }}"
+                           placeholder="Enter business name">
+                </div>
+
+                <div class="settings-field">
+                    <label for="business_email">Business email</label>
+                    <input id="business_email" name="business_email"
+                           type="email"
+                           value="{{ business_email|default('') }}"
+                           placeholder="business@example.com">
+                </div>
+
+                <div class="settings-field">
+                    <label for="business_phone">Phone number</label>
+                    <input id="business_phone" name="business_phone"
+                           type="tel"
+                           value="{{ business_phone|default('') }}"
+                           placeholder="+250 7XX XXX XXX">
+                </div>
+
+                <div class="settings-field">
+                    <label for="business_address">Business address</label>
+                    <input id="business_address" name="business_address"
+                           type="text"
+                           value="{{ business_address|default('') }}"
+                           placeholder="City, district or address">
+                </div>
+
+                <div class="settings-field">
+                    <label for="business_description">Business description</label>
+                    <textarea id="business_description"
+                              name="business_description"
+                              placeholder="Describe the services you provide">{{ business_description|default('') }}</textarea>
+                </div>
+
+                <div class="settings-actions">
+                    <button class="settings-btn" type="submit">
+                        💾 Save Business Profile
+                    </button>
+                </div>
+            </form>
+        </section>
+
+        <section class="settings-card">
+            <h2>👤 Account Information</h2>
+            <p class="settings-description">
+                Review the account currently signed in.
+            </p>
+
+            <div class="settings-field">
+                <label>Username</label>
+                <input type="text"
+                       value="{{ current_user.username }}"
+                       readonly>
+            </div>
+
+            <div class="settings-field">
+                <label>Full name</label>
+                <input type="text"
+                       value="{{ current_user.full_name or '' }}"
+                       readonly>
+            </div>
+
+            <div class="settings-field">
+                <label>Email address</label>
+                <input type="email"
+                       value="{{ current_user.email or '' }}"
+                       readonly>
+            </div>
+
+            <div class="settings-info">
+                <div class="settings-info-icon">🔐</div>
+                <div>
+                    <strong>Account security</strong>
+                    <p>
+                        Keep your password private. Sign out when using
+                        a shared computer. Password changes should be
+                        implemented through a secure account route.
+                    </p>
+                </div>
+            </div>
+
+            <div class="settings-info">
+                <div class="settings-info-icon">🛡️</div>
+                <div>
+                    <strong>Access permissions</strong>
+                    <p>
+                        Your available management features depend on
+                        your assigned account role.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <section class="settings-card">
+            <h2>🎨 Appearance & Preferences</h2>
+            <p class="settings-description">
+                Helpful preferences for using your business dashboard.
+            </p>
+
+            <div class="settings-info">
+                <div class="settings-info-icon">🌙</div>
+                <div>
+                    <strong>Dashboard theme</strong>
+                    <p>
+                        Pacifique Digital Services uses its existing
+                        dashboard theme and responsive layout.
+                    </p>
+                </div>
+            </div>
+
+            <div class="settings-info">
+                <div class="settings-info-icon">💱</div>
+                <div>
+                    <strong>Business currency</strong>
+                    <p>
+                        Rwandan Franc (RWF) is the default currency
+                        displayed by this settings page.
+                    </p>
+                </div>
+            </div>
+
+            <div class="settings-info">
+                <div class="settings-info-icon">📱</div>
+                <div>
+                    <strong>Responsive dashboard</strong>
+                    <p>
+                        The layout adapts to desktop and smaller screens.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <section class="settings-card">
+            <h2>🧰 Business Tools</h2>
+            <p class="settings-description">
+                Quickly access important areas of your business system.
+            </p>
+
+            <div class="settings-info">
+                <div class="settings-info-icon">🛠️</div>
+                <div>
+                    <strong>Services & Pricing</strong>
+                    <p>Manage the services offered to your customers.</p>
+                </div>
+            </div>
+
+            <div class="settings-actions">
+                <a class="settings-btn-secondary"
+                   href="{{ url_for('services') }}">
+                    🛠️ Manage Services
+                </a>
+
+                <a class="settings-btn-secondary"
+                   href="{{ url_for('payments') }}">
+                    💳 View Payments
+                </a>
+
+                <a class="settings-btn-secondary"
+                   href="{{ url_for('reports') }}">
+                    📊 View Reports
+                </a>
+            </div>
+        </section>
+    </div>
+
+    <div class="settings-footer">
+        Pacifique Digital Services · Account & Business Settings
+    </div>
+</div>
+{% endblock %}

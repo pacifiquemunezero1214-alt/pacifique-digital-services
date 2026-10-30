@@ -1,0 +1,279 @@
+
+{% extends "base.html" %}
+
+{% block title %}Make Payment | Pacifique Digital Services{% endblock %}
+
+{% block content %}
+
+<style>
+.payment-page {
+    max-width: 850px;
+    margin: 25px auto;
+    padding: 10px;
+}
+.payment-heading {
+    margin-bottom: 22px;
+}
+.payment-heading h1 {
+    font-size: 28px;
+    margin-bottom: 8px;
+}
+.payment-heading p {
+    color: #64748b;
+}
+.payment-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 18px;
+    padding: 25px;
+    margin-bottom: 20px;
+    box-shadow: 0 8px 25px rgba(15, 23, 42, 0.05);
+}
+.payment-summary {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+    margin-bottom: 20px;
+}
+.payment-summary-item {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 16px;
+}
+.payment-summary-item span {
+    display: block;
+    color: #64748b;
+    font-size: 13px;
+    margin-bottom: 7px;
+}
+.payment-summary-item strong {
+    font-size: 20px;
+    color: #0f172a;
+}
+.payment-instructions {
+    background: linear-gradient(135deg, #eff6ff, #eef2ff);
+    border: 1px solid #bfdbfe;
+    border-radius: 14px;
+    padding: 20px;
+    margin-bottom: 22px;
+}
+.payment-instructions h3 {
+    margin: 0 0 12px;
+    color: #1e40af;
+}
+.payment-recipient {
+    font-size: 23px;
+    font-weight: 800;
+    color: #1d4ed8;
+    margin: 8px 0;
+}
+.payment-form-group {
+    margin-bottom: 18px;
+}
+.payment-form-group label {
+    display: block;
+    font-weight: 700;
+    margin-bottom: 8px;
+    color: #334155;
+}
+.payment-form-group input,
+.payment-form-group select {
+    width: 100%;
+    padding: 13px 14px;
+    border: 1px solid #cbd5e1;
+    border-radius: 10px;
+    font-size: 15px;
+    box-sizing: border-box;
+    background: #fff;
+}
+.payment-form-group input:focus,
+.payment-form-group select:focus {
+    outline: none;
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, .12);
+}
+.payment-help {
+    font-size: 13px;
+    color: #64748b;
+    margin-top: 6px;
+}
+.payment-submit {
+    width: 100%;
+    border: none;
+    border-radius: 11px;
+    padding: 15px;
+    background: linear-gradient(135deg, #2563eb, #4f46e5);
+    color: white;
+    font-size: 16px;
+    font-weight: 800;
+    cursor: pointer;
+}
+.payment-submit:hover {
+    opacity: .92;
+}
+.payment-back {
+    display: inline-block;
+    margin-top: 15px;
+    color: #2563eb;
+    text-decoration: none;
+    font-weight: 700;
+}
+.payment-warning {
+    background: #fff7ed;
+    color: #9a3412;
+    border: 1px solid #fed7aa;
+    border-radius: 10px;
+    padding: 13px;
+    margin-bottom: 18px;
+    font-size: 14px;
+}
+@media(max-width: 600px) {
+    .payment-summary {
+        grid-template-columns: 1fr;
+    }
+    .payment-card {
+        padding: 18px;
+    }
+}
+</style>
+
+<div class="payment-page">
+
+    <div class="payment-heading">
+        <h1>Make a Payment</h1>
+        <p>Complete your service payment securely and submit your transaction proof.</p>
+    </div>
+
+    <div class="payment-card">
+
+        <div class="payment-summary">
+            <div class="payment-summary-item">
+                <span>Service Request</span>
+                <strong>#{{ service_request.id }}</strong>
+            </div>
+
+            <div class="payment-summary-item">
+                <span>Remaining Balance</span>
+                <strong>{{ "{:,.0f}".format(balance) }} RWF</strong>
+            </div>
+        </div>
+
+        <div class="payment-instructions">
+            <h3>Payment Instructions</h3>
+
+            <p>Send your payment using one of the supported mobile money services.</p>
+
+            <p><strong>Recipient Name:</strong></p>
+            <div class="payment-recipient">{{ payment_recipient }}</div>
+
+            <p><strong>Payment Number:</strong></p>
+            <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+    <div class="payment-recipient" id="paymentNumber">
+        {{ payment_phone }}
+    </div>
+
+    <button type="button"
+            onclick="copyPaymentNumber()"
+            style="padding:9px 15px; border:0; border-radius:8px;
+                   background:#2563eb; color:white; font-weight:700;
+                   cursor:pointer;">
+        Copy Number
+    </button>
+</div>
+
+<script>
+function copyPaymentNumber() {
+    const number = document.getElementById("paymentNumber").innerText.trim();
+
+    navigator.clipboard.writeText(number).then(() => {
+        alert("Payment number copied successfully!");
+    }).catch(() => {
+        alert("Please copy this number manually: " + number);
+    });
+}
+</script>
+
+            <p style="margin-bottom:0;">
+                <strong>Important:</strong> After sending the money, copy the transaction ID
+                and upload a screenshot of the successful transaction.
+            </p>
+        </div>
+
+        <div class="payment-warning">
+            Your payment will remain <strong>Pending</strong> until the manager verifies it.
+            It will not be added to your paid balance before approval.
+        </div>
+
+        <form method="POST"
+              action="{{ url_for('pay_for_request', request_id=service_request.id) }}"
+              enctype="multipart/form-data">
+
+            <div class="payment-form-group">
+                <label for="amount">Amount to Pay (RWF)</label>
+                <input
+                    type="number"
+                    id="amount"
+                    name="amount"
+                    min="1"
+                    max="{{ balance }}"
+                    step="1"
+                    required
+                    placeholder="Enter amount"
+                >
+                <div class="payment-help">
+                    You can pay partially, but not more than
+                    {{ "{:,.0f}".format(balance) }} RWF.
+                </div>
+            </div>
+
+            <div class="payment-form-group">
+                <label for="method">Payment Method</label>
+                <select id="method" name="method" required>
+                    <option value="">Select payment method</option>
+                    {% for method in payment_methods %}
+                    <option value="{{ method }}">{{ method }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="payment-form-group">
+                <label for="reference">Transaction ID</label>
+                <input
+                    type="text"
+                    id="reference"
+                    name="reference"
+                    maxlength="120"
+                    required
+                    placeholder="Enter your transaction ID"
+                >
+            </div>
+
+            <div class="payment-form-group">
+                <label for="proof">Payment Screenshot</label>
+                <input
+                    type="file"
+                    id="proof"
+                    name="proof"
+                    accept=".png,.jpg,.jpeg,.webp,image/png,image/jpeg,image/webp"
+                    required
+                >
+                <div class="payment-help">
+                    Accepted formats: PNG, JPG, JPEG and WEBP. Maximum size: 5 MB.
+                </div>
+            </div>
+
+            <button type="submit" class="payment-submit">
+                Submit Payment for Verification
+            </button>
+
+        </form>
+
+        <a href="{{ url_for('my_requests') }}" class="payment-back">
+            ← Back to My Requests
+        </a>
+
+    </div>
+</div>
+
+{% endblock %}

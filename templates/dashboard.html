@@ -1,0 +1,222 @@
+
+{% extends "base.html" %}
+
+{% block title %}Dashboard | Pacifique Digital Services{% endblock %}
+{% block page_name %}Dashboard{% endblock %}
+
+{% block content %}
+
+<div class="page-heading">
+    <div>
+        <span class="eyebrow">OVERVIEW</span>
+        <h1>Welcome back, {{ current_user.full_name or current_user.username }} 👋</h1>
+        <p>Here's what's happening in your service center today.</p>
+    </div>
+
+    <div class="dashboard-heading-actions">
+        <a href="{{ url_for('new_request') }}" class="btn btn-primary">
+            <span>＋</span> New Customer Request
+        </a>
+
+        <a href="{{ url_for('logout') }}" class="btn btn-logout"
+           onclick="return confirm('Are you sure you want to log out?');">
+            <span>⇥</span> Log Out
+        </a>
+    </div>
+</div>
+
+<!-- STATISTICS -->
+<div class="stats-grid">
+
+    <article class="stat-card">
+        <div class="stat-top">
+            <span class="stat-label">Total Requests</span>
+            <span class="stat-icon blue">▤</span>
+        </div>
+        <strong class="stat-value">{{ total_requests }}</strong>
+        <div class="stat-note">All customer service requests</div>
+    </article>
+
+    <article class="stat-card">
+        <div class="stat-top">
+            <span class="stat-label">New Requests</span>
+            <span class="stat-icon cyan">✦</span>
+        </div>
+        <strong class="stat-value">{{ new_requests }}</strong>
+        <div class="stat-note">Waiting for initial review</div>
+    </article>
+
+    <article class="stat-card">
+        <div class="stat-top">
+            <span class="stat-label">In Progress</span>
+            <span class="stat-icon purple">◷</span>
+        </div>
+        <strong class="stat-value">{{ in_progress }}</strong>
+        <div class="stat-note">Currently being worked on</div>
+    </article>
+
+    <article class="stat-card">
+        <div class="stat-top">
+            <span class="stat-label">Completed</span>
+            <span class="stat-icon green">✓</span>
+        </div>
+        <strong class="stat-value">{{ completed }}</strong>
+        <div class="stat-note">Successfully completed requests</div>
+    </article>
+
+</div>
+
+<!-- MAIN DASHBOARD CONTENT -->
+<div class="dashboard-grid">
+
+    <section class="card">
+        <div class="card-header">
+            <div>
+                <h2>Recent Customer Requests</h2>
+                <p class="muted" style="margin:5px 0 0;font-size:11px;">
+                    Latest work submitted to your service center
+                </p>
+            </div>
+            <a href="{{ url_for('requests_page') }}" class="table-link">
+                View all →
+            </a>
+        </div>
+
+        {% if recent_requests %}
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Customer</th>
+                        <th>Service</th>
+                        <th>Status</th>
+                        <th>Details</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in recent_requests %}
+                    <tr>
+                        <td>
+                            <strong>{{ item.customer_name }}</strong>
+                            <div class="muted" style="font-size:10px;">
+                                #{{ item.id }}
+                            </div>
+                        </td>
+                        <td>{{ item.service_name }}</td>
+                        <td>
+                            <span class="badge {{ item.status|lower|replace(' ', '-') }}">
+                                {{ item.status }}
+                            </span>
+                        </td>
+                        <td>
+                            <a href="{{ url_for('request_detail', request_id=item.id) }}"
+                               class="table-link">
+                                Open →
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <div class="empty-icon">▤</div>
+            <h3>No requests yet</h3>
+            <p>New customer requests will appear here.</p>
+            <a href="{{ url_for('new_request') }}" class="btn btn-primary">
+                Create First Request
+            </a>
+        </div>
+        {% endif %}
+    </section>
+
+    <!-- QUICK ACTIONS -->
+    <section class="card">
+        <div class="card-header">
+            <h2>Quick Actions</h2>
+        </div>
+
+        <div class="quick-actions-list">
+
+            <a href="{{ url_for('requests_page') }}" class="quick-action">
+                <span class="stat-icon blue">▤</span>
+                <span class="quick-action-text">
+                    <strong>Manage Requests</strong>
+                    <small class="muted">Review and track customer work</small>
+                </span>
+                <span class="table-link">→</span>
+            </a>
+
+            <a href="{{ url_for('customers') }}" class="quick-action">
+                <span class="stat-icon cyan">♙</span>
+                <span class="quick-action-text">
+                    <strong>View Customers</strong>
+                    <small class="muted">See your customer directory</small>
+                </span>
+                <span class="table-link">→</span>
+            </a>
+
+            <a href="{{ url_for('services') }}" class="quick-action">
+                <span class="stat-icon purple">◇</span>
+                <span class="quick-action-text">
+                    <strong>Services & Pricing</strong>
+                    <small class="muted">Manage services and prices</small>
+                </span>
+                <span class="table-link">→</span>
+            </a>
+
+            <a href="{{ url_for('payments') }}" class="quick-action">
+                <span class="stat-icon green">▣</span>
+                <span class="quick-action-text">
+                    <strong>Record Payment</strong>
+                    <small class="muted">Record customer payments</small>
+                </span>
+                <span class="table-link">→</span>
+            </a>
+
+        </div>
+
+        <div class="workspace-banner">
+            <span class="eyebrow">YOUR WORKSPACE</span>
+            <strong>Everything in one place.</strong>
+            <p>
+                Keep customer requests organized and track every job
+                from start to completion.
+            </p>
+        </div>
+    </section>
+
+</div>
+
+<!-- FINANCIAL OVERVIEW -->
+<section class="card">
+    <div class="card-header">
+        <div>
+            <h2>Payments Overview</h2>
+            <p class="muted" style="margin:5px 0 0;font-size:11px;">
+                Total payments recorded in the system
+            </p>
+        </div>
+        <span class="stat-icon green">▣</span>
+    </div>
+
+    <div class="report-value">
+        {{ "{:,.0f}".format(total_payments|float) }}
+        <span style="font-size:13px;color:var(--pds-muted);font-weight:600;">
+            RWF
+        </span>
+    </div>
+
+    <p class="muted" style="font-size:11px;margin:7px 0 0;">
+        Based on recorded transactions. This is not necessarily your net profit.
+    </p>
+
+    <div style="margin-top:18px;">
+        <a href="{{ url_for('reports') }}" class="btn btn-secondary">
+            View Reports →
+        </a>
+    </div>
+</section>
+
+{% endblock %}

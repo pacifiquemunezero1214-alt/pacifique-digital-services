@@ -1,0 +1,253 @@
+
+{% extends "base.html" %}
+
+{% block title %}My Dashboard | Pacifique Digital Services{% endblock %}
+
+{% block content %}
+
+<style>
+    .dashboard-actions {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
+    .payment-dashboard-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 7px;
+        padding: 10px 16px;
+        border-radius: 9px;
+        background: linear-gradient(135deg, #7c3aed, #4f46e5);
+        color: white;
+        text-decoration: none;
+        font-weight: 700;
+        font-size: 14px;
+    }
+
+    .payment-dashboard-btn:hover {
+        opacity: .9;
+    }
+
+    .dashboard-payment-info {
+        min-width: 130px;
+        line-height: 1.7;
+    }
+
+    .dashboard-payment-info small {
+        display: block;
+        color: #64748b;
+    }
+
+    .pay-now-btn {
+        display: inline-block;
+        padding: 8px 13px;
+        background: #059669;
+        color: white;
+        text-decoration: none;
+        border-radius: 8px;
+        font-weight: 700;
+        font-size: 12px;
+        white-space: nowrap;
+    }
+
+    .pay-now-btn:hover {
+        background: #047857;
+    }
+
+    .paid-label {
+        display: inline-block;
+        padding: 6px 10px;
+        background: #dcfce7;
+        color: #166534;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 700;
+    }
+
+    .cancelled-label {
+        color: #dc2626;
+        font-size: 12px;
+        font-weight: 700;
+    }
+
+    @media(max-width: 600px) {
+        .dashboard-actions {
+            width: 100%;
+        }
+
+        .dashboard-actions a {
+            flex: 1;
+            text-align: center;
+        }
+    }
+</style>
+
+<div class="page-header">
+    <div>
+        <h1>Welcome to Your Dashboard</h1>
+        <p>Manage your digital service requests and payments in one place.</p>
+    </div>
+
+    <div class="dashboard-actions">
+
+        <a href="{{ url_for('new_request') }}"
+           class="btn btn-primary">
+            + Request a Service
+        </a>
+
+        <a href="{{ url_for('my_payments') }}"
+           class="payment-dashboard-btn">
+            💳 My Payments
+        </a>
+
+        <a href="{{ url_for('logout') }}"
+           class="btn"
+           style="background:#fee2e2;color:#b91c1c;border:1px solid #fecaca;">
+            ↪ Logout
+        </a>
+
+    </div>
+</div>
+
+<div class="stats-grid">
+
+    <div class="stat-card">
+        <h3>Total Requests</h3>
+        <h2>{{ total_requests }}</h2>
+    </div>
+
+    <div class="stat-card">
+        <h3>New Requests</h3>
+        <h2>{{ new_requests }}</h2>
+    </div>
+
+    <div class="stat-card">
+        <h3>In Progress</h3>
+        <h2>{{ in_progress }}</h2>
+    </div>
+
+    <div class="stat-card">
+        <h3>Completed</h3>
+        <h2>{{ completed }}</h2>
+    </div>
+
+</div>
+
+<div class="content-card">
+
+    <h2>Recent Requests</h2>
+
+    {% if recent_requests %}
+
+    <div class="table-responsive">
+        <table>
+            <thead>
+                <tr>
+                    <th>Request</th>
+                    <th>Service</th>
+                    <th>Status</th>
+                    <th>Quoted Price</th>
+                    <th>Paid</th>
+                    <th>Balance</th>
+                    <th>Payment</th>
+                    <th>Date</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for item in recent_requests %}
+
+                {% set quoted = item.quoted_price or 0 %}
+                {% set paid = item.amount_paid or 0 %}
+                {% set due = [quoted - paid, 0]|max %}
+
+                <tr>
+
+                    <td>{{ item.title }}</td>
+
+                    <td>
+                        {{ item.service.name if item.service else 'General Service' }}
+                    </td>
+
+                    <td>{{ item.status }}</td>
+
+                    <td>
+                        {{ "{:,.0f}".format(quoted) }} Frw
+                    </td>
+
+                    <td>
+                        {{ "{:,.0f}".format(paid) }} Frw
+                    </td>
+
+                    <td>
+                        <div class="dashboard-payment-info">
+                            <strong>{{ "{:,.0f}".format(due) }} Frw</strong>
+                            <small>Remaining balance</small>
+                        </div>
+                    </td>
+
+                    <td>
+                        {% if item.status != 'Cancelled' and due > 0 %}
+                            <a href="{{ url_for('pay_for_request', request_id=item.id) }}"
+                               class="pay-now-btn">
+                                Pay Now →
+                            </a>
+                        {% elif item.status == 'Cancelled' %}
+                            <span class="cancelled-label">Cancelled</span>
+                        {% elif quoted > 0 and due == 0 %}
+                            <span class="paid-label">✓ Fully Paid</span>
+                        {% else %}
+                            <span style="color:#64748b;font-size:12px;">Awaiting price</span>
+                        {% endif %}
+                    </td>
+
+                    <td>{{ item.created_at }}</td>
+
+                </tr>
+
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    {% else %}
+
+    <div style="text-align:center;padding:30px 10px;">
+
+        <div style="font-size:40px;margin-bottom:12px;">📋</div>
+
+        <h3>No Requests Yet</h3>
+
+        <p style="color:#64748b;margin-bottom:20px;">
+            You have not submitted any service requests yet.
+            Start by requesting a digital service.
+        </p>
+
+        <a href="{{ url_for('new_request') }}"
+           class="btn btn-primary">
+            Submit Your First Request
+        </a>
+
+    </div>
+
+    {% endif %}
+
+    <div style="margin-top:20px;display:flex;gap:20px;flex-wrap:wrap;">
+
+        <a href="{{ url_for('my_requests') }}"
+           style="color:#2563eb;font-weight:700;text-decoration:none;">
+            View All My Requests →
+        </a>
+
+        <a href="{{ url_for('my_payments') }}"
+           style="color:#7c3aed;font-weight:700;text-decoration:none;">
+            View Payment History →
+        </a>
+
+    </div>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,447 @@
+
+{% extends "base.html" %}
+
+{% block content %}
+
+<style>
+.privacy-container {
+    max-width: 1050px;
+    margin: 30px auto;
+    padding: 25px;
+    color: #263247;
+}
+
+.privacy-hero {
+    background: linear-gradient(135deg, #102a56, #1769aa, #14a6a6);
+    color: white;
+    padding: 45px 35px;
+    border-radius: 18px;
+    margin-bottom: 30px;
+}
+
+.privacy-hero h1 {
+    font-size: 32px;
+    margin-bottom: 12px;
+}
+
+.privacy-hero p {
+    line-height: 1.8;
+    opacity: .95;
+}
+
+.privacy-card {
+    background: white;
+    padding: 25px;
+    border-radius: 14px;
+    margin-bottom: 20px;
+    border: 1px solid #e5eaf1;
+    box-shadow: 0 4px 15px rgba(0,0,0,.04);
+}
+
+.privacy-card h2 {
+    color: #1456a0;
+    font-size: 20px;
+    margin-bottom: 13px;
+}
+
+.privacy-card p,
+.privacy-card li {
+    line-height: 1.8;
+    color: #526174;
+    font-size: 15px;
+}
+
+.privacy-card ul {
+    padding-left: 22px;
+}
+
+.privacy-updated {
+    font-size: 13px;
+    color: #dcecff;
+    margin-top: 15px;
+}
+
+.privacy-contact {
+    background: #edf6ff;
+    padding: 22px;
+    border-radius: 12px;
+}
+
+.privacy-contact a {
+    color: #1261a8;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+@media(max-width:600px) {
+    .privacy-container {
+        padding: 12px;
+    }
+
+    .privacy-hero {
+        padding: 30px 20px;
+    }
+
+    .privacy-hero h1 {
+        font-size: 25px;
+    }
+
+    .privacy-card {
+        padding: 18px;
+    }
+}
+</style>
+
+<div class="privacy-container">
+
+    <div class="privacy-hero">
+        <h1>Privacy Policy</h1>
+        <p>
+            Your privacy matters to us. This Privacy Policy explains
+            how Pacifique Digital Services collects, uses, stores
+            and protects information when you use our website
+            and digital services.
+        </p>
+        <div class="privacy-updated">
+            Effective date: October 30, 2026
+        </div>
+    </div>
+
+    <div class="privacy-card">
+        <h2>1. Introduction</h2>
+        <p>
+            Pacifique Digital Services is committed to respecting
+            the privacy of its customers and website visitors.
+            This policy explains how personal information is handled
+            when you create an account, request a service,
+            communicate with us or use our platform.
+        </p>
+        <p>
+            By using our website, you acknowledge that you have
+            read this Privacy Policy. Where applicable, we will
+            request your consent before processing information
+            that requires consent under applicable law.
+        </p>
+    </div>
+
+    <div class="privacy-card">
+        <h2>2. Information We Collect</h2>
+        <p>Depending on how you use our platform, we may collect:</p>
+        <ul>
+            <li><strong>Account information:</strong> Your name, email address, phone number and password.</li>
+            <li><strong>Service information:</strong> Details and instructions you provide when requesting a service.</li>
+            <li><strong>Payment information:</strong> Payment method, amount, transaction reference and payment confirmation details.</li>
+            <li><strong>Uploaded files:</strong> Documents, images and other files you submit for a service.</li>
+            <li><strong>Communication information:</strong> Messages and inquiries you send through our contact channels.</li>
+            <li><strong>Technical information:</strong> Information that may be collected by our hosting provider or website technologies, such as IP address, browser type and access logs.</li>
+        </ul>
+    </div>
+
+    <div class="privacy-card">
+        <h2>3. How We Collect Information</h2>
+        <p>We may collect information when you:</p>
+        <ul>
+            <li>Register for an account.</li>
+            <li>Log in to our website.</li>
+            <li>Submit a service request.</li>
+            <li>Make or confirm a payment.</li>
+            <li>Upload payment proof or documents.</li>
+            <li>Download completed service results.</li>
+            <li>Contact our support team.</li>
+            <li>Browse or interact with our website.</li>
+        </ul>
+    </div>
+
+    <div class="privacy-card">
+        <h2>4. How We Use Your Information</h2>
+        <p>We use information for legitimate business and service purposes, including:</p>
+        <ul>
+            <li>Creating and managing customer accounts.</li>
+            <li>Processing and managing service requests.</li>
+            <li>Confirming and verifying payments.</li>
+            <li>Communicating with customers about their requests.</li>
+            <li>Delivering completed services and files.</li>
+            <li>Providing customer support.</li>
+            <li>Maintaining website security and preventing misuse.</li>
+            <li>Improving the quality and reliability of our services.</li>
+            <li>Meeting applicable legal obligations.</li>
+        </ul>
+    </div>
+
+    <div class="privacy-card">
+        <h2>5. Accounts and Passwords</h2>
+        <p>
+            Customers may create accounts to access services.
+            You are responsible for keeping your login credentials
+            confidential and for activities carried out through
+            your account.
+        </p>
+        <p>
+            Please use a strong password and do not share it with
+            other people. If you believe that someone has accessed
+            your account without permission, contact us immediately.
+        </p>
+        <p>
+            We may use account information to authenticate users,
+            manage access and support password-reset requests.
+        </p>
+    </div>
+
+    <div class="privacy-card">
+        <h2>6. Service Requests and Customer Support</h2>
+        <p>
+            When you request a service, we may process the information
+            and instructions you submit so that we can understand,
+            manage and complete your request.
+        </p>
+        <p>
+            We may contact you using the email address or phone
+            number associated with your account to provide updates,
+            request clarification or communicate about your service.
+        </p>
+    </div>
+
+    <div class="privacy-card">
+        <h2>7. Payments and Financial Information</h2>
+        <p>
+            Pacifique Digital Services may accept payments through
+            supported mobile money services, including MTN MoMo
+            and Airtel Money.
+        </p>
+        <p>For payment verification, we may process information such as:</p>
+        <ul>
+            <li>Payment amount.</li>
+            <li>Payment method.</li>
+            <li>Transaction reference or confirmation details.</li>
+            <li>Payment confirmation screenshots submitted by customers.</li>
+            <li>Payment status and related service information.</li>
+        </ul>
+        <p>
+            We do not ask customers to provide their mobile money
+            PIN or password through our website. Never share your
+            mobile money PIN with anyone.
+        </p>
+        <p>
+            Mobile money transactions are also subject to the privacy
+            policies and terms of the relevant payment providers.
+        </p>
+    </div>
+
+    <div class="privacy-card">
+        <h2>8. Uploaded Documents and Files</h2>
+        <p>
+            Customers may upload documents, images, payment
+            confirmations or other files required to provide a
+            requested service.
+        </p>
+        <p>
+            We use these files only for purposes related to the
+            requested service, account administration, payment
+            verification or other legitimate operational needs.
+        </p>
+        <p>
+            Customers should avoid uploading unnecessary sensitive
+            personal information. Please ensure that you have the
+            right to share any document you submit.
+        </p>
+    </div>
+
+    <div class="privacy-card">
+        <h2>9. Sharing of Information</h2>
+        <p>
+            We do not sell customers' personal information.
+            We may share limited information when reasonably
+            necessary for the following purposes:
+        </p>
+        <ul>
+            <li>With authorized personnel who need the information to provide services.</li>
+            <li>With hosting, email or technical service providers where necessary to operate the platform.</li>
+            <li>With payment providers when needed to verify or process transactions.</li>
+            <li>When disclosure is required by applicable law or a lawful authority.</li>
+            <li>When necessary to protect our users, platform or legal rights.</li>
+        </ul>
+        <p>
+            Where third-party service providers process personal
+            information on our behalf, we will take reasonable
+            steps to ensure appropriate protection.
+        </p>
+    </div>
+
+    <div class="privacy-card">
+        <h2>10. Cookies and Similar Technologies</h2>
+        <p>
+            Our website may use essential cookies or similar
+            technologies to support functions such as login sessions,
+            security and website operation.
+        </p>
+        <p>
+            If we introduce analytics, advertising or other
+            non-essential cookies, we will update this policy
+            and provide consent choices where required by law.
+        </p>
+        <p>
+            You can manage cookies through your browser settings.
+            Disabling essential cookies may affect some website
+            functions.
+        </p>
+    </div>
+
+    <div class="privacy-card">
+        <h2>11. Data Security</h2>
+        <p>
+            We take reasonable technical and organizational steps
+            to protect personal information against unauthorized
+            access, loss, misuse, alteration or disclosure.
+        </p>
+        <p>
+            However, no website, electronic storage system or
+            internet transmission can be guaranteed to be completely
+            secure. We therefore cannot promise absolute security.
+        </p>
+        <p>
+            Customers should protect their account credentials
+            and use secure devices when accessing the platform.
+        </p>
+    </div>
+
+    <div class="privacy-card">
+        <h2>12. Data Retention</h2>
+        <p>
+            We retain personal information for as long as reasonably
+            necessary to provide services, manage accounts, resolve
+            disputes, maintain appropriate records and meet legal
+            obligations.
+        </p>
+        <p>
+            When information is no longer required, we will take
+            reasonable steps to delete it or otherwise handle it
+            in accordance with applicable law and our operational
+            requirements.
+        </p>
+    </div>
+
+    <div class="privacy-card">
+        <h2>13. Your Privacy Rights</h2>
+        <p>
+            Subject to applicable law, you may have rights to:
+        </p>
+        <ul>
+            <li>Request access to your personal information.</li>
+            <li>Request correction of inaccurate or incomplete information.</li>
+            <li>Request deletion of personal information where legally permitted.</li>
+            <li>Object to or request restriction of certain processing activities.</li>
+            <li>Withdraw consent where processing is based on consent.</li>
+            <li>Raise a complaint with the relevant data protection authority.</li>
+        </ul>
+        <p>
+            To exercise a privacy right, contact us using the
+            details provided below. We may need to verify your
+            identity before responding.
+        </p>
+    </div>
+
+    <div class="privacy-card">
+        <h2>14. Children's Privacy</h2>
+        <p>
+            Our services are not knowingly directed at children
+            who are not legally able to use the services independently.
+            Where applicable, a parent or legal guardian should
+            provide the necessary authorization.
+        </p>
+        <p>
+            If we become aware that personal information has been
+            collected from a child in circumstances that require
+            authorization and that authorization was not obtained,
+            we will take appropriate steps in accordance with
+            applicable law.
+        </p>
+    </div>
+
+    <div class="privacy-card">
+        <h2>15. Third-Party Services and Websites</h2>
+        <p>
+            Our website may rely on third-party providers for
+            hosting, email delivery, payment services or other
+            technical functions. Links to external websites may
+            also be provided.
+        </p>
+        <p>
+            These third parties may have their own privacy policies
+            and terms. We encourage users to review those policies
+            before providing information to external services.
+        </p>
+    </div>
+
+    <div class="privacy-card">
+        <h2>16. International Data Processing</h2>
+        <p>
+            Some service providers that support our website may
+            process or store information outside Rwanda.
+            Where this occurs, we will take appropriate steps
+            to ensure that personal information receives protection
+            in accordance with applicable data protection law.
+        </p>
+    </div>
+
+    <div class="privacy-card">
+        <h2>17. Advertising and Google AdSense</h2>
+        <p>
+            If we display advertisements through Google AdSense
+            or another advertising provider, those providers may
+            use cookies or similar technologies to provide,
+            measure and personalize advertisements, subject to
+            applicable settings and consent requirements.
+        </p>
+        <p>
+            Google and its partners may use information in
+            accordance with their own privacy policies.
+            Users can review Google's advertising and privacy
+            information through Google's official privacy resources.
+        </p>
+        <p>
+            We will update this section and implement any required
+            consent mechanism before enabling advertising features
+            that use non-essential cookies or similar technologies.
+        </p>
+    </div>
+
+    <div class="privacy-card">
+        <h2>18. Changes to This Privacy Policy</h2>
+        <p>
+            We may update this Privacy Policy when our services,
+            technology, legal obligations or data practices change.
+            Updated versions will be published on this page with
+            a revised effective date.
+        </p>
+            We encourage users to review this page periodically.
+    </div>
+
+    <div class="privacy-card">
+        <h2>19. Contact Us</h2>
+        <p>
+            If you have questions, concerns or requests relating
+            to this Privacy Policy or your personal information,
+            contact Pacifique Digital Services:
+        </p>
+
+        <div class="privacy-contact">
+            <p><strong>Business:</strong> Pacifique Digital Services</p>
+            <p>
+                <strong>Email:</strong>
+                <a href="mailto:pacifiquemunezero1214@gmail.com">
+                    pacifiquemunezero1214@gmail.com
+                </a>
+            </p>
+            <p>
+                <strong>WhatsApp:</strong>
+                <a href="https://wa.me/250798386664" target="_blank">
+                    Chat with our team
+                </a>
+            </p>
+            <p><strong>Country:</strong> Rwanda</p>
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}

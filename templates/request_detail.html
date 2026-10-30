@@ -1,0 +1,258 @@
+
+{% extends "base.html" %}
+
+{% block title %}Request Details | Pacifique Digital Services{% endblock %}
+{% block page_name %}Request Details{% endblock %}
+
+{% block content %}
+<section class="page-heading">
+    <div>
+        <a href="{{ url_for('requests_page') }}" class="back-link">
+            ← Back to Requests
+        </a>
+        <h1>Request #{{ service_request.id }}</h1>
+        <p>Review the customer's information and manage this job.</p>
+    </div>
+
+    <span class="status-badge
+        {% if service_request.status == 'Completed' %}status-success
+        {% elif service_request.status == 'In Progress' %}status-info
+        {% elif service_request.status == 'Cancelled' %}status-danger
+        {% else %}status-neutral{% endif %}">
+        {{ service_request.status }}
+    </span>
+</section>
+
+<div class="dashboard-grid">
+    <div class="card">
+        <div class="card-header">
+            <div>
+                <h2>Customer Information</h2>
+                <p>Contact details and request description.</p>
+            </div>
+        </div>
+
+        <div class="detail-list">
+            <div class="detail-item">
+                <span>Customer Name</span>
+                <strong>{{ service_request.customer_name }}</strong>
+            </div>
+
+            <div class="detail-item">
+                <span>Phone Number</span>
+                <strong>{{ service_request.phone }}</strong>
+            </div>
+
+            <div class="detail-item">
+                <span>Email Address</span>
+                <strong>{{ service_request.email or 'Not provided' }}</strong>
+            </div>
+
+            <div class="detail-item">
+                <span>Service Requested</span>
+                <strong>{{ service_request.service_name }}</strong>
+            </div>
+
+            <div class="detail-item">
+                <span>Priority</span>
+                <strong>{{ service_request.priority }}</strong>
+            </div>
+
+            <div class="detail-item">
+                <span>Date Received</span>
+                <strong>
+                    {{ service_request.created_at.strftime('%d %B %Y, %H:%M') if service_request.created_at else '—' }}
+                </strong>
+            </div>
+        </div>
+
+        <div class="description-box">
+            <h3>{{ service_request.title }}</h3>
+            <p>{{ service_request.details }}</p>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            <div>
+                <h2>Manage Request</h2>
+                <p>Update the job's status, quotation, and notes.</p>
+            </div>
+        </div>
+
+        <form method="POST"
+              action="{{ url_for('request_detail', request_id=service_request.id) }}"
+              class="form-stack">
+
+            <div class="form-group">
+                <label for="status">Work Status</label>
+                <select name="status" id="status" required>
+                    {% for status in ['New', 'In Progress', 'Waiting for Customer', 'Completed', 'Cancelled'] %}
+                    <option value="{{ status }}"
+                        {% if service_request.status == status %}selected{% endif %}>
+                        {{ status }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="quoted_price">Quoted Price (RWF)</label>
+                <input type="number"
+                       id="quoted_price"
+                       name="quoted_price"
+                       min="0"
+                       step="1"
+                       value="{{ service_request.quoted_price if service_request.quoted_price is not none else '' }}"
+                       placeholder="Enter the service price">
+            </div>
+
+            <div class="form-group">
+                <label for="staff_notes">Internal Notes</label>
+                <textarea id="staff_notes"
+                          name="staff_notes"
+                          rows="5"
+                          placeholder="Record progress, requirements, or other notes...">{{ service_request.staff_notes or '' }}</textarea>
+            </div>
+
+            <button type="submit" class="btn btn-primary">
+                Save Changes
+            </button>
+        </form>
+    </div>
+</div>
+
+<!-- PAYMENT HISTORY -->
+<div class="card">
+    <div class="card-header">
+        <div>
+            <h2>Payment History</h2>
+            <p>Payments recorded for this request.</p>
+        </div>
+    </div>
+
+    {% if payments %}
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Amount</th>
+                    <th>Method</th>
+                    <th>Reference</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for payment in payments %}
+                <tr>
+                    <td>
+                        {{ payment.created_at.strftime('%d %b %Y') if payment.created_at else '—' }}
+                    </td>
+                    <td>
+                        <strong>{{ "{:,.0f}".format(payment.amount) }} RWF</strong>
+                    </td>
+                    <td>{{ payment.method }}</td>
+                    <td>{{ payment.reference or '—' }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <h3>No payments recorded</h3>
+        <p>Payments for this request will appear here once recorded.</p>
+        <a href="{{ url_for('payments') }}" class="btn btn-secondary">
+            Go to Payments
+        </a>
+    </div>
+    {% endif %}
+</div>
+
+<!-- UPLOAD COMPLETED RESULTS -->
+<div class="card">
+    <div class="card-header">
+        <div>
+            <h2>Upload Completed Results</h2>
+            <p>Upload completed documents for this customer.</p>
+        </div>
+    </div>
+
+    <form method="POST"
+          action="{{ url_for('upload_service_results', request_id=service_request.id) }}"
+          enctype="multipart/form-data"
+          class="form-stack">
+
+        <div class="form-group">
+            <label for="result_files">Choose Files</label>
+            <input type="file"
+                   id="result_files"
+                   name="result_files"
+                   multiple
+                   required
+                   accept=".pdf,.png,.jpg,.jpeg,.webp,.doc,.docx,.xls,.xlsx,.txt">
+            <small>You can select up to 10 files.</small>
+        </div>
+
+        <div class="form-group">
+            <label for="description">Description (optional)</label>
+            <textarea id="description"
+                      name="description"
+                      rows="3"
+                      placeholder="Describe the completed documents..."></textarea>
+        </div>
+
+        <button type="submit" class="btn btn-primary">
+            Upload Results
+        </button>
+    </form>
+</div>
+
+<!-- UPLOADED RESULTS -->
+<div class="card">
+    <div class="card-header">
+        <div>
+            <h2>Uploaded Results</h2>
+            <p>Files already uploaded for this request.</p>
+        </div>
+    </div>
+
+    {% if results %}
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>File</th>
+                    <th>Description</th>
+                    <th>Date Uploaded</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for result in results %}
+                <tr>
+                    <td>{{ result.original_filename }}</td>
+                    <td>{{ result.description or '—' }}</td>
+                    <td>
+                        {{ result.uploaded_at.strftime('%d %b %Y') if result.uploaded_at else '—' }}
+                    </td>
+                    <td>
+                        <a class="btn btn-secondary"
+                           href="{{ url_for('download_service_result', result_id=result.id) }}">
+                            Download
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <h3>No results uploaded yet</h3>
+        <p>Uploaded customer files will appear here.</p>
+    </div>
+    {% endif %}
+</div>
+
+{% endblock %}

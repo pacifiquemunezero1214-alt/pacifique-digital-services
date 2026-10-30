@@ -1,0 +1,116 @@
+
+{% extends "base.html" %}
+
+{% block title %}My Dashboard | Pacifique Digital Services{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+    <div>
+        <h1>Welcome to Your Dashboard</h1>
+        <p>Manage your digital service requests in one place.</p>
+    </div>
+
+    <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+        <a href="{{ url_for('new_request') }}"
+           class="btn btn-primary">
+            + Request a Service
+        </a>
+
+        <a href="{{ url_for('logout') }}"
+           class="btn"
+           style="background: #fee2e2; color: #b91c1c; border: 1px solid #fecaca;">
+            ↪ Logout
+        </a>
+    </div>
+</div>
+
+<div class="stats-grid">
+
+    <div class="stat-card">
+        <h3>Total Requests</h3>
+        <h2>{{ total_requests }}</h2>
+    </div>
+
+    <div class="stat-card">
+        <h3>New Requests</h3>
+        <h2>{{ new_requests }}</h2>
+    </div>
+
+    <div class="stat-card">
+        <h3>In Progress</h3>
+        <h2>{{ in_progress }}</h2>
+    </div>
+
+    <div class="stat-card">
+        <h3>Completed</h3>
+        <h2>{{ completed }}</h2>
+    </div>
+
+</div>
+
+<div class="content-card">
+
+    <h2>Recent Requests</h2>
+
+    {% if recent_requests %}
+
+    <div class="table-responsive">
+        <table>
+            <thead>
+                <tr>
+                    <th>Request</th>
+                    <th>Service</th>
+                    <th>Status</th>
+                    <th>Date</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for item in recent_requests %}
+                <tr>
+                    <td>{{ item.title }}</td>
+
+                    <td>
+                        {{ item.service.name if item.service else 'General Service' }}
+                    </td>
+
+                    <td>{{ item.status }}</td>
+
+                    <td>{{ item.created_at }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    {% else %}
+
+    <div style="text-align: center; padding: 30px 10px;">
+        <div style="font-size: 40px; margin-bottom: 12px;">📋</div>
+
+        <h3>No Requests Yet</h3>
+
+        <p style="color: #64748b; margin-bottom: 20px;">
+            You have not submitted any service requests yet.
+            Start by requesting a digital service.
+        </p>
+
+        <a href="{{ url_for('new_request') }}"
+           class="btn btn-primary">
+            Submit Your First Request
+        </a>
+    </div>
+
+    {% endif %}
+
+    <div style="margin-top: 20px;">
+        <a href="{{ url_for('my_requests') }}"
+           style="color: #2563eb; font-weight: 700;">
+            View All My Requests →
+        </a>
+    </div>
+
+</div>
+
+{% endblock %}

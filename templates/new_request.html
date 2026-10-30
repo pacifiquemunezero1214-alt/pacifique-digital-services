@@ -1,0 +1,299 @@
+{% extends "base.html" %}
+
+{% block title %}Request a Service | Pacifique Digital Services{% endblock %}
+
+{% block content %}
+
+<style>
+.request-container {
+    max-width: 900px;
+    margin: 30px auto;
+    padding: 30px;
+    background: var(--card-bg, #ffffff);
+    border-radius: 18px;
+    box-shadow: 0 8px 30px rgba(0,0,0,.08);
+}
+
+.request-container h2 {
+    margin-bottom: 8px;
+    color: #2563eb;
+    font-size: 27px;
+}
+
+.request-subtitle {
+    color: #64748b;
+    margin-bottom: 20px;
+    line-height: 1.6;
+}
+
+.request-info {
+    background: #eff6ff;
+    border: 1px solid #bfdbfe;
+    color: #1e40af;
+    padding: 14px;
+    border-radius: 12px;
+    margin-bottom: 25px;
+    line-height: 1.6;
+}
+
+.request-form {
+    display: grid;
+    gap: 19px;
+}
+
+.request-form label {
+    display: block;
+    font-weight: 700;
+    margin-bottom: 8px;
+    color: #334155;
+}
+
+.request-form input,
+.request-form select,
+.request-form textarea {
+    width: 100%;
+    padding: 13px;
+    border: 1px solid #dbe2ea;
+    border-radius: 10px;
+    font-size: 15px;
+    box-sizing: border-box;
+    background: #fff;
+}
+
+.request-form input:focus,
+.request-form select:focus,
+.request-form textarea:focus {
+    outline: none;
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37,99,235,.12);
+}
+
+.request-form textarea {
+    min-height: 140px;
+    resize: vertical;
+}
+
+.request-help {
+    font-size: 13px;
+    color: #64748b;
+    margin-top: 6px;
+}
+
+.request-submit {
+    background: linear-gradient(135deg, #2563eb, #7c3aed);
+    color: white;
+    border: none;
+    padding: 15px;
+    border-radius: 10px;
+    font-weight: 800;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.request-submit:hover {
+    opacity: .92;
+}
+
+.request-back {
+    display: inline-block;
+    margin-top: 20px;
+    color: #2563eb;
+    text-decoration: none;
+    font-weight: 700;
+}
+
+@media(max-width: 600px) {
+    .request-container {
+        margin: 15px;
+        padding: 20px;
+    }
+}
+</style>
+
+<div class="request-container">
+
+    <h2>Request a Service</h2>
+
+    <p class="request-subtitle">
+        Welcome to Pacifique Digital Services.
+        Choose the service you need and tell us how we can help you.
+    </p>
+
+    <div class="request-info">
+        <strong>How it works:</strong>
+        Select your service and submit your request.
+        Our team will review it and provide a quotation.
+        You will be able to make payment after the price is confirmed.
+    </div>
+
+    <form method="POST" class="request-form">
+
+        <div>
+            <label for="service_name">Choose a Service</label>
+
+            <select name="service_name" id="service_name" required>
+
+                <option value="">-- Select the service you need --</option>
+
+                <optgroup label="CV & Career Services">
+                    <option value="CV Writing & Design">CV Writing & Design</option>
+                    <option value="Cover Letter Writing">Cover Letter Writing</option>
+                    <option value="Job Application Assistance">Job Application Assistance</option>
+                    <option value="Online Job Applications">Online Job Applications</option>
+                    <option value="LinkedIn Profile Creation">LinkedIn Profile Creation</option>
+                    <option value="Interview Preparation">Interview Preparation</option>
+                </optgroup>
+
+                <optgroup label="Education & Scholarship Services">
+                    <option value="Scholarship Applications">Scholarship Applications</option>
+                    <option value="University Applications">University Applications</option>
+                    <option value="International University Applications">International University Applications</option>
+                    <option value="School Registration Assistance">School Registration Assistance</option>
+                    <option value="Personal Statement Writing">Personal Statement Writing</option>
+                    <option value="Academic Document Formatting">Academic Document Formatting</option>
+                </optgroup>
+
+                <optgroup label="Business & Company Services">
+                    <option value="Business Registration Assistance">Business Registration Assistance</option>
+                    <option value="Company Name Search Assistance">Company Name Search Assistance</option>
+                    <option value="Business Plan Writing">Business Plan Writing</option>
+                    <option value="Business Profile Creation">Business Profile Creation</option>
+                    <option value="TIN Registration Assistance">TIN Registration Assistance</option>
+                    <option value="Online Business Setup">Online Business Setup</option>
+                </optgroup>
+
+                <optgroup label="Graphic Design & Branding">
+                    <option value="Logo Design">Logo Design</option>
+                    <option value="Business Card Design">Business Card Design</option>
+                    <option value="Poster & Flyer Design">Poster & Flyer Design</option>
+                    <option value="Certificate Design">Certificate Design</option>
+                    <option value="Social Media Designs">Social Media Designs</option>
+                    <option value="Company Branding">Company Branding</option>
+                </optgroup>
+
+                <optgroup label="Website & Technology Services">
+                    <option value="Website Design">Website Design</option>
+                    <option value="Web Application Development">Web Application Development</option>
+                    <option value="E-commerce Website Development">E-commerce Website Development</option>
+                    <option value="Domain & Hosting Assistance">Domain & Hosting Assistance</option>
+                    <option value="Website Maintenance">Website Maintenance</option>
+                    <option value="Database & System Development">Database & System Development</option>
+                </optgroup>
+
+                <optgroup label="Online Applications & Registration">
+                    <option value="Government Online Application Assistance">Government Online Application Assistance</option>
+                    <option value="Passport Application Assistance">Passport Application Assistance</option>
+                    <option value="Visa Application Assistance">Visa Application Assistance</option>
+                    <option value="Online Exam Registration">Online Exam Registration</option>
+                    <option value="Appointment Booking">Appointment Booking</option>
+                    <option value="Account Creation & Verification Assistance">Account Creation & Verification Assistance</option>
+                </optgroup>
+
+                <optgroup label="Document Services">
+                    <option value="Document Typing">Document Typing</option>
+                    <option value="PDF Editing & Formatting">PDF Editing & Formatting</option>
+                    <option value="Document Conversion">Document Conversion</option>
+                    <option value="Scanning & Digitalization">Scanning & Digitalization</option>
+                    <option value="Professional Letter Writing">Professional Letter Writing</option>
+                    <option value="Translation Assistance">Translation Assistance</option>
+                </optgroup>
+
+                <optgroup label="Digital Marketing">
+                    <option value="Social Media Account Setup">Social Media Account Setup</option>
+                    <option value="Facebook Page Creation">Facebook Page Creation</option>
+                    <option value="Digital Marketing">Digital Marketing</option>
+                    <option value="Google Business Profile Setup">Google Business Profile Setup</option>
+                    <option value="Online Advertising Assistance">Online Advertising Assistance</option>
+                    <option value="Social Media Management">Social Media Management</option>
+                </optgroup>
+
+                <option value="Other Digital Service">Other Digital Service</option>
+
+            </select>
+
+            <div class="request-help">
+                Choose the service that best describes what you need.
+                If it is not listed, select Other Digital Service.
+            </div>
+        </div>
+
+        <div>
+            <label for="customer_name">Your Name</label>
+            <input
+                type="text"
+                id="customer_name"
+                name="customer_name"
+                value="{{ current_user.full_name or current_user.username }}"
+                required
+            >
+        </div>
+
+        <div>
+            <label for="phone">Phone Number</label>
+            <input
+                type="tel"
+                id="phone"
+                name="phone"
+                value="{{ current_user.phone or '' }}"
+                required
+            >
+        </div>
+
+        <div>
+            <label for="email">Email Address</label>
+            <input
+                type="email"
+                id="email"
+                name="email"
+                value="{{ current_user.email or '' }}"
+            >
+        </div>
+
+        <div>
+            <label for="title">Request Title</label>
+            <input
+                type="text"
+                id="title"
+                name="title"
+                placeholder="Example: I need help applying for a scholarship"
+                maxlength="180"
+                required
+            >
+        </div>
+
+        <div>
+            <label for="details">Describe Your Request</label>
+            <textarea
+                id="details"
+                name="details"
+                placeholder="Explain exactly what you need. Include any important information that will help our team understand your request..."
+                required
+            ></textarea>
+
+            <div class="request-help">
+                Please provide enough details so our team can understand how to assist you.
+            </div>
+        </div>
+
+        <div>
+            <label for="priority">Priority</label>
+            <select name="priority" id="priority">
+                <option value="Normal">Normal</option>
+                <option value="High">High</option>
+                <option value="Urgent">Urgent</option>
+            </select>
+        </div>
+
+        <button type="submit" class="request-submit">
+            Submit Service Request
+        </button>
+
+    </form>
+
+    <a href="{{ url_for('user_dashboard') }}" class="request-back">
+        ← Back to Dashboard
+    </a>
+
+</div>
+
+{% endblock %}

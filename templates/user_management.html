@@ -1,0 +1,205 @@
+
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+.um-page { color:var(--cyber-white,#f1f5f9); padding:8px 0 30px; }
+.um-header { display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:15px; margin-bottom:24px; }
+.um-header h1 { font-size:27px; margin:0 0 7px; font-weight:800; }
+.um-muted { color:var(--cyber-muted,#94a3b8); font-size:13px; }
+.um-stats { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:15px; margin-bottom:22px; }
+.um-card,.um-panel { background:var(--cyber-panel,#111827); border:1px solid var(--cyber-border,#263244); border-radius:15px; padding:20px; min-width:0; }
+.um-label { color:var(--cyber-muted,#94a3b8); font-size:13px; margin-bottom:10px; }
+.um-number { font-size:28px; font-weight:800; }
+.um-icon { font-size:23px; margin-bottom:12px; }
+.um-filters { display:flex; flex-wrap:wrap; gap:10px; margin-bottom:20px; }
+.um-filters input,.um-filters select { flex:1; min-width:150px; padding:11px 12px; border-radius:9px; border:1px solid var(--cyber-border,#334155); background:var(--cyber-bg,#0b1120); color:var(--cyber-white,#f1f5f9); }
+.um-btn { border:0; border-radius:8px; padding:9px 12px; background:linear-gradient(135deg,#06b6d4,#6366f1); color:white; font-weight:700; cursor:pointer; text-decoration:none; display:inline-block; font-size:12px; }
+.um-btn-view { background:#2563eb; }
+.um-btn-activate { background:#15803d; }
+.um-btn-deactivate { background:#b45309; }
+.um-btn-delete { background:#b91c1c; }
+.um-actions { display:flex; flex-wrap:wrap; gap:7px; min-width:260px; }
+.um-actions form { display:inline; margin:0; }
+.um-table-wrap { overflow-x:auto; }
+.um-table { width:100%; border-collapse:collapse; min-width:1050px; }
+.um-table th,.um-table td { text-align:left; padding:14px 12px; border-bottom:1px solid var(--cyber-border,#263244); font-size:13px; }
+.um-table th { color:var(--cyber-muted,#94a3b8); font-weight:700; }
+.um-table tr:last-child td { border-bottom:0; }
+.um-avatar { display:inline-flex; align-items:center; justify-content:center; width:35px; height:35px; border-radius:10px; background:#312e81; color:#c4b5fd; font-weight:800; margin-right:9px; vertical-align:middle; }
+.um-role { display:inline-block; border-radius:20px; padding:5px 10px; background:rgba(6,182,212,.12); color:#22d3ee; font-size:11px; font-weight:800; }
+.um-role.manager,.um-role.admin { background:rgba(139,92,246,.15); color:#c4b5fd; }
+.um-status { display:inline-block; border-radius:20px; padding:5px 10px; font-size:11px; font-weight:800; }
+.um-status-active { background:rgba(34,197,94,.13); color:#4ade80; }
+.um-status-inactive { background:rgba(239,68,68,.13); color:#f87171; }
+.um-empty { padding:30px; text-align:center; color:var(--cyber-muted,#94a3b8); }
+@media(max-width:600px) { .um-header h1 { font-size:23px; } .um-card,.um-panel { padding:15px; } }
+@media print { .um-filters,.um-btn,.um-actions { display:none!important; } }
+</style>
+
+<div class="um-page">
+    <div class="um-header">
+        <div>
+            <h1>👥 User Management</h1>
+            <div class="um-muted">
+                Manage registered accounts and review user information.
+            </div>
+        </div>
+        <button class="um-btn" type="button" onclick="window.print()">
+            🖨️ Print Users
+        </button>
+    </div>
+
+    <div class="um-stats">
+        <div class="um-card">
+            <div class="um-icon">👥</div>
+            <div class="um-label">Total Registered Accounts</div>
+            <div class="um-number">{{ total_users }}</div>
+        </div>
+        <div class="um-card">
+            <div class="um-icon">🛡️</div>
+            <div class="um-label">Managers & Admins</div>
+            <div class="um-number">{{ manager_count }}</div>
+        </div>
+        <div class="um-card">
+            <div class="um-icon">🙋</div>
+            <div class="um-label">Regular Users</div>
+            <div class="um-number">{{ customer_count }}</div>
+        </div>
+    </div>
+
+    <div class="um-panel">
+        <h2 style="margin:0 0 7px;font-size:19px;">Registered Users</h2>
+        <p class="um-muted">
+            Search accounts and filter them by their assigned role.
+        </p>
+
+        <form method="GET" action="{{ url_for('user_management') }}"
+              class="um-filters">
+            <input type="search" name="search"
+                   value="{{ search }}"
+                   placeholder="Search name, username, email or phone">
+
+            <select name="role">
+                <option value="">All roles</option>
+                <option value="user"
+                    {% if selected_role == 'user' %}selected{% endif %}>
+                    Regular User
+                </option>
+                <option value="manager"
+                    {% if selected_role == 'manager' %}selected{% endif %}>
+                    Manager
+                </option>
+                <option value="admin"
+                    {% if selected_role == 'admin' %}selected{% endif %}>
+                    Admin
+                </option>
+            </select>
+
+            <button class="um-btn" type="submit">🔍 Search</button>
+            <a class="um-btn"
+               href="{{ url_for('user_management') }}"
+               style="background:#334155;">Reset</a>
+        </form>
+
+        <div class="um-table-wrap">
+            <table class="um-table">
+                <thead>
+                    <tr>
+                        <th>User</th>
+                        <th>Username</th>
+                        <th>Email</th>
+                        <th>Phone</th>
+                        <th>Role</th>
+                        <th>Account ID</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for person in users %}
+                    <tr>
+                        <td>
+                            <span class="um-avatar">
+                                {{ (person.full_name or person.username or '?')[0]|upper }}
+                            </span>
+                            {{ person.full_name or 'Name not provided' }}
+                        </td>
+                        <td>{{ person.username }}</td>
+                        <td>{{ person.email or '—' }}</td>
+                        <td>{{ person.phone or '—' }}</td>
+                        <td>
+                            <span class="um-role {{ person.role|lower }}">
+                                {{ person.role|upper }}
+                            </span>
+                        </td>
+                        <td>#{{ person.id }}</td>
+                        <td>
+                            {% if person.is_active %}
+                                <span class="um-status um-status-active">
+                                    Active
+                                </span>
+                            {% else %}
+                                <span class="um-status um-status-inactive">
+                                    Inactive
+                                </span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <div class="um-actions">
+
+                                <a class="um-btn um-btn-view"
+                                   href="{{ url_for('user_details', user_id=person.id) }}">
+                                    👁️ View Details
+                                </a>
+
+                                {% if person.role|lower not in ['admin', 'manager'] and person.id != current_user.id %}
+
+                                    <form method="POST"
+                                          action="{{ url_for('toggle_user_status', user_id=person.id) }}"
+                                          onsubmit="return confirm('Are you sure you want to {% if person.is_active %}deactivate{% else %}activate{% endif %} this account?');">
+                                        <button class="um-btn {% if person.is_active %}um-btn-deactivate{% else %}um-btn-activate{% endif %}"
+                                                type="submit">
+                                            {% if person.is_active %}
+                                                ⏸ Deactivate
+                                            {% else %}
+                                                ✓ Activate
+                                            {% endif %}
+                                        </button>
+                                    </form>
+
+                                    <form method="POST"
+                                          action="{{ url_for('delete_user_account', user_id=person.id) }}"
+                                          onsubmit="return confirm('WARNING: Are you sure you want to permanently delete this account? This action cannot be undone.');">
+                                        <button class="um-btn um-btn-delete"
+                                                type="submit">
+                                            🗑 Delete Account
+                                        </button>
+                                    </form>
+
+                                {% elif person.id == current_user.id %}
+                                    <span class="um-muted">Your account</span>
+                                {% else %}
+                                    <span class="um-muted">Protected account</span>
+                                {% endif %}
+
+                            </div>
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="8" class="um-empty">
+                            No registered users match your search.
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <p class="um-muted" style="margin-top:16px;">
+            Showing {{ users|length }} account(s) matching your filters.
+        </p>
+    </div>
+</div>
+{% endblock %}

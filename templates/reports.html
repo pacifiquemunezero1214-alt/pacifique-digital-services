@@ -1,0 +1,262 @@
+
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+.reports-page {
+    color: var(--cyber-white, #f1f5f9);
+    padding: 8px 0 30px;
+}
+.report-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-bottom: 25px;
+}
+.report-header h1 {
+    font-size: 28px;
+    margin: 0 0 7px;
+    font-weight: 800;
+}
+.report-header p {
+    color: var(--cyber-muted, #94a3b8);
+    margin: 0;
+}
+.report-btn {
+    border: 0;
+    border-radius: 10px;
+    padding: 11px 17px;
+    cursor: pointer;
+    font-weight: 700;
+    background: linear-gradient(135deg, #06b6d4, #6366f1);
+    color: white;
+}
+.report-section-title {
+    font-size: 19px;
+    margin: 28px 0 15px;
+    font-weight: 750;
+}
+.report-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+    gap: 17px;
+}
+.report-card {
+    padding: 22px;
+    border-radius: 16px;
+    background: var(--cyber-panel, #111827);
+    border: 1px solid var(--cyber-border, #263244);
+    min-width: 0;
+}
+.report-card .report-icon {
+    width: 43px;
+    height: 43px;
+    display: grid;
+    place-items: center;
+    border-radius: 12px;
+    font-size: 21px;
+    margin-bottom: 17px;
+}
+.report-card .report-label {
+    color: var(--cyber-muted, #94a3b8);
+    font-size: 13px;
+    margin-bottom: 9px;
+}
+.report-card .report-value {
+    font-size: clamp(22px, 3vw, 29px);
+    font-weight: 800;
+    overflow-wrap: anywhere;
+}
+.report-card .report-note {
+    color: var(--cyber-muted, #94a3b8);
+    font-size: 12px;
+    margin-top: 10px;
+}
+.report-cyan { background: #083344; color: #22d3ee; }
+.report-purple { background: #312e81; color: #c4b5fd; }
+.report-green { background: #064e3b; color: #6ee7b7; }
+.report-orange { background: #7c2d12; color: #fdba74; }
+.report-panel {
+    margin-top: 22px;
+    padding: 23px;
+    border-radius: 16px;
+    background: var(--cyber-panel, #111827);
+    border: 1px solid var(--cyber-border, #263244);
+}
+.report-panel h2 {
+    font-size: 18px;
+    margin: 0 0 8px;
+}
+.report-muted {
+    color: var(--cyber-muted, #94a3b8);
+    font-size: 13px;
+}
+.report-progress {
+    height: 12px;
+    width: 100%;
+    background: #263244;
+    border-radius: 20px;
+    overflow: hidden;
+    margin: 17px 0 10px;
+}
+.report-progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #06b6d4, #818cf8);
+    border-radius: 20px;
+}
+.report-summary-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 15px 0;
+    border-bottom: 1px solid var(--cyber-border, #263244);
+}
+.report-summary-row:last-child { border-bottom: 0; }
+.report-summary-row span:first-child {
+    color: var(--cyber-muted, #94a3b8);
+}
+.report-summary-row strong { text-align: right; }
+.report-footer {
+    margin-top: 22px;
+    color: var(--cyber-muted, #94a3b8);
+    font-size: 12px;
+    text-align: center;
+}
+@media print {
+    body { background: white !important; color: black !important; }
+    .reports-page { color: black !important; }
+    .report-card, .report-panel {
+        background: white !important;
+        color: black !important;
+        border: 1px solid #ccc !important;
+        break-inside: avoid;
+    }
+    .report-btn, aside, nav, .sidebar, header button {
+        display: none !important;
+    }
+    .report-muted, .report-label, .report-note,
+    .report-summary-row span:first-child {
+        color: #444 !important;
+    }
+}
+</style>
+
+<div class="reports-page">
+    <div class="report-header">
+        <div>
+            <h1>📊 Business Reports</h1>
+            <p>Pacifique Digital Services · Business performance overview</p>
+        </div>
+        <button class="report-btn" type="button"
+                onclick="window.print()">🖨️ Print Report</button>
+    </div>
+
+    <div class="report-grid">
+        <div class="report-card">
+            <div class="report-icon report-cyan">📋</div>
+            <div class="report-label">Total Service Requests</div>
+            <div class="report-value">{{ total_requests|default(0)|int }}</div>
+            <div class="report-note">All recorded requests</div>
+        </div>
+
+        <div class="report-card">
+            <div class="report-icon report-green">✅</div>
+            <div class="report-label">Completed Requests</div>
+            <div class="report-value">{{ completed|default(0)|int }}</div>
+            <div class="report-note">Requests marked completed</div>
+        </div>
+
+        <div class="report-card">
+            <div class="report-icon report-purple">💰</div>
+            <div class="report-label">Payments Received</div>
+            <div class="report-value">
+                {{ "{:,.0f}".format(total_paid|default(0)|float) }} RWF
+            </div>
+            <div class="report-note">Recorded payments</div>
+        </div>
+
+        <div class="report-card">
+            <div class="report-icon report-orange">🧾</div>
+            <div class="report-label">Total Quoted Value</div>
+            <div class="report-value">
+                {{ "{:,.0f}".format(total_quoted|default(0)|float) }} RWF
+            </div>
+            <div class="report-note">Total value quoted for requests</div>
+        </div>
+    </div>
+
+    <h2 class="report-section-title">💹 Financial Overview</h2>
+
+    <div class="report-panel">
+        <h2>Payment Collection Progress</h2>
+        <p class="report-muted">
+            Payments received compared with the total quoted value.
+        </p>
+
+        {% set quoted = total_quoted|default(0)|float %}
+        {% set paid = total_paid|default(0)|float %}
+        {% set collection = ((paid / quoted) * 100) if quoted > 0 else 0 %}
+        {% set collection = [collection, 100]|min %}
+
+        <div class="report-progress">
+            <div class="report-progress-fill"
+                 style="width: {{ collection }}%;"></div>
+        </div>
+
+        <div class="report-summary-row">
+            <span>Collection rate</span>
+            <strong>{{ "%.1f"|format(collection) }}%</strong>
+        </div>
+        <div class="report-summary-row">
+            <span>Payments received</span>
+            <strong>{{ "{:,.0f}".format(paid) }} RWF</strong>
+        </div>
+        <div class="report-summary-row">
+            <span>Total quoted value</span>
+            <strong>{{ "{:,.0f}".format(quoted) }} RWF</strong>
+        </div>
+        <div class="report-summary-row">
+            <span>Difference between quoted value and payments</span>
+            <strong>{{ "{:,.0f}".format(quoted - paid) }} RWF</strong>
+        </div>
+
+        <p class="report-muted" style="margin-top: 14px;">
+            Note: The difference above is a comparison, not a verified
+            outstanding debt balance. Actual balances may differ.
+        </p>
+    </div>
+
+    <h2 class="report-section-title">📌 Business Summary</h2>
+
+    <div class="report-panel">
+        <div class="report-summary-row">
+            <span>Requests completed</span>
+            <strong>{{ completed|default(0)|int }}</strong>
+        </div>
+        <div class="report-summary-row">
+            <span>Requests not completed</span>
+            <strong>
+                {{ (total_requests|default(0)|int -
+                    completed|default(0)|int) }}
+            </strong>
+        </div>
+        <div class="report-summary-row">
+            <span>Average payment per request</span>
+            <strong>
+                {{ "{:,.0f}".format(
+                    (paid / (total_requests|default(0)|int))
+                    if (total_requests|default(0)|int) > 0 else 0
+                ) }} RWF
+            </strong>
+        </div>
+    </div>
+
+    <div class="report-footer">
+        Pacifique Digital Services · Business Reports
+        <br>
+        Generated on {{ now.strftime('%d %b %Y, %H:%M') if now is defined else 'today' }}
+    </div>
+</div>
+{% endblock %}

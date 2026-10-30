@@ -1,0 +1,214 @@
+
+{% extends "base.html" %}
+
+{% block title %}Contact Us | Pacifique Digital Services{% endblock %}
+{% block page_heading %}Contact Us{% endblock %}
+
+{% block content %}
+
+<style>
+.contact-wrapper {
+    max-width: 1000px;
+    margin: 10px auto;
+}
+
+.contact-intro {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.contact-intro h1 {
+    font-size: 30px;
+    color: #172554;
+    margin-bottom: 10px;
+}
+
+.contact-intro p {
+    color: #64748b;
+    line-height: 1.7;
+}
+
+.contact-grid {
+    display: grid;
+    grid-template-columns: 1fr 1.3fr;
+    gap: 22px;
+}
+
+.contact-info, .contact-form {
+    background: white;
+    padding: 28px;
+    border-radius: 16px;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 5px 20px rgba(15,23,42,.05);
+}
+
+.contact-info {
+    background: linear-gradient(145deg, #172554, #2563eb);
+    color: white;
+}
+
+.contact-info h2, .contact-form h2 {
+    margin-top: 0;
+    margin-bottom: 20px;
+}
+
+.contact-info p {
+    color: #dbeafe;
+    line-height: 1.7;
+    font-size: 14px;
+}
+
+.contact-item {
+    padding: 15px;
+    margin-top: 15px;
+    background: rgba(255,255,255,.12);
+    border-radius: 10px;
+    overflow-wrap: anywhere;
+}
+
+.contact-item strong {
+    display: block;
+    margin-bottom: 7px;
+}
+
+.contact-item a {
+    color: white;
+    font-size: 13px;
+}
+
+.contact-form label {
+    display: block;
+    font-size: 13px;
+    font-weight: 700;
+    margin: 15px 0 7px;
+}
+
+.contact-form input,
+.contact-form textarea {
+    width: 100%;
+    padding: 13px;
+    border: 1px solid #cbd5e1;
+    border-radius: 9px;
+    outline: none;
+}
+
+.contact-form input:focus,
+.contact-form textarea:focus {
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37,99,235,.1);
+}
+
+.contact-form textarea {
+    min-height: 140px;
+    resize: vertical;
+}
+
+.contact-submit {
+    width: 100%;
+    margin-top: 20px;
+    padding: 14px;
+    border: none;
+    border-radius: 9px;
+    background: linear-gradient(90deg, #2563eb, #06b6d4);
+    color: white;
+    font-weight: 800;
+    cursor: pointer;
+}
+
+.contact-submit:hover {
+    opacity: .9;
+}
+
+@media(max-width: 700px) {
+    .contact-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .contact-intro h1 {
+        font-size: 24px;
+    }
+
+    .contact-info, .contact-form {
+        padding: 20px;
+    }
+}
+</style>
+
+<div class="contact-wrapper">
+
+    <div class="contact-intro">
+        <h1>Let's Talk About Your Next Project</h1>
+        <p>
+            Have a question or need a digital service?
+            Contact Pacifique Digital Services.
+            We are ready to help you.
+        </p>
+    </div>
+
+    <div class="contact-grid">
+
+        <div class="contact-info">
+            <h2>Get In Touch</h2>
+
+            <p>
+                We value your questions, ideas and feedback.
+                Reach out to us through any of the channels below.
+            </p>
+
+            <div class="contact-item">
+                <strong>✉ Email Address</strong>
+                <a href="mailto:pacifiquemunezero1214@gmail.com">
+                    pacifiquemunezero1214@gmail.com
+                </a>
+            </div>
+
+            <div class="contact-item">
+                <strong>☏ WhatsApp</strong>
+                <a href="https://wa.me/250732438879" target="_blank"
+                   rel="noopener noreferrer">
+                    +250 732438879
+                </a>
+            </div>
+
+            <div class="contact-item">
+                <strong>🌐 Our Platform</strong>
+                <span>Pacifique Digital Services</span>
+            </div>
+        </div>
+
+        <div class="contact-form">
+            <h2>Send Us a Message</h2>
+
+            <form method="POST" action="{{ url_for('contact') }}">
+
+                <label for="name">Your Name</label>
+                <input type="text" id="name" name="name"
+                       placeholder="Enter your full name"
+                       maxlength="100" required>
+
+                <label for="email">Email Address</label>
+                <input type="email" id="email" name="email"
+                       placeholder="Enter your email address"
+                       maxlength="150" required>
+
+                <label for="subject">Subject</label>
+                <input type="text" id="subject" name="subject"
+                       placeholder="What is your message about?"
+                       maxlength="150" required>
+
+                <label for="message">Your Message</label>
+                <textarea id="message" name="message"
+                          placeholder="Write your message here..."
+                          maxlength="5000" required></textarea>
+
+                <button type="submit" class="contact-submit">
+                    Send Message →
+                </button>
+
+            </form>
+        </div>
+
+    </div>
+</div>
+
+{% endblock %}
