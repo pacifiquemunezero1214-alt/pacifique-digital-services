@@ -241,6 +241,16 @@
             margin-top: 4px;
         }
 
+        /* REQUESTED TEXT STYLING */
+        .topbar h2,
+        .topbar p,
+        .profile .avatar,
+        .profile-name,
+        .profile-role {
+            color: #111111 !important;
+            font-weight: 900 !important;
+        }
+
         .page-content {
             padding: 28px;
             max-width: 1600px;
@@ -526,18 +536,21 @@
                    href="{{ url_for('new_request') }}">
                     <span class="nav-icon">＋</span> Request a Service
                 </a>
-<a class="{% if request.endpoint == 'contact' %}active{% endif %}"
-   href="{{ url_for('contact') }}">
-    <span class="nav-icon">✉</span> Contact Us
-</a>
-<a class="{% if request.endpoint == 'about' %}active{% endif %}"
-   href="{{ url_for('about') }}">
-    <span class="nav-icon">ℹ</span> About Us
-</a>
-<a class="{% if request.endpoint == 'privacy_policy' %}active{% endif %}"
-   href="{{ url_for('privacy_policy') }}">
-    <span class="nav-icon">🔒</span> Privacy Policy
-</a>
+
+                <a class="{% if request.endpoint == 'contact' %}active{% endif %}"
+                   href="{{ url_for('contact') }}">
+                    <span class="nav-icon">✉</span> Contact Us
+                </a>
+
+                <a class="{% if request.endpoint == 'about' %}active{% endif %}"
+                   href="{{ url_for('about') }}">
+                    <span class="nav-icon">ℹ</span> About Us
+                </a>
+
+                <a class="{% if request.endpoint == 'privacy_policy' %}active{% endif %}"
+                   href="{{ url_for('privacy_policy') }}">
+                    <span class="nav-icon">🔒</span> Privacy Policy
+                </a>
 
             {% endif %}
 
