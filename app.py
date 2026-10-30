@@ -337,7 +337,7 @@ def migrate_database():
         if configured_admin_email and "user" in existing_tables:
             connection.execute(
                 text(
-                    "UPDATE user SET email = :email "
+                    'UPDATE "user" SET email = :email '
                     "WHERE role IN ('manager', 'admin') "
                     "AND (email IS NULL OR email = '') "
                     "AND username = :username"
