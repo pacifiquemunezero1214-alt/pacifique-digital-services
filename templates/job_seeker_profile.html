@@ -1,33 +1,201 @@
-
+html
 {% extends "base.html" %}
 
 {% block title %}Job Seeker Registration | Pacifique Digital Services{% endblock %}
 
 {% block content %}
 <style>
-.seeker-wrap{max-width:950px;margin:20px auto}
-.seeker-card{background:#fff;padding:30px;border-radius:18px;box-shadow:0 8px 30px rgba(15,23,42,.08);border:1px solid #e2e8f0}
-.seeker-card h2{color:#172554;margin-top:0}
-.intro{color:#64748b;margin-bottom:25px}
-.form-section{margin-top:28px;padding-top:20px;border-top:1px solid #e2e8f0}
-.form-section h3{color:#1e40af;margin-bottom:8px}
-.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-.field label{display:block;font-weight:600;color:#334155;margin:13px 0 7px}
-.field input,.field textarea,.field select{width:100%;padding:12px;border:1px solid #cbd5e1;border-radius:9px;box-sizing:border-box;font:inherit}
-.field textarea{min-height:105px;resize:vertical}
-.skills-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-top:15px}
-.skill-option{display:flex;align-items:center;gap:9px;background:#f8fafc;border:1px solid #e2e8f0;padding:11px;border-radius:9px;color:#334155}
-.skill-option input{width:17px;height:17px;accent-color:#2563eb}
-.note{background:#eff6ff;padding:13px;border-radius:9px;color:#1e40af;margin-top:12px;font-size:14px}
-.submit-btn{margin-top:25px;padding:14px 25px;background:#2563eb;color:white;border:0;border-radius:10px;font-weight:700;cursor:pointer;font-size:15px}
-.submit-btn:hover{background:#1d4ed8}
-@media(max-width:650px){.form-grid{grid-template-columns:1fr}.seeker-card{padding:18px}}
+.seeker-wrap {
+    max-width: 950px;
+    margin: 20px auto;
+}
+
+.seeker-card {
+    background: #ffffff;
+    padding: 30px;
+    border-radius: 18px;
+    box-shadow: 0 8px 30px rgba(15,23,42,.08);
+    border: 1px solid #e2e8f0;
+    color: #172554;
+}
+
+.seeker-card h2 {
+    color: #172554 !important;
+    margin-top: 0;
+}
+
+.intro {
+    color: #475569 !important;
+    margin-bottom: 25px;
+}
+
+.form-section {
+    margin-top: 28px;
+    padding-top: 20px;
+    border-top: 1px solid #e2e8f0;
+}
+
+.form-section h3 {
+    color: #1e40af !important;
+    margin-bottom: 8px;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+.field label {
+    display: block;
+    font-weight: 600;
+    color: #334155 !important;
+    margin: 13px 0 7px;
+}
+
+.field input,
+.field textarea,
+.field select {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #cbd5e1;
+    border-radius: 9px;
+    box-sizing: border-box;
+    font: inherit;
+    color: #172554 !important;
+    background: #ffffff !important;
+}
+
+.field input::placeholder,
+.field textarea::placeholder {
+    color: #94a3b8 !important;
+}
+
+.field textarea {
+    min-height: 105px;
+    resize: vertical;
+}
+
+/* SKILLS SECTION */
+.skills-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.skill-option {
+    display: flex !important;
+    align-items: center;
+    gap: 10px;
+    background: #eff6ff !important;
+    border: 1px solid #bfdbfe !important;
+    padding: 12px !important;
+    border-radius: 10px;
+    color: #172554 !important;
+    cursor: pointer;
+    transition: all .2s ease;
+    font-weight: 600;
+}
+
+.skill-option span {
+    color: #172554 !important;
+    background: transparent !important;
+    font-size: 14px;
+}
+
+.skill-option input[type="checkbox"] {
+    width: 18px !important;
+    height: 18px !important;
+    min-width: 18px;
+    margin: 0;
+    accent-color: #2563eb;
+    cursor: pointer;
+}
+
+.skill-option:hover {
+    background: #dbeafe !important;
+    border-color: #2563eb !important;
+    transform: translateY(-1px);
+}
+
+/* Selected skill appearance */
+.skill-option:has(input:checked) {
+    background: #dcfce7 !important;
+    border: 1px solid #16a34a !important;
+}
+
+.skill-option:has(input:checked) span {
+    color: #14532d !important;
+}
+
+/* SKILL CATEGORY TITLES */
+.skills-heading {
+    color: #1e3a8a !important;
+    background: #dbeafe;
+    padding: 10px 13px;
+    border-radius: 8px;
+    margin: 20px 0 8px;
+    font-weight: 700;
+}
+
+.note {
+    background: #eff6ff;
+    padding: 13px;
+    border-radius: 9px;
+    color: #1e40af !important;
+    margin-top: 12px;
+    font-size: 14px;
+}
+
+.consent-label {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    color: #334155 !important;
+}
+
+.consent-label span {
+    color: #334155 !important;
+}
+
+.consent-label input {
+    margin-top: 4px;
+    accent-color: #2563eb;
+}
+
+.submit-btn {
+    margin-top: 25px;
+    padding: 14px 25px;
+    background: #2563eb;
+    color: white !important;
+    border: 0;
+    border-radius: 10px;
+    font-weight: 700;
+    cursor: pointer;
+    font-size: 15px;
+}
+
+.submit-btn:hover {
+    background: #1d4ed8;
+}
+
+@media(max-width:650px) {
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .seeker-card {
+        padding: 18px;
+    }
+}
 </style>
 
 <div class="seeker-wrap">
 <div class="seeker-card">
 
 <h2>👤 Job Seeker Registration</h2>
+
 <p class="intro">
 Create your professional profile. Employers can discover your skills
 and contact you when a suitable opportunity becomes available.
@@ -36,6 +204,7 @@ and contact you when a suitable opportunity becomes available.
 <form method="POST" class="seeker-form">
 
 <div class="form-section" style="border-top:0;padding-top:0">
+
 <h3>1. Professional Information</h3>
 
 <div class="field">
@@ -47,19 +216,24 @@ placeholder="e.g. Nurse, Software Developer, Teacher" required>
 
 <div class="field">
 <label>About Yourself</label>
-<textarea name="bio" placeholder="Introduce yourself and explain what kind of work you can do...">{{ profile.bio if profile else '' }}</textarea>
+<textarea name="bio"
+placeholder="Introduce yourself and explain what kind of work you can do...">{{ profile.bio if profile else '' }}</textarea>
 </div>
 
 <div class="form-grid">
+
 <div class="field">
 <label>Education and Qualifications *</label>
-<textarea name="education" required placeholder="e.g. Advanced Diploma in Nursing">{{ profile.education if profile else '' }}</textarea>
+<textarea name="education" required
+placeholder="e.g. Advanced Diploma in Nursing">{{ profile.education if profile else '' }}</textarea>
 </div>
 
 <div class="field">
 <label>Work Experience</label>
-<textarea name="experience" placeholder="Describe your previous work or internship experience...">{{ profile.experience if profile else '' }}</textarea>
+<textarea name="experience"
+placeholder="Describe your previous work or internship experience...">{{ profile.experience if profile else '' }}</textarea>
 </div>
+
 </div>
 
 <div class="field">
@@ -68,11 +242,16 @@ placeholder="e.g. Nurse, Software Developer, Teacher" required>
 value="{{ profile.preferred_location if profile else '' }}"
 placeholder="e.g. Kigali, Musanze, Huye" required>
 </div>
+
 </div>
 
 <div class="form-section">
+
 <h3>2. Select Your Skills</h3>
-<p class="intro">Select all the areas in which you have skills or experience.</p>
+
+<p class="intro">
+Select all the areas in which you have skills or experience.
+</p>
 
 {% set skill_groups = [
 ("Information Technology", ["Software Development","Web Design","Graphic Design","Computer Repair","Networking","Data Entry","IT Support","Cybersecurity"]),
@@ -86,47 +265,70 @@ placeholder="e.g. Kigali, Musanze, Huye" required>
 ] %}
 
 {% for group, skills in skill_groups %}
-<h4 style="color:#334155;margin:20px 0 8px">{{ group }}</h4>
+
+<h4 class="skills-heading">{{ group }}</h4>
+
 <div class="skills-grid">
+
 {% for skill in skills %}
+
 <label class="skill-option">
+
 <input type="checkbox" name="skills" value="{{ skill }}"
 {% if selected_skills and skill in selected_skills %}checked{% endif %}>
+
 <span>{{ skill }}</span>
+
 </label>
+
 {% endfor %}
+
 </div>
+
 {% endfor %}
 
 <div class="note">
 You can select several skills. Choose only skills you genuinely have.
 </div>
+
 </div>
 
 <div class="form-section">
+
 <h3>3. Contact Information</h3>
+
 <p class="intro">
 Your registered account details will be used to contact you.
 Please make sure they are correct in your account.
 </p>
+
 </div>
 
 <div class="form-section">
+
 <h3>4. Privacy and Consent</h3>
-<label style="display:flex;gap:10px;align-items:flex-start;color:#334155">
-<input type="checkbox" name="consent" value="yes" required style="margin-top:4px">
+
+<label class="consent-label">
+
+<input type="checkbox" name="consent" value="yes" required>
+
 <span>
 I agree that Pacifique Digital Services may store my job seeker profile
 and share relevant professional information with authorized employers
 for recruitment purposes. I understand that my contact details will
 only be shown to authorized users.
 </span>
+
 </label>
+
 </div>
 
-<button type="submit" class="submit-btn">Save My Job Seeker Profile</button>
+<button type="submit" class="submit-btn">
+Save My Job Seeker Profile
+</button>
 
 </form>
 </div>
 </div>
+
 {% endblock %}
