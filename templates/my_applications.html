@@ -1,0 +1,133 @@
+
+{% extends "base.html" %}
+
+{% block title %}My Applications | Pacifique Digital Services{% endblock %}
+
+{% block content %}
+<style>
+.applications-wrap {
+    max-width: 1100px;
+    margin: auto;
+}
+.applications-header {
+    padding: 25px;
+    border-radius: 15px;
+    background: linear-gradient(120deg, #172554, #2563eb, #7c3aed);
+    color: white;
+    margin-bottom: 22px;
+}
+.applications-header h2 {
+    margin: 0 0 8px;
+}
+.applications-header p {
+    margin: 0;
+    opacity: .9;
+}
+.application-card {
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 13px;
+    padding: 20px;
+    margin-bottom: 15px;
+    box-shadow: 0 3px 12px rgba(0,0,0,.04);
+}
+.application-card h3 {
+    color: #172554;
+    margin-top: 0;
+}
+.application-meta {
+    color: #64748b;
+    font-size: 14px;
+    margin: 8px 0;
+}
+.application-status {
+    display: inline-block;
+    padding: 7px 12px;
+    border-radius: 20px;
+    background: #eff6ff;
+    color: #1d4ed8;
+    font-weight: 600;
+    font-size: 13px;
+}
+.application-letter {
+    background: #f8fafc;
+    border-radius: 9px;
+    padding: 14px;
+    margin-top: 14px;
+    color: #334155;
+    line-height: 1.6;
+    white-space: pre-wrap;
+}
+.application-empty {
+    padding: 35px;
+    text-align: center;
+    background: white;
+    border-radius: 13px;
+    color: #64748b;
+}
+.application-btn {
+    display: inline-block;
+    padding: 10px 15px;
+    border-radius: 8px;
+    background: #2563eb;
+    color: white !important;
+    text-decoration: none;
+    font-weight: 600;
+    margin-top: 12px;
+}
+</style>
+
+<div class="applications-wrap">
+
+    <div class="applications-header">
+        <h2>📄 My Job Applications</h2>
+        <p>Track the jobs you have applied for and follow your application progress.</p>
+    </div>
+
+    {% if applications %}
+        {% for application in applications %}
+            <div class="application-card">
+                <h3>{{ application.job.title }}</h3>
+
+                <div class="application-meta">
+                    🏢 {{ application.job.company_name }}
+                </div>
+
+                <div class="application-meta">
+                    📍 {{ application.job.location }}
+                </div>
+
+                <div class="application-meta">
+                    📅 Applied on:
+                    {{ application.created_at.strftime('%d %b %Y') if application.created_at else 'N/A' }}
+                </div>
+
+                <div style="margin-top:12px;">
+                    <span class="application-status">
+                        {{ application.status }}
+                    </span>
+                </div>
+
+                <div class="application-letter">
+                    <strong>Your Application Message:</strong>
+                    <p>{{ application.cover_letter }}</p>
+                </div>
+
+                <a href="{{ url_for('job_details', job_id=application.job.id) }}"
+                   class="application-btn">
+                    View Job
+                </a>
+            </div>
+        {% endfor %}
+    {% else %}
+        <div class="application-empty">
+            <h3>You have not applied for any jobs yet.</h3>
+            <p>Explore Job Connect and find an opportunity that matches your skills.</p>
+            <a href="{{ url_for('job_connect') }}" class="application-btn">
+                Explore Jobs
+            </a>
+        </div>
+    {% endif %}
+
+</div>
+{% endblock %}

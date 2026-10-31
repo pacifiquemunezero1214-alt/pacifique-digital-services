@@ -1,0 +1,161 @@
+
+{% extends "base.html" %}
+
+{% block title %}Job Details | Pacifique Digital Services{% endblock %}
+
+{% block content %}
+<style>
+.job-detail-wrap {
+    max-width: 950px;
+    margin: 0 auto;
+}
+.job-detail-card {
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    padding: 28px;
+    box-shadow: 0 5px 20px rgba(0,0,0,.05);
+}
+.job-detail-card h1 {
+    color: #172554;
+    margin-top: 0;
+}
+.job-detail-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin: 18px 0;
+}
+.job-detail-meta span {
+    background: #eff6ff;
+    color: #1e40af;
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-size: 13px;
+}
+.job-detail-section {
+    margin-top: 25px;
+    line-height: 1.7;
+    color: #334155;
+}
+.job-detail-section h3 {
+    color: #172554;
+}
+.job-apply-form {
+    margin-top: 25px;
+    padding: 22px;
+    background: #f8fafc;
+    border-radius: 12px;
+}
+.job-apply-form textarea {
+    width: 100%;
+    min-height: 140px;
+    padding: 12px;
+    border: 1px solid #cbd5e1;
+    border-radius: 9px;
+    box-sizing: border-box;
+    margin: 12px 0;
+}
+.job-btn {
+    display: inline-block;
+    background: #2563eb;
+    color: white !important;
+    padding: 11px 18px;
+    border: none;
+    border-radius: 9px;
+    text-decoration: none;
+    cursor: pointer;
+    font-weight: 600;
+}
+.job-back {
+    display: inline-block;
+    margin-bottom: 18px;
+    color: #2563eb;
+    text-decoration: none;
+}
+.job-notice {
+    padding: 14px;
+    border-radius: 9px;
+    background: #eff6ff;
+    color: #1e40af;
+    margin-top: 18px;
+}
+</style>
+
+<div class="job-detail-wrap">
+
+    <a href="{{ url_for('job_connect') }}" class="job-back">
+        ← Back to Job Connect
+    </a>
+
+    <div class="job-detail-card">
+        <h1>{{ job.title }}</h1>
+
+        <h3>{{ job.company_name }}</h3>
+
+        <div class="job-detail-meta">
+            <span>📍 {{ job.location }}</span>
+            <span>💼 {{ job.employment_type }}</span>
+            <span>📂 {{ job.category }}</span>
+            {% if job.salary %}
+                <span>💰 {{ job.salary }}</span>
+            {% endif %}
+            <span>📌 {{ job.status }}</span>
+        </div>
+
+        <div class="job-detail-section">
+            <h3>Job Description</h3>
+            <p>{{ job.description }}</p>
+        </div>
+
+        <div class="job-detail-section">
+            <h3>Requirements</h3>
+            <p>{{ job.requirements or "No additional requirements provided." }}</p>
+        </div>
+
+        {% if job.application_deadline %}
+            <div class="job-detail-section">
+                <strong>Application Deadline:</strong>
+                {{ job.application_deadline }}
+            </div>
+        {% endif %}
+
+        {% if current_user.is_authenticated %}
+            {% if job.status == "Open" %}
+                {% if already_applied %}
+                    <div class="job-notice">
+                        You have already applied for this job.
+                    </div>
+                {% else %}
+                    <div class="job-apply-form">
+                        <h3>Apply for this Job</h3>
+                        <p>Introduce yourself and explain why you are suitable for this position.</p>
+
+                        <form method="POST"
+                              action="{{ url_for('apply_for_job', job_id=job.id) }}">
+                            <textarea
+                                name="cover_letter"
+                                placeholder="Write your application message here..."
+                                required></textarea>
+
+                            <button type="submit" class="job-btn">
+                                Submit Application
+                            </button>
+                        </form>
+                    </div>
+                {% endif %}
+            {% else %}
+                <div class="job-notice">
+                    Applications for this job are currently closed.
+                </div>
+            {% endif %}
+        {% else %}
+            <div class="job-notice">
+                Please log in to apply for this job.
+                <a href="{{ url_for('login') }}">Login here</a>.
+            </div>
+        {% endif %}
+
+    </div>
+</div>
+{% endblock %}

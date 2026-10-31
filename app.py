@@ -247,6 +247,166 @@ class Payment(db.Model):
 
     service_request = db.relationship("ServiceRequest")
 
+# =========================================================
+# JOB CONNECT DATABASE MODELS
+# =========================================================
+
+class JobSeekerProfile(db.Model):
+    __tablename__ = "job_seeker_profiles"
+
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(
+        db.Integer,
+        db.ForeignKey("user.id"),
+        nullable=False,
+        unique=True,
+        index=True
+    )
+
+    professional_title = db.Column(db.String(150), default="")
+    bio = db.Column(db.Text, default="")
+    skills = db.Column(db.Text, default="")
+    education = db.Column(db.Text, default="")
+    experience = db.Column(db.Text, default="")
+    preferred_location = db.Column(db.String(150), default="")
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(
+        db.DateTime,
+        default=datetime.utcnow,
+        onupdate=datetime.utcnow
+    )
+
+    user = db.relationship("User", backref="job_seeker_profile")
+
+
+class EmployerProfile(db.Model):
+    __tablename__ = "employer_profiles"
+
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(
+        db.Integer,
+        db.ForeignKey("user.id"),
+        nullable=False,
+        unique=True,
+        index=True
+    )
+
+    company_name = db.Column(db.String(180), nullable=False)
+    company_description = db.Column(db.Text, default="")
+    industry = db.Column(db.String(120), default="")
+    website = db.Column(db.String(255), default="")
+    contact_phone = db.Column(db.String(30), default="")
+    whatsapp_public = db.Column(
+        db.Boolean,
+        default=False,
+        nullable=False
+    )
+
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(
+        db.DateTime,
+        default=datetime.utcnow,
+        onupdate=datetime.utcnow
+    )
+
+    user = db.relationship("User", backref="employer_profile")
+
+
+class JobListing(db.Model):
+    __tablename__ = "job_listings"
+
+    id = db.Column(db.Integer, primary_key=True)
+
+    employer_id = db.Column(
+        db.Integer,
+        db.ForeignKey("user.id"),
+        nullable=False,
+        index=True
+    )
+
+    title = db.Column(db.String(180), nullable=False)
+    company_name = db.Column(db.String(180), nullable=False)
+    category = db.Column(db.String(120), default="")
+    location = db.Column(db.String(180), default="")
+    employment_type = db.Column(db.String(60), default="Full-time")
+    salary = db.Column(db.String(120), default="")
+    description = db.Column(db.Text, nullable=False)
+    requirements = db.Column(db.Text, default="")
+    application_deadline = db.Column(db.Date, nullable=True)
+
+    # Open, Closed or Filled
+    status = db.Column(
+        db.String(30),
+        default="Open",
+        nullable=False,
+        index=True
+    )
+
+    created_at = db.Column(
+        db.DateTime,
+        default=datetime.utcnow,
+        index=True
+    )
+
+    employer = db.relationship("User", backref="published_jobs")
+
+
+class JobApplication(db.Model):
+    __tablename__ = "job_applications"
+
+    id = db.Column(db.Integer, primary_key=True)
+
+    job_id = db.Column(
+        db.Integer,
+        db.ForeignKey("job_listings.id"),
+        nullable=False,
+        index=True
+    )
+
+    applicant_id = db.Column(
+        db.Integer,
+        db.ForeignKey("user.id"),
+        nullable=False,
+        index=True
+    )
+
+    cover_letter = db.Column(db.Text, default="")
+
+    # Submitted, Reviewing, Shortlisted, Rejected or Accepted
+    status = db.Column(
+        db.String(30),
+        default="Submitted",
+        nullable=False
+    )
+
+    created_at = db.Column(
+        db.DateTime,
+        default=datetime.utcnow
+    )
+
+    job = db.relationship(
+        "JobListing",
+        backref=db.backref(
+            "applications",
+            lazy=True,
+            cascade="all, delete-orphan"
+        )
+    )
+
+    applicant = db.relationship(
+        "User",
+        backref="job_applications"
+    )
+
+    __table_args__ = (
+        db.UniqueConstraint(
+            "job_id",
+            "applicant_id",
+            name="unique_job_application"
+        ),
+    )
+
+
 
 # =========================================================
 # LOGIN MANAGER
@@ -2193,6 +2353,383 @@ def delete_user_account(user_id):
         )
 
     return redirect(url_for("user_management"))
+
+# =========================================================
+# JOB CONNECT - ROUTES
+# =========================================================
+
+@app.route("/job-connect")
+def job_connect():
+    search = (request.args.get("search") or "").strip()
+    category = (request.args.get("category") or "").strip()
+    location = (request.args.get("location") or "").strip()
+
+    jobs_query = JobListing.query.filter_by(status="Open")
+
+    if search:
+        jobs_query = jobs_query.filter(
+            or_(
+                JobListing.title.ilike(f"%{search}%"),
+                JobListing.company_name.ilike(f"%{search}%"),
+                JobListing.description.ilike(f"%{search}%"),
+            )
+        )
+
+    if category:
+        jobs_query = jobs_query.filter(
+            JobListing.category.ilike(f"%{category}%")
+        )
+
+    if location:
+        jobs_query = jobs_query.filter(
+            JobListing.location.ilike(f"%{location}%")
+        )
+
+    jobs = jobs_query.order_by(
+        JobListing.created_at.desc()
+    ).all()
+
+    return render_template(
+        "job_connect.html",
+        jobs=jobs,
+        search=search,
+        category=category,
+        location=location,
+    )
+
+
+@app.route("/job-connect/jobs/<int:job_id>")
+def job_details(job_id):
+    job = db.get_or_404(JobListing, job_id)
+
+    already_applied = False
+
+    if current_user.is_authenticated:
+        already_applied = JobApplication.query.filter_by(
+            job_id=job.id,
+            applicant_id=current_user.id,
+        ).first() is not None
+
+    return render_template(
+        "job_details.html",
+        job=job,
+        already_applied=already_applied,
+    )
+
+
+@app.route("/job-connect/profile", methods=["GET", "POST"])
+@login_required
+def job_seeker_profile():
+    profile = JobSeekerProfile.query.filter_by(
+        user_id=current_user.id
+    ).first()
+
+    if request.method == "POST":
+        if not profile:
+            profile = JobSeekerProfile(user_id=current_user.id)
+            db.session.add(profile)
+
+        profile.professional_title = (
+            request.form.get("professional_title") or ""
+        ).strip()
+
+        profile.bio = (
+            request.form.get("bio") or ""
+        ).strip()
+
+        profile.skills = (
+            request.form.get("skills") or ""
+        ).strip()
+
+        profile.education = (
+            request.form.get("education") or ""
+        ).strip()
+
+        profile.experience = (
+            request.form.get("experience") or ""
+        ).strip()
+
+        profile.preferred_location = (
+            request.form.get("preferred_location") or ""
+        ).strip()
+
+        try:
+            db.session.commit()
+            flash("Job Seeker profile saved successfully.", "success")
+            return redirect(url_for("job_seeker_profile"))
+
+        except Exception:
+            db.session.rollback()
+            app.logger.exception("Could not save Job Seeker profile.")
+            flash("Could not save your profile. Please try again.", "error")
+
+    return render_template(
+        "job_seeker_profile.html",
+        profile=profile,
+    )
+
+
+@app.route("/job-connect/employer/profile", methods=["GET", "POST"])
+@login_required
+def employer_profile():
+    profile = EmployerProfile.query.filter_by(
+        user_id=current_user.id
+    ).first()
+
+    if request.method == "POST":
+        company_name = (
+            request.form.get("company_name") or ""
+        ).strip()
+
+        if not company_name:
+            flash("Company name is required.", "error")
+            return render_template(
+                "employer_profile.html",
+                profile=profile,
+            )
+
+        if not profile:
+            profile = EmployerProfile(user_id=current_user.id)
+            db.session.add(profile)
+
+        profile.company_name = company_name
+        profile.company_description = (
+            request.form.get("company_description") or ""
+        ).strip()
+        profile.industry = (
+            request.form.get("industry") or ""
+        ).strip()
+        profile.website = (
+            request.form.get("website") or ""
+        ).strip()
+        profile.contact_phone = (
+            request.form.get("contact_phone") or ""
+        ).strip()
+        profile.whatsapp_public = (
+            request.form.get("whatsapp_public") or ""
+        ).strip()
+
+        try:
+            db.session.commit()
+            flash("Employer profile saved successfully.", "success")
+            return redirect(url_for("employer_profile"))
+
+        except Exception:
+            db.session.rollback()
+            app.logger.exception("Could not save Employer profile.")
+            flash("Could not save your company profile.", "error")
+
+    return render_template(
+        "employer_profile.html",
+        profile=profile,
+    )
+
+
+@app.route("/job-connect/employer/jobs/new", methods=["GET", "POST"])
+@login_required
+def create_job():
+    employer = EmployerProfile.query.filter_by(
+        user_id=current_user.id
+    ).first()
+
+    if not employer:
+        flash("Create your Employer profile before publishing a job.", "warning")
+        return redirect(url_for("employer_profile"))
+
+    if request.method == "POST":
+        title = (request.form.get("title") or "").strip()
+        category = (request.form.get("category") or "").strip()
+        location = (request.form.get("location") or "").strip()
+        employment_type = (
+            request.form.get("employment_type") or ""
+        ).strip()
+        salary = (request.form.get("salary") or "").strip()
+        description = (
+            request.form.get("description") or ""
+        ).strip()
+        requirements = (
+            request.form.get("requirements") or ""
+        ).strip()
+
+        if not all([title, category, location, employment_type, description]):
+            flash("Please complete all required job fields.", "error")
+            return render_template("create_job.html", employer=employer)
+
+        job = JobListing(
+            employer_id=current_user.id,
+            title=title,
+            company_name=employer.company_name,
+            category=category,
+            location=location,
+            employment_type=employment_type,
+            salary=salary,
+            description=description,
+            requirements=requirements,
+            status="Open",
+        )
+
+        try:
+            db.session.add(job)
+            db.session.commit()
+            flash("Your job vacancy has been published.", "success")
+            return redirect(url_for("my_jobs"))
+
+        except Exception:
+            db.session.rollback()
+            app.logger.exception("Could not publish job vacancy.")
+            flash("Could not publish this job. Please try again.", "error")
+
+    return render_template(
+        "create_job.html",
+        employer=employer,
+    )
+
+
+@app.route("/job-connect/employer/jobs")
+@login_required
+def my_jobs():
+    jobs = JobListing.query.filter_by(
+        employer_id=current_user.id
+    ).order_by(
+        JobListing.created_at.desc()
+    ).all()
+
+    return render_template(
+        "my_jobs.html",
+        jobs=jobs,
+    )
+
+
+@app.route(
+    "/job-connect/jobs/<int:job_id>/apply",
+    methods=["POST"],
+)
+@login_required
+def apply_for_job(job_id):
+    job = db.get_or_404(JobListing, job_id)
+
+    if job.employer_id == current_user.id:
+        flash("You cannot apply for your own job vacancy.", "error")
+        return redirect(url_for("job_details", job_id=job.id))
+
+    if job.status != "Open":
+        flash("This job is no longer accepting applications.", "warning")
+        return redirect(url_for("job_details", job_id=job.id))
+
+    seeker_profile = JobSeekerProfile.query.filter_by(
+        user_id=current_user.id
+    ).first()
+
+    if not seeker_profile:
+        flash("Complete your Job Seeker profile before applying.", "warning")
+        return redirect(url_for("job_seeker_profile"))
+
+    existing_application = JobApplication.query.filter_by(
+        job_id=job.id,
+        applicant_id=current_user.id,
+    ).first()
+
+    if existing_application:
+        flash("You have already applied for this job.", "info")
+        return redirect(url_for("job_details", job_id=job.id))
+
+    application = JobApplication(
+        job_id=job.id,
+        applicant_id=current_user.id,
+        cover_letter=(
+            request.form.get("cover_letter") or ""
+        ).strip(),
+        status="Submitted",
+    )
+
+    try:
+        db.session.add(application)
+        db.session.commit()
+        flash("Your job application has been submitted.", "success")
+
+    except Exception:
+        db.session.rollback()
+        app.logger.exception("Could not submit job application.")
+        flash("Could not submit your application. Please try again.", "error")
+
+    return redirect(url_for("my_applications"))
+
+
+@app.route("/job-connect/my-applications")
+@login_required
+def my_applications():
+    applications = JobApplication.query.filter_by(
+        applicant_id=current_user.id
+    ).order_by(
+        JobApplication.created_at.desc()
+    ).all()
+
+    return render_template(
+        "my_applications.html",
+        applications=applications,
+    )
+
+
+@app.route("/job-connect/employer/jobs/<int:job_id>/applications")
+@login_required
+def job_applications(job_id):
+    job = db.get_or_404(JobListing, job_id)
+
+    if job.employer_id != current_user.id:
+        abort(403)
+
+    applications = JobApplication.query.filter_by(
+        job_id=job.id
+    ).order_by(
+        JobApplication.created_at.desc()
+    ).all()
+
+    return render_template(
+        "employer_applications.html",
+        job=job,
+        applications=applications,
+    )
+
+
+@app.route(
+    "/job-connect/applications/<int:application_id>/status",
+    methods=["POST"],
+)
+@login_required
+def update_job_application_status(application_id):
+    application = db.get_or_404(JobApplication, application_id)
+    job = db.get_or_404(JobListing, application.job_id)
+
+    if job.employer_id != current_user.id:
+        abort(403)
+
+    allowed_statuses = [
+        "Submitted",
+        "Reviewing",
+        "Shortlisted",
+        "Rejected",
+        "Accepted",
+    ]
+
+    new_status = (request.form.get("status") or "").strip()
+
+    if new_status not in allowed_statuses:
+        abort(400)
+
+    application.status = new_status
+
+    try:
+        db.session.commit()
+        flash("Application status updated.", "success")
+
+    except Exception:
+        db.session.rollback()
+        app.logger.exception("Could not update application status.")
+        flash("Could not update application status.", "error")
+
+    return redirect(
+        url_for("job_applications", job_id=job.id)
+    )
 
 
 # =========================================================

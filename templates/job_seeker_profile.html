@@ -1,0 +1,126 @@
+
+{% extends "base.html" %}
+
+{% block title %}Job Seeker Profile | Pacifique Digital Services{% endblock %}
+
+{% block content %}
+<style>
+.profile-wrap {
+    max-width: 850px;
+    margin: auto;
+}
+.profile-card {
+    background: white;
+    padding: 28px;
+    border-radius: 16px;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 5px 20px rgba(0,0,0,.05);
+}
+.profile-card h2 {
+    color: #172554;
+    margin-top: 0;
+}
+.profile-intro {
+    color: #64748b;
+    margin-bottom: 25px;
+}
+.profile-form label {
+    display: block;
+    margin: 16px 0 7px;
+    font-weight: 600;
+    color: #334155;
+}
+.profile-form input,
+.profile-form textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #cbd5e1;
+    border-radius: 9px;
+    box-sizing: border-box;
+    font: inherit;
+}
+.profile-form textarea {
+    min-height: 110px;
+    resize: vertical;
+}
+.profile-submit {
+    margin-top: 22px;
+    padding: 12px 22px;
+    background: #2563eb;
+    color: white;
+    border: none;
+    border-radius: 9px;
+    cursor: pointer;
+    font-weight: 600;
+}
+.profile-submit:hover {
+    background: #1d4ed8;
+}
+</style>
+
+<div class="profile-wrap">
+    <div class="profile-card">
+        <h2>👤 Job Seeker Profile</h2>
+
+        <p class="profile-intro">
+            Create your professional profile to help employers understand
+            your skills, education and experience.
+        </p>
+
+        <form method="POST" class="profile-form">
+
+            <label for="professional_title">Professional Title</label>
+            <input
+                type="text"
+                id="professional_title"
+                name="professional_title"
+                value="{{ profile.professional_title if profile else '' }}"
+                placeholder="e.g. Software Developer, Nurse, Accountant"
+                required
+            >
+
+            <label for="bio">About Me</label>
+            <textarea
+                id="bio"
+                name="bio"
+                placeholder="Introduce yourself and describe your career goals..."
+            >{{ profile.bio if profile else '' }}</textarea>
+
+            <label for="skills">Skills</label>
+            <textarea
+                id="skills"
+                name="skills"
+                placeholder="e.g. Python, Communication, Customer Service"
+            >{{ profile.skills if profile else '' }}</textarea>
+
+            <label for="education">Education</label>
+            <textarea
+                id="education"
+                name="education"
+                placeholder="Describe your education and qualifications..."
+            >{{ profile.education if profile else '' }}</textarea>
+
+            <label for="experience">Work Experience</label>
+            <textarea
+                id="experience"
+                name="experience"
+                placeholder="Describe your previous work experience..."
+            >{{ profile.experience if profile else '' }}</textarea>
+
+            <label for="preferred_location">Preferred Location</label>
+            <input
+                type="text"
+                id="preferred_location"
+                name="preferred_location"
+                value="{{ profile.preferred_location if profile else '' }}"
+                placeholder="e.g. Kigali, Rwanda"
+            >
+
+            <button type="submit" class="profile-submit">
+                Save My Profile
+            </button>
+
+        </form>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,157 @@
+
+{% extends "base.html" %}
+
+{% block title %}Publish a Job | Pacifique Digital Services{% endblock %}
+
+{% block content %}
+<style>
+.create-job-wrap {
+    max-width: 900px;
+    margin: auto;
+}
+.create-job-card {
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    padding: 28px;
+    box-shadow: 0 5px 20px rgba(0,0,0,.05);
+}
+.create-job-card h2 {
+    color: #172554;
+    margin-top: 0;
+}
+.create-job-intro {
+    color: #64748b;
+    margin-bottom: 25px;
+}
+.create-job-form label {
+    display: block;
+    margin: 15px 0 7px;
+    font-weight: 600;
+    color: #334155;
+}
+.create-job-form input,
+.create-job-form select,
+.create-job-form textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #cbd5e1;
+    border-radius: 9px;
+    box-sizing: border-box;
+    font: inherit;
+}
+.create-job-form textarea {
+    min-height: 130px;
+    resize: vertical;
+}
+.create-job-submit {
+    margin-top: 22px;
+    padding: 12px 22px;
+    background: #2563eb;
+    color: white;
+    border: none;
+    border-radius: 9px;
+    cursor: pointer;
+    font-weight: 600;
+}
+.create-job-submit:hover {
+    background: #1d4ed8;
+}
+</style>
+
+<div class="create-job-wrap">
+    <div class="create-job-card">
+        <h2>📢 Publish a Job Opportunity</h2>
+
+        <p class="create-job-intro">
+            Reach qualified candidates by publishing your job opportunity
+            on Job Connect.
+        </p>
+
+        <form method="POST" class="create-job-form">
+
+            <label for="title">Job Title</label>
+            <input
+                type="text"
+                id="title"
+                name="title"
+                placeholder="e.g. Software Developer"
+                required
+            >
+
+            <label for="company_name">Company Name</label>
+            <input
+                type="text"
+                id="company_name"
+                name="company_name"
+                placeholder="Company or organization name"
+                required
+            >
+
+            <label for="category">Job Category</label>
+            <input
+                type="text"
+                id="category"
+                name="category"
+                placeholder="e.g. Technology, Healthcare, Finance"
+                required
+            >
+
+            <label for="location">Job Location</label>
+            <input
+                type="text"
+                id="location"
+                name="location"
+                placeholder="e.g. Kigali, Rwanda"
+                required
+            >
+
+            <label for="employment_type">Employment Type</label>
+            <select id="employment_type" name="employment_type" required>
+                <option value="">Select employment type</option>
+                <option value="Full-time">Full-time</option>
+                <option value="Part-time">Part-time</option>
+                <option value="Contract">Contract</option>
+                <option value="Temporary">Temporary</option>
+                <option value="Internship">Internship</option>
+                <option value="Remote">Remote</option>
+            </select>
+
+            <label for="salary">Salary / Compensation</label>
+            <input
+                type="text"
+                id="salary"
+                name="salary"
+                placeholder="e.g. Negotiable or 300,000 RWF"
+            >
+
+            <label for="description">Job Description</label>
+            <textarea
+                id="description"
+                name="description"
+                placeholder="Describe the responsibilities and duties..."
+                required
+            ></textarea>
+
+            <label for="requirements">Job Requirements</label>
+            <textarea
+                id="requirements"
+                name="requirements"
+                placeholder="List the qualifications, skills and experience required..."
+            ></textarea>
+
+            <label for="application_deadline">Application Deadline</label>
+            <input
+                type="date"
+                id="application_deadline"
+                name="application_deadline"
+            >
+
+            <button type="submit" class="create-job-submit">
+                Publish Job
+            </button>
+
+        </form>
+    </div>
+</div>
+{% endblock %}

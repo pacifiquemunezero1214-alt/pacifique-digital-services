@@ -1,0 +1,134 @@
+
+{% extends "base.html" %}
+
+{% block title %}My Published Jobs | Pacifique Digital Services{% endblock %}
+
+{% block content %}
+<style>
+.my-jobs-wrap {
+    max-width: 1100px;
+    margin: auto;
+}
+.my-jobs-header {
+    padding: 25px;
+    border-radius: 15px;
+    background: linear-gradient(120deg, #172554, #2563eb, #7c3aed);
+    color: white;
+    margin-bottom: 22px;
+}
+.my-jobs-header h2 {
+    margin: 0 0 8px;
+}
+.my-jobs-header p {
+    margin: 0;
+    opacity: .9;
+}
+.my-job-card {
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 13px;
+    padding: 20px;
+    margin-bottom: 15px;
+    box-shadow: 0 3px 12px rgba(0,0,0,.04);
+}
+.my-job-card h3 {
+    color: #172554;
+    margin-top: 0;
+}
+.my-job-meta {
+    color: #64748b;
+    font-size: 14px;
+    margin: 7px 0;
+}
+.my-job-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 15px;
+}
+.my-job-btn {
+    display: inline-block;
+    padding: 10px 15px;
+    border-radius: 8px;
+    background: #2563eb;
+    color: white !important;
+    text-decoration: none;
+    font-weight: 600;
+}
+.my-job-btn.secondary {
+    background: #0f766e;
+}
+.my-job-empty {
+    padding: 35px;
+    text-align: center;
+    background: white;
+    border-radius: 13px;
+    color: #64748b;
+}
+</style>
+
+<div class="my-jobs-wrap">
+
+    <div class="my-jobs-header">
+        <h2>📢 My Published Jobs</h2>
+        <p>Manage your job opportunities and review applications from candidates.</p>
+    </div>
+
+    <div style="margin-bottom:20px;">
+        <a href="{{ url_for('create_job') }}" class="my-job-btn">
+            + Publish New Job
+        </a>
+    </div>
+
+    {% if jobs %}
+        {% for job in jobs %}
+            <div class="my-job-card">
+                <h3>{{ job.title }}</h3>
+
+                <div class="my-job-meta">
+                    🏢 {{ job.company_name }}
+                </div>
+
+                <div class="my-job-meta">
+                    📍 {{ job.location }}
+                </div>
+
+                <div class="my-job-meta">
+                    💼 {{ job.employment_type }}
+                </div>
+
+                <div class="my-job-meta">
+                    📂 {{ job.category }}
+                </div>
+
+                <div class="my-job-meta">
+                    📌 Status: <strong>{{ job.status }}</strong>
+                </div>
+
+                <div class="my-job-meta">
+                    👥 Applications:
+                    <strong>{{ job.applications|length }}</strong>
+                </div>
+
+                <div class="my-job-actions">
+                    <a href="{{ url_for('employer_applications', job_id=job.id) }}"
+                       class="my-job-btn secondary">
+                        View Applications
+                    </a>
+
+                    <a href="{{ url_for('job_details', job_id=job.id) }}"
+                       class="my-job-btn">
+                        View Job
+                    </a>
+                </div>
+            </div>
+        {% endfor %}
+    {% else %}
+        <div class="my-job-empty">
+            <h3>You have not published any jobs yet.</h3>
+            <p>Publish your first opportunity and start receiving applications.</p>
+        </div>
+    {% endif %}
+
+</div>
+{% endblock %}

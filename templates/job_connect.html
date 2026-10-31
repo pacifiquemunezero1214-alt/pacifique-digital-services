@@ -1,0 +1,214 @@
+
+{% extends "base.html" %}
+
+{% block title %}Job Connect | Pacifique Digital Services{% endblock %}
+
+{% block content %}
+<style>
+.job-page {
+    padding: 10px 0;
+}
+.job-hero {
+    padding: 30px;
+    border-radius: 18px;
+    background: linear-gradient(120deg, #172554, #2563eb, #7c3aed);
+    color: white;
+    margin-bottom: 25px;
+}
+.job-hero h1 {
+    font-size: 30px;
+    margin: 0 0 10px;
+}
+.job-hero p {
+    margin: 0;
+    opacity: .9;
+}
+.job-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 20px;
+}
+.job-btn {
+    display: inline-block;
+    padding: 11px 17px;
+    border-radius: 9px;
+    background: #2563eb;
+    color: white !important;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    font-weight: 600;
+}
+.job-btn.light {
+    background: white;
+    color: #1e40af !important;
+}
+.job-search {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr auto;
+    gap: 12px;
+    padding: 20px;
+    background: white;
+    border-radius: 14px;
+    margin-bottom: 25px;
+    box-shadow: 0 3px 15px rgba(0,0,0,.06);
+}
+.job-search input,
+.job-search select {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #dbe2ea;
+    border-radius: 8px;
+}
+.job-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 18px;
+}
+.job-card {
+    background: white;
+    border: 1px solid #e5eaf2;
+    border-radius: 14px;
+    padding: 20px;
+    box-shadow: 0 3px 12px rgba(0,0,0,.04);
+}
+.job-card h3 {
+    color: #172554;
+    margin-top: 0;
+}
+.job-meta {
+    color: #64748b;
+    font-size: 13px;
+    margin: 7px 0;
+}
+.job-description {
+    color: #475569;
+    margin: 14px 0;
+    line-height: 1.5;
+}
+.job-empty {
+    padding: 35px;
+    text-align: center;
+    background: white;
+    border-radius: 14px;
+    color: #64748b;
+}
+@media(max-width: 700px) {
+    .job-search {
+        grid-template-columns: 1fr;
+    }
+    .job-hero h1 {
+        font-size: 23px;
+    }
+}
+</style>
+
+<div class="job-page">
+
+    <div class="job-hero">
+        <h1>🚀 Job Connect</h1>
+        <p>Discover opportunities, connect with employers and build your career.</p>
+
+        <div class="job-actions">
+            <a href="{{ url_for('job_seeker_profile') }}" class="job-btn light">
+                My Job Seeker Profile
+            </a>
+
+            <a href="{{ url_for('employer_profile') }}" class="job-btn light">
+                Employer Profile
+            </a>
+
+            <a href="{{ url_for('create_job') }}" class="job-btn light">
+                + Publish a Job
+            </a>
+
+            <a href="{{ url_for('my_applications') }}" class="job-btn light">
+                My Applications
+            </a>
+
+            <a href="{{ url_for('my_jobs') }}" class="job-btn light">
+                My Published Jobs
+            </a>
+        </div>
+    </div>
+
+    <form method="GET" action="{{ url_for('job_connect') }}" class="job-search">
+        <input
+            type="text"
+            name="search"
+            placeholder="Search job title or keywords..."
+            value="{{ request.args.get('search', '') }}"
+        >
+
+        <input
+            type="text"
+            name="location"
+            placeholder="Location"
+            value="{{ request.args.get('location', '') }}"
+        >
+
+        <select name="category">
+            <option value="">All Categories</option>
+            {% for category in categories %}
+                <option value="{{ category }}"
+                    {% if request.args.get('category') == category %}selected{% endif %}>
+                    {{ category }}
+                </option>
+            {% endfor %}
+        </select>
+
+        <button type="submit" class="job-btn">Search Jobs</button>
+    </form>
+
+    <h2>Latest Job Opportunities</h2>
+
+    {% if jobs %}
+        <div class="job-grid">
+            {% for job in jobs %}
+                <div class="job-card">
+                    <h3>{{ job.title }}</h3>
+
+                    <div class="job-meta">
+                        🏢 {{ job.company_name }}
+                    </div>
+
+                    <div class="job-meta">
+                        📍 {{ job.location }}
+                    </div>
+
+                    <div class="job-meta">
+                        💼 {{ job.employment_type }}
+                    </div>
+
+                    <div class="job-meta">
+                        📂 {{ job.category }}
+                    </div>
+
+                    {% if job.salary %}
+                        <div class="job-meta">
+                            💰 {{ job.salary }}
+                        </div>
+                    {% endif %}
+
+                    <p class="job-description">
+                        {{ job.description[:150] }}
+                        {% if job.description|length > 150 %}...{% endif %}
+                    </p>
+
+                    <a href="{{ url_for('job_details', job_id=job.id) }}"
+                       class="job-btn">
+                        View Details
+                    </a>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="job-empty">
+            <h3>No jobs found</h3>
+            <p>Try another search or check again later.</p>
+        </div>
+    {% endif %}
+
+</div>
+{% endblock %}

@@ -1,0 +1,132 @@
+
+{% extends "base.html" %}
+
+{% block title %}Employer Profile | Pacifique Digital Services{% endblock %}
+
+{% block content %}
+<style>
+.employer-wrap {
+    max-width: 850px;
+    margin: auto;
+}
+.employer-card {
+    background: white;
+    padding: 28px;
+    border-radius: 16px;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 5px 20px rgba(0,0,0,.05);
+}
+.employer-card h2 {
+    color: #172554;
+    margin-top: 0;
+}
+.employer-intro {
+    color: #64748b;
+    margin-bottom: 25px;
+}
+.employer-form label {
+    display: block;
+    margin: 16px 0 7px;
+    font-weight: 600;
+    color: #334155;
+}
+.employer-form input,
+.employer-form textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #cbd5e1;
+    border-radius: 9px;
+    box-sizing: border-box;
+    font: inherit;
+}
+.employer-form textarea {
+    min-height: 110px;
+    resize: vertical;
+}
+.employer-submit {
+    margin-top: 22px;
+    padding: 12px 22px;
+    background: #2563eb;
+    color: white;
+    border: none;
+    border-radius: 9px;
+    cursor: pointer;
+    font-weight: 600;
+}
+.employer-submit:hover {
+    background: #1d4ed8;
+}
+</style>
+
+<div class="employer-wrap">
+    <div class="employer-card">
+        <h2>🏢 Employer Profile</h2>
+
+        <p class="employer-intro">
+            Set up your company profile so job seekers can learn about
+            your organization and the opportunities you offer.
+        </p>
+
+        <form method="POST" class="employer-form">
+
+            <label for="company_name">Company / Organization Name</label>
+            <input
+                type="text"
+                id="company_name"
+                name="company_name"
+                value="{{ profile.company_name if profile else '' }}"
+                placeholder="Enter your company name"
+                required
+            >
+
+            <label for="company_description">Company Description</label>
+            <textarea
+                id="company_description"
+                name="company_description"
+                placeholder="Describe your company and what it does..."
+            >{{ profile.company_description if profile else '' }}</textarea>
+
+            <label for="industry">Industry</label>
+            <input
+                type="text"
+                id="industry"
+                name="industry"
+                value="{{ profile.industry if profile else '' }}"
+                placeholder="e.g. Technology, Healthcare, Education"
+            >
+
+            <label for="website">Company Website</label>
+            <input
+                type="url"
+                id="website"
+                name="website"
+                value="{{ profile.website if profile else '' }}"
+                placeholder="https://example.com"
+            >
+
+            <label for="contact_phone">Contact Phone</label>
+            <input
+                type="text"
+                id="contact_phone"
+                name="contact_phone"
+                value="{{ profile.contact_phone if profile else '' }}"
+                placeholder="Company contact number"
+            >
+
+            <label for="whatsapp_public">WhatsApp Contact</label>
+            <input
+                type="text"
+                id="whatsapp_public"
+                name="whatsapp_public"
+                value="{{ profile.whatsapp_public if profile else '' }}"
+                placeholder="WhatsApp number for job inquiries"
+            >
+
+            <button type="submit" class="employer-submit">
+                Save Employer Profile
+            </button>
+
+        </form>
+    </div>
+</div>
+{% endblock %}

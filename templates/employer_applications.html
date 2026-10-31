@@ -1,0 +1,189 @@
+
+{% extends "base.html" %}
+
+{% block title %}Job Applicants | Pacifique Digital Services{% endblock %}
+
+{% block content %}
+<style>
+.applicants-wrap {
+    max-width: 1100px;
+    margin: auto;
+}
+.applicants-header {
+    padding: 25px;
+    border-radius: 15px;
+    background: linear-gradient(120deg, #172554, #2563eb, #7c3aed);
+    color: white;
+    margin-bottom: 22px;
+}
+.applicants-header h2 {
+    margin: 0 0 8px;
+}
+.applicants-header p {
+    margin: 0;
+    opacity: .9;
+}
+.applicant-card {
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 13px;
+    padding: 22px;
+    margin-bottom: 16px;
+    box-shadow: 0 3px 12px rgba(0,0,0,.04);
+}
+.applicant-card h3 {
+    color: #172554;
+    margin-top: 0;
+}
+.applicant-info {
+    color: #475569;
+    margin: 9px 0;
+    font-size: 14px;
+}
+.applicant-message {
+    background: #f8fafc;
+    padding: 15px;
+    border-radius: 9px;
+    margin-top: 15px;
+    color: #334155;
+    line-height: 1.6;
+    white-space: pre-wrap;
+}
+.applicant-status {
+    display: inline-block;
+    padding: 7px 12px;
+    border-radius: 20px;
+    background: #eff6ff;
+    color: #1d4ed8;
+    font-size: 13px;
+    font-weight: 600;
+}
+.applicant-form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 18px;
+}
+.applicant-form select {
+    padding: 10px;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    min-width: 180px;
+}
+.applicant-form button {
+    padding: 10px 17px;
+    background: #2563eb;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+}
+.applicant-empty {
+    padding: 35px;
+    text-align: center;
+    background: white;
+    border-radius: 13px;
+    color: #64748b;
+}
+.applicant-back {
+    display: inline-block;
+    margin-bottom: 18px;
+    color: #2563eb;
+    text-decoration: none;
+}
+</style>
+
+<div class="applicants-wrap">
+
+    <a href="{{ url_for('my_jobs') }}" class="applicant-back">
+        ← Back to My Published Jobs
+    </a>
+
+    <div class="applicants-header">
+        <h2>👥 Job Applicants</h2>
+        <p>Review candidates and manage their application status.</p>
+    </div>
+
+    {% if applications %}
+        {% for application in applications %}
+            <div class="applicant-card">
+
+                <h3>
+                    {{ application.applicant.full_name or application.applicant.username }}
+                </h3>
+
+                <div class="applicant-info">
+                    📧 Email:
+                    {{ application.applicant.email or 'Not provided' }}
+                </div>
+
+                <div class="applicant-info">
+                    📞 Phone:
+                    {{ application.applicant.phone or 'Not provided' }}
+                </div>
+
+                <div class="applicant-info">
+                    📅 Applied:
+                    {{ application.created_at.strftime('%d %b %Y, %H:%M') if application.created_at else 'N/A' }}
+                </div>
+
+                <div style="margin-top:12px;">
+                    <span class="applicant-status">
+                        {{ application.status }}
+                    </span>
+                </div>
+
+                <div class="applicant-message">
+                    <strong>Application Message:</strong>
+                    <p>{{ application.cover_letter }}</p>
+                </div>
+
+                <form method="POST"
+                      action="{{ url_for('update_application_status', application_id=application.id) }}"
+                      class="applicant-form">
+
+                    <select name="status" required>
+                        <option value="Submitted"
+                            {% if application.status == 'Submitted' %}selected{% endif %}>
+                            Submitted
+                        </option>
+
+                        <option value="Reviewing"
+                            {% if application.status == 'Reviewing' %}selected{% endif %}>
+                            Reviewing
+                        </option>
+
+                        <option value="Shortlisted"
+                            {% if application.status == 'Shortlisted' %}selected{% endif %}>
+                            Shortlisted
+                        </option>
+
+                        <option value="Rejected"
+                            {% if application.status == 'Rejected' %}selected{% endif %}>
+                            Rejected
+                        </option>
+
+                        <option value="Accepted"
+                            {% if application.status == 'Accepted' %}selected{% endif %}>
+                            Accepted
+                        </option>
+                    </select>
+
+                    <button type="submit">
+                        Update Application Status
+                    </button>
+
+                </form>
+
+            </div>
+        {% endfor %}
+    {% else %}
+        <div class="applicant-empty">
+            <h3>No applications yet.</h3>
+            <p>When candidates apply for this job, their applications will appear here.</p>
+        </div>
+    {% endif %}
+
+</div>
+{% endblock %}
