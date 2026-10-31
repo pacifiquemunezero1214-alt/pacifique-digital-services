@@ -746,15 +746,12 @@ def send_password_reset_email(user, reset_url):
 
 
 # =========================================================
-# HOME
+# PUBLIC HOME / LANDING PAGE
 # =========================================================
 
 @app.route("/")
 def home():
-    if current_user.is_authenticated:
-        return redirect(url_for("dashboard"))
-
-    return redirect(url_for("login"))
+    return render_template("landing.html")
 
 # =========================================================
 # PUBLIC CONTACT US
