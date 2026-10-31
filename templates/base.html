@@ -536,6 +536,20 @@
                    href="{{ url_for('new_request') }}">
                     <span class="nav-icon">＋</span> Request a Service
                 </a>
+<!-- JOB CONNECT -->
+<a class="{% if request.endpoint in [
+    'job_connect',
+    'job_details',
+    'job_seeker_profile',
+    'employer_profile',
+    'create_job',
+    'my_jobs',
+    'my_applications',
+    'employer_applications'
+] %}active{% endif %}"
+   href="{{ url_for('job_connect') }}">
+    <span class="nav-icon">💼</span> Job Connect
+</a>
 
                 <a class="{% if request.endpoint == 'contact' %}active{% endif %}"
                    href="{{ url_for('contact') }}">
@@ -553,22 +567,6 @@
                 </a>
 
                         {% endif %}
-
-            <!-- JOB CONNECT -->
-            <a class="{% if request.endpoint in [
-                'job_connect',
-                'job_details',
-                'job_seeker_profile',
-                'employer_profile',
-                'create_job',
-                'my_jobs',
-                'my_applications',
-                'employer_applications'
-            ] %}active{% endif %}"
-               href="{{ url_for('job_connect') }}">
-                <span class="nav-icon">💼</span> Job Connect
-            </a>
-
         </nav>
 
         <div class="sidebar-bottom">
