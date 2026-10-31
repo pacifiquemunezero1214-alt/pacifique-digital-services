@@ -2506,8 +2506,9 @@ def employer_profile():
             request.form.get("contact_phone") or ""
         ).strip()
         profile.whatsapp_public = (
-            request.form.get("whatsapp_public") or ""
-        ).strip()
+    (request.form.get("whatsapp_public") or "").strip().lower()
+    in ("on", "true", "1", "yes")
+)
 
         try:
             db.session.commit()
