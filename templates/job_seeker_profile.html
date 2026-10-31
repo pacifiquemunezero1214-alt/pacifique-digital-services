@@ -1,126 +1,132 @@
 
 {% extends "base.html" %}
 
-{% block title %}Job Seeker Profile | Pacifique Digital Services{% endblock %}
+{% block title %}Job Seeker Registration | Pacifique Digital Services{% endblock %}
 
 {% block content %}
 <style>
-.profile-wrap {
-    max-width: 850px;
-    margin: auto;
-}
-.profile-card {
-    background: white;
-    padding: 28px;
-    border-radius: 16px;
-    border: 1px solid #e2e8f0;
-    box-shadow: 0 5px 20px rgba(0,0,0,.05);
-}
-.profile-card h2 {
-    color: #172554;
-    margin-top: 0;
-}
-.profile-intro {
-    color: #64748b;
-    margin-bottom: 25px;
-}
-.profile-form label {
-    display: block;
-    margin: 16px 0 7px;
-    font-weight: 600;
-    color: #334155;
-}
-.profile-form input,
-.profile-form textarea {
-    width: 100%;
-    padding: 12px;
-    border: 1px solid #cbd5e1;
-    border-radius: 9px;
-    box-sizing: border-box;
-    font: inherit;
-}
-.profile-form textarea {
-    min-height: 110px;
-    resize: vertical;
-}
-.profile-submit {
-    margin-top: 22px;
-    padding: 12px 22px;
-    background: #2563eb;
-    color: white;
-    border: none;
-    border-radius: 9px;
-    cursor: pointer;
-    font-weight: 600;
-}
-.profile-submit:hover {
-    background: #1d4ed8;
-}
+.seeker-wrap{max-width:950px;margin:20px auto}
+.seeker-card{background:#fff;padding:30px;border-radius:18px;box-shadow:0 8px 30px rgba(15,23,42,.08);border:1px solid #e2e8f0}
+.seeker-card h2{color:#172554;margin-top:0}
+.intro{color:#64748b;margin-bottom:25px}
+.form-section{margin-top:28px;padding-top:20px;border-top:1px solid #e2e8f0}
+.form-section h3{color:#1e40af;margin-bottom:8px}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.field label{display:block;font-weight:600;color:#334155;margin:13px 0 7px}
+.field input,.field textarea,.field select{width:100%;padding:12px;border:1px solid #cbd5e1;border-radius:9px;box-sizing:border-box;font:inherit}
+.field textarea{min-height:105px;resize:vertical}
+.skills-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-top:15px}
+.skill-option{display:flex;align-items:center;gap:9px;background:#f8fafc;border:1px solid #e2e8f0;padding:11px;border-radius:9px;color:#334155}
+.skill-option input{width:17px;height:17px;accent-color:#2563eb}
+.note{background:#eff6ff;padding:13px;border-radius:9px;color:#1e40af;margin-top:12px;font-size:14px}
+.submit-btn{margin-top:25px;padding:14px 25px;background:#2563eb;color:white;border:0;border-radius:10px;font-weight:700;cursor:pointer;font-size:15px}
+.submit-btn:hover{background:#1d4ed8}
+@media(max-width:650px){.form-grid{grid-template-columns:1fr}.seeker-card{padding:18px}}
 </style>
 
-<div class="profile-wrap">
-    <div class="profile-card">
-        <h2>👤 Job Seeker Profile</h2>
+<div class="seeker-wrap">
+<div class="seeker-card">
 
-        <p class="profile-intro">
-            Create your professional profile to help employers understand
-            your skills, education and experience.
-        </p>
+<h2>👤 Job Seeker Registration</h2>
+<p class="intro">
+Create your professional profile. Employers can discover your skills
+and contact you when a suitable opportunity becomes available.
+</p>
 
-        <form method="POST" class="profile-form">
+<form method="POST" class="seeker-form">
 
-            <label for="professional_title">Professional Title</label>
-            <input
-                type="text"
-                id="professional_title"
-                name="professional_title"
-                value="{{ profile.professional_title if profile else '' }}"
-                placeholder="e.g. Software Developer, Nurse, Accountant"
-                required
-            >
+<div class="form-section" style="border-top:0;padding-top:0">
+<h3>1. Professional Information</h3>
 
-            <label for="bio">About Me</label>
-            <textarea
-                id="bio"
-                name="bio"
-                placeholder="Introduce yourself and describe your career goals..."
-            >{{ profile.bio if profile else '' }}</textarea>
+<div class="field">
+<label>Professional Title *</label>
+<input type="text" name="professional_title"
+value="{{ profile.professional_title if profile else '' }}"
+placeholder="e.g. Nurse, Software Developer, Teacher" required>
+</div>
 
-            <label for="skills">Skills</label>
-            <textarea
-                id="skills"
-                name="skills"
-                placeholder="e.g. Python, Communication, Customer Service"
-            >{{ profile.skills if profile else '' }}</textarea>
+<div class="field">
+<label>About Yourself</label>
+<textarea name="bio" placeholder="Introduce yourself and explain what kind of work you can do...">{{ profile.bio if profile else '' }}</textarea>
+</div>
 
-            <label for="education">Education</label>
-            <textarea
-                id="education"
-                name="education"
-                placeholder="Describe your education and qualifications..."
-            >{{ profile.education if profile else '' }}</textarea>
+<div class="form-grid">
+<div class="field">
+<label>Education and Qualifications *</label>
+<textarea name="education" required placeholder="e.g. Advanced Diploma in Nursing">{{ profile.education if profile else '' }}</textarea>
+</div>
 
-            <label for="experience">Work Experience</label>
-            <textarea
-                id="experience"
-                name="experience"
-                placeholder="Describe your previous work experience..."
-            >{{ profile.experience if profile else '' }}</textarea>
+<div class="field">
+<label>Work Experience</label>
+<textarea name="experience" placeholder="Describe your previous work or internship experience...">{{ profile.experience if profile else '' }}</textarea>
+</div>
+</div>
 
-            <label for="preferred_location">Preferred Location</label>
-            <input
-                type="text"
-                id="preferred_location"
-                name="preferred_location"
-                value="{{ profile.preferred_location if profile else '' }}"
-                placeholder="e.g. Kigali, Rwanda"
-            >
+<div class="field">
+<label>Preferred Work Location *</label>
+<input type="text" name="preferred_location"
+value="{{ profile.preferred_location if profile else '' }}"
+placeholder="e.g. Kigali, Musanze, Huye" required>
+</div>
+</div>
 
-            <button type="submit" class="profile-submit">
-                Save My Profile
-            </button>
+<div class="form-section">
+<h3>2. Select Your Skills</h3>
+<p class="intro">Select all the areas in which you have skills or experience.</p>
 
-        </form>
-    </div>
+{% set skill_groups = [
+("Information Technology", ["Software Development","Web Design","Graphic Design","Computer Repair","Networking","Data Entry","IT Support","Cybersecurity"]),
+("Healthcare", ["Nursing","Midwifery","Clinical Assistance","Laboratory Services","Pharmacy Assistance","Community Health"]),
+("Business and Finance", ["Accounting","Bookkeeping","Banking","Business Management","Entrepreneurship","Data Analysis"]),
+("Education", ["Teaching","Tutoring","Early Childhood Education","Training and Coaching"]),
+("Sales and Marketing", ["Sales","Digital Marketing","Social Media Management","Customer Service","Public Relations"]),
+("Technical Trades", ["Driving","Electrical Installation","Plumbing","Construction","Carpentry","Welding","Mechanics"]),
+("Hospitality and Services", ["Cooking","Hotel Management","Waitressing","Housekeeping","Tourism","Security"]),
+("Other Fields", ["Agriculture","Fashion Design","Tailoring","Photography","Video Editing","Translation","Administration","Cleaning Services","Other Skills"])
+] %}
+
+{% for group, skills in skill_groups %}
+<h4 style="color:#334155;margin:20px 0 8px">{{ group }}</h4>
+<div class="skills-grid">
+{% for skill in skills %}
+<label class="skill-option">
+<input type="checkbox" name="skills" value="{{ skill }}"
+{% if selected_skills and skill in selected_skills %}checked{% endif %}>
+<span>{{ skill }}</span>
+</label>
+{% endfor %}
+</div>
+{% endfor %}
+
+<div class="note">
+You can select several skills. Choose only skills you genuinely have.
+</div>
+</div>
+
+<div class="form-section">
+<h3>3. Contact Information</h3>
+<p class="intro">
+Your registered account details will be used to contact you.
+Please make sure they are correct in your account.
+</p>
+</div>
+
+<div class="form-section">
+<h3>4. Privacy and Consent</h3>
+<label style="display:flex;gap:10px;align-items:flex-start;color:#334155">
+<input type="checkbox" name="consent" value="yes" required style="margin-top:4px">
+<span>
+I agree that Pacifique Digital Services may store my job seeker profile
+and share relevant professional information with authorized employers
+for recruitment purposes. I understand that my contact details will
+only be shown to authorized users.
+</span>
+</label>
+</div>
+
+<button type="submit" class="submit-btn">Save My Job Seeker Profile</button>
+
+</form>
+</div>
 </div>
 {% endblock %}

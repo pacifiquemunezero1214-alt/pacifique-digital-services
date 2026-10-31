@@ -2429,6 +2429,8 @@ def job_seeker_profile():
             profile = JobSeekerProfile(user_id=current_user.id)
             db.session.add(profile)
 
+        selected_skills = request.form.getlist("skills")
+
         profile.professional_title = (
             request.form.get("professional_title") or ""
         ).strip()
@@ -2437,9 +2439,7 @@ def job_seeker_profile():
             request.form.get("bio") or ""
         ).strip()
 
-        profile.skills = (
-            request.form.get("skills") or ""
-        ).strip()
+        profile.skills = ", ".join(selected_skills)
 
         profile.education = (
             request.form.get("education") or ""
@@ -2455,7 +2455,7 @@ def job_seeker_profile():
 
         try:
             db.session.commit()
-            flash("Job Seeker profile saved successfully.", "success")
+            flash("Your Job Seeker Profile was saved successfully.", "success")
             return redirect(url_for("job_seeker_profile"))
 
         except Exception:
@@ -2466,6 +2466,58 @@ def job_seeker_profile():
     return render_template(
         "job_seeker_profile.html",
         profile=profile,
+        selected_skills=(
+            profile.skills.split(", ") if profile and profile.skills else []
+        )
+    )
+
+@app.route("/opportunities/job-seekers")
+@login_required
+def opportunities_seekers():
+    # Only employers with a company profile and managers can search.
+    if not is_manager():
+        employer = EmployerProfile.query.filter_by(
+            user_id=current_user.id
+        ).first()
+
+        if not employer:
+            flash(
+                "Please create your Employer Profile before searching for candidates.",
+                "error"
+            )
+            return redirect(url_for("employer_profile"))
+
+    search = (request.args.get("q") or "").strip()
+
+    candidates_query = JobSeekerProfile.query.join(
+        User,
+        JobSeekerProfile.user_id == User.id
+    ).filter(
+        User.is_active.is_(True),
+        JobSeekerProfile.professional_title.isnot(None),
+        JobSeekerProfile.professional_title != ""
+    )
+
+    if search:
+        pattern = f"%{search}%"
+
+        candidates_query = candidates_query.filter(
+            or_(
+                JobSeekerProfile.professional_title.ilike(pattern),
+                JobSeekerProfile.skills.ilike(pattern),
+                JobSeekerProfile.education.ilike(pattern),
+                JobSeekerProfile.preferred_location.ilike(pattern)
+            )
+        )
+
+    candidates = candidates_query.order_by(
+        JobSeekerProfile.updated_at.desc()
+    ).all()
+
+    return render_template(
+        "opportunities_seekers.html",
+        candidates=candidates,
+        search=search
     )
 
 

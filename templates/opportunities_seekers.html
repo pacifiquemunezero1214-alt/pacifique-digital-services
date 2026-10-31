@@ -1,0 +1,202 @@
+```html
+{% extends "base.html" %}
+
+{% block title %}Find Job Seekers - Pacifique Digital Services{% endblock %}
+
+{% block content %}
+<style>
+.opportunities-page {
+    padding: 25px;
+    background: linear-gradient(135deg, #eef2ff, #f0fdfa);
+    min-height: 85vh;
+    border-radius: 18px;
+}
+.opportunities-header {
+    background: linear-gradient(120deg, #172554, #2563eb, #0891b2);
+    color: white;
+    padding: 28px;
+    border-radius: 18px;
+    margin-bottom: 25px;
+}
+.opportunities-header h2 { margin: 0 0 8px; }
+.search-box {
+    background: white;
+    padding: 18px;
+    border-radius: 14px;
+    display: flex;
+    gap: 10px;
+    margin-bottom: 22px;
+    box-shadow: 0 5px 18px #0000000d;
+}
+.search-box input {
+    flex: 1;
+    min-width: 0;
+    padding: 13px;
+    border: 1px solid #cbd5e1;
+    border-radius: 9px;
+}
+.search-box button {
+    background: #2563eb;
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 9px;
+    cursor: pointer;
+}
+.candidate-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+    gap: 18px;
+}
+.candidate-card {
+    background: white;
+    border-radius: 15px;
+    padding: 22px;
+    box-shadow: 0 5px 20px #0000000d;
+    border: 1px solid #e2e8f0;
+}
+.candidate-card h3 { color: #1e3a8a; margin-bottom: 5px; }
+.candidate-name { color: #64748b; margin-bottom: 15px; }
+.candidate-info { margin: 10px 0; color: #334155; }
+.skills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px;
+    margin: 13px 0;
+}
+.skill-tag {
+    background: #dbeafe;
+    color: #1d4ed8;
+    padding: 5px 9px;
+    border-radius: 20px;
+    font-size: 12px;
+}
+.contact-actions {
+    display: flex;
+    gap: 9px;
+    margin-top: 18px;
+}
+.contact-actions a {
+    flex: 1;
+    text-align: center;
+    text-decoration: none;
+    padding: 10px;
+    border-radius: 8px;
+    color: white;
+    font-weight: bold;
+}
+.call-btn { background: #059669; }
+.email-btn { background: #2563eb; }
+.empty-state {
+    background: white;
+    padding: 35px;
+    border-radius: 14px;
+    text-align: center;
+    color: #64748b;
+}
+@media(max-width: 600px) {
+    .opportunities-page { padding: 12px; }
+    .search-box { flex-direction: column; }
+    .search-box button { width: 100%; }
+}
+</style>
+
+<div class="opportunities-page">
+
+    <div class="opportunities-header">
+        <h2>🔎 Find Job Seekers</h2>
+        <p>Discover talented people and connect with candidates who match your business needs.</p>
+    </div>
+
+    <form method="GET" class="search-box">
+        <input
+            type="text"
+            name="q"
+            value="{{ search }}"
+            placeholder="Search by skills, education, location or profession..."
+        >
+        <button type="submit">Search Candidates</button>
+    </form>
+
+    <h3 style="color:#172554; margin-bottom:18px;">
+        Available Candidates ({{ candidates|length }})
+    </h3>
+
+    {% if candidates %}
+    <div class="candidate-grid">
+
+        {% for candidate in candidates %}
+        <div class="candidate-card">
+
+            <h3>{{ candidate.professional_title }}</h3>
+
+            <div class="candidate-name">
+                {{ candidate.user.full_name or candidate.user.username }}
+            </div>
+
+            {% if candidate.preferred_location %}
+            <div class="candidate-info">
+                📍 {{ candidate.preferred_location }}
+            </div>
+            {% endif %}
+
+            {% if candidate.education %}
+            <div class="candidate-info">
+                🎓 <strong>Education:</strong><br>
+                {{ candidate.education }}
+            </div>
+            {% endif %}
+
+            {% if candidate.experience %}
+            <div class="candidate-info">
+                💼 <strong>Experience:</strong><br>
+                {{ candidate.experience }}
+            </div>
+            {% endif %}
+
+            {% if candidate.bio %}
+            <div class="candidate-info">
+                {{ candidate.bio }}
+            </div>
+            {% endif %}
+
+            {% if candidate.skills %}
+            <strong>Skills:</strong>
+            <div class="skills">
+                {% for skill in candidate.skills.split(',') %}
+                    <span class="skill-tag">{{ skill.strip() }}</span>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            <div class="contact-actions">
+                {% if candidate.user.phone %}
+                <a class="call-btn"
+                   href="tel:{{ candidate.user.phone }}">
+                    📞 Call
+                </a>
+                {% endif %}
+
+                {% if candidate.user.email %}
+                <a class="email-btn"
+                   href="mailto:{{ candidate.user.email }}">
+                    ✉ Email
+                </a>
+                {% endif %}
+            </div>
+
+        </div>
+        {% endfor %}
+
+    </div>
+
+    {% else %}
+    <div class="empty-state">
+        <h3>👥 No Candidates Found</h3>
+        <p>There are currently no matching job seeker profiles.</p>
+    </div>
+    {% endif %}
+
+</div>
+{% endblock %}
+```
