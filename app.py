@@ -748,6 +748,13 @@ def send_password_reset_email(user, reset_url):
 # =========================================================
 # PUBLIC HOME / LANDING PAGE
 # =========================================================
+@app.route("/robots.txt")
+def robots_txt():
+    return send_from_directory(
+        app.static_folder,
+        "robots.txt",
+        mimetype="text/plain"
+    )
 
 @app.route("/")
 def home():
