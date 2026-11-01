@@ -766,6 +766,33 @@ def ads_txt():
 @app.route("/")
 def home():
     return render_template("landing.html")
+@app.route("/sitemap.xml")
+def sitemap():
+    pages = [
+        ("home", "weekly", "1.0"),
+        ("about", "monthly", "0.8"),
+        ("contact", "monthly", "0.8"),
+        ("privacy_policy", "yearly", "0.3"),
+    ]
+
+    xml = [
+        '<?xml version="1.0" encoding="UTF-8"?>',
+        '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'
+    ]
+
+    for endpoint, frequency, priority in pages:
+        page_url = url_for(endpoint, _external=True)
+        page_url = page_url.replace("http://", "https://", 1)
+
+        xml.append("<url>")
+        xml.append(f"<loc>{page_url}</loc>")
+        xml.append(f"<changefreq>{frequency}</changefreq>")
+        xml.append(f"<priority>{priority}</priority>")
+        xml.append("</url>")
+
+    xml.append("</urlset>")
+
+    return Response("\n".join(xml), mimetype="application/xml")
 
 # =========================================================
 # PUBLIC CONTACT US
