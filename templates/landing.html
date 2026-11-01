@@ -37,6 +37,7 @@
             background: #07152e;
             color: #f8fafc;
             line-height: 1.6;
+            overflow-x: hidden;
         }
 
         a {
@@ -48,6 +49,8 @@
             width: min(1150px, 92%);
             margin: auto;
         }
+
+        /* NAVIGATION */
 
         header {
             position: sticky;
@@ -118,16 +121,29 @@
             color: #7dd3fc;
         }
 
+        /* HERO SECTION */
+
         .hero {
-            padding: 105px 0 95px;
+            position: relative;
+            padding: 85px 0 90px;
+            overflow: hidden;
             background:
                 radial-gradient(circle at 80% 20%, rgba(14,165,233,.22), transparent 30%),
                 radial-gradient(circle at 10% 90%, rgba(99,102,241,.2), transparent 30%),
                 #07152e;
         }
 
+        .hero-layout {
+            display: grid;
+            grid-template-columns: 1.15fr .85fr;
+            align-items: center;
+            gap: 45px;
+        }
+
         .hero-content {
-            max-width: 790px;
+            position: relative;
+            z-index: 2;
+            max-width: 700px;
         }
 
         .eyebrow {
@@ -143,7 +159,7 @@
         }
 
         .hero h1 {
-            font-size: clamp(38px, 6vw, 68px);
+            font-size: clamp(38px, 5.5vw, 65px);
             line-height: 1.08;
             letter-spacing: -2px;
             margin-bottom: 24px;
@@ -168,6 +184,273 @@
             flex-wrap: wrap;
             gap: 13px;
         }
+
+        /* ANIMATED SMARTPHONE */
+
+        .phone-showcase {
+            min-height: 500px;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            isolation: isolate;
+        }
+
+        .phone-glow {
+            position: absolute;
+            width: 330px;
+            height: 330px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #0ea5e9, #7c3aed);
+            filter: blur(90px);
+            opacity: .35;
+            animation: glowPulse 5s ease-in-out infinite alternate;
+            z-index: -1;
+        }
+
+        .phone-orbit {
+            position: absolute;
+            width: 410px;
+            height: 410px;
+            border: 1px solid rgba(56,189,248,.16);
+            border-radius: 50%;
+            animation: orbitRotate 25s linear infinite;
+        }
+
+        .phone-orbit::before,
+        .phone-orbit::after {
+            content: "";
+            position: absolute;
+            border: 1px solid rgba(167,139,250,.16);
+            border-radius: 50%;
+        }
+
+        .phone-orbit::before {
+            inset: 25px;
+        }
+
+        .phone-orbit::after {
+            inset: 55px;
+        }
+
+        .phone {
+            position: relative;
+            width: 235px;
+            height: 445px;
+            padding: 9px;
+            border-radius: 37px;
+            background: linear-gradient(145deg, #dbeafe, #64748b 35%, #111827 75%);
+            box-shadow:
+                0 35px 80px rgba(0,0,0,.55),
+                0 0 35px rgba(56,189,248,.25),
+                inset 0 1px 3px rgba(255,255,255,.7);
+            animation: phoneFloat 5s ease-in-out infinite;
+            z-index: 3;
+        }
+
+        .phone::before {
+            content: "";
+            position: absolute;
+            left: -4px;
+            top: 95px;
+            width: 4px;
+            height: 55px;
+            border-radius: 5px 0 0 5px;
+            background: #64748b;
+        }
+
+        .phone::after {
+            content: "";
+            position: absolute;
+            right: -4px;
+            top: 115px;
+            width: 4px;
+            height: 75px;
+            border-radius: 0 5px 5px 0;
+            background: #64748b;
+        }
+
+        .phone-screen {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            position: relative;
+            border-radius: 29px;
+            background:
+                radial-gradient(circle at 80% 20%, rgba(14,165,233,.25), transparent 35%),
+                linear-gradient(160deg, #0c1d3a, #07152e 65%, #172554);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 20px 13px;
+        }
+
+        .phone-camera {
+            position: absolute;
+            top: 9px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 72px;
+            height: 19px;
+            border-radius: 20px;
+            background: #020617;
+            z-index: 5;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding-right: 10px;
+        }
+
+        .phone-camera::after {
+            content: "";
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #1e3a8a;
+            box-shadow: 0 0 5px #38bdf8;
+        }
+
+        .phone-logo {
+            width: 68px;
+            height: 68px;
+            border-radius: 20px;
+            display: grid;
+            place-items: center;
+            margin-bottom: 24px;
+            font-size: 32px;
+            font-weight: 900;
+            color: white;
+            background: linear-gradient(135deg, #0ea5e9, #6366f1);
+            box-shadow: 0 0 30px rgba(56,189,248,.4);
+        }
+
+        .phone-screen h2 {
+            font-size: 21px;
+            line-height: 1.2;
+            letter-spacing: -.7px;
+            margin-bottom: 12px;
+        }
+
+        .phone-screen h2 span {
+            display: block;
+            color: #38bdf8;
+        }
+
+        .phone-screen p {
+            font-size: 10px;
+            color: #cbd5e1;
+            line-height: 1.6;
+            margin-bottom: 24px;
+        }
+
+        .phone-screen-button {
+            display: inline-block;
+            padding: 9px 16px;
+            border-radius: 20px;
+            background: linear-gradient(135deg, #0ea5e9, #6366f1);
+            color: white;
+            font-size: 10px;
+            font-weight: 800;
+            letter-spacing: .4px;
+        }
+
+        .phone-screen-footer {
+            position: absolute;
+            bottom: 22px;
+            color: #64748b;
+            font-size: 8px;
+            letter-spacing: 1.5px;
+        }
+
+        /* FLOATING TECHNOLOGY LABELS */
+
+        .float-card {
+            position: absolute;
+            z-index: 4;
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            padding: 11px 15px;
+            border-radius: 13px;
+            background: rgba(15,35,65,.9);
+            border: 1px solid rgba(56,189,248,.3);
+            box-shadow: 0 12px 30px rgba(0,0,0,.25);
+            backdrop-filter: blur(12px);
+            color: #e0f2fe;
+            font-size: 12px;
+            font-weight: 700;
+            animation: cardFloat 4s ease-in-out infinite;
+        }
+
+        .float-card .float-icon {
+            font-size: 19px;
+        }
+
+        .float-web {
+            top: 75px;
+            left: 0;
+            animation-delay: .3s;
+        }
+
+        .float-ai {
+            top: 175px;
+            right: -5px;
+            animation-delay: 1s;
+        }
+
+        .float-code {
+            bottom: 90px;
+            left: 0;
+            animation-delay: 1.7s;
+        }
+
+        .float-digital {
+            bottom: 45px;
+            right: -10px;
+            animation-delay: .7s;
+        }
+
+        @keyframes phoneFloat {
+            0%, 100% {
+                transform: translateY(0) rotate(-2deg);
+            }
+            50% {
+                transform: translateY(-18px) rotate(2deg);
+            }
+        }
+
+        @keyframes cardFloat {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-12px);
+            }
+        }
+
+        @keyframes glowPulse {
+            from {
+                opacity: .25;
+                transform: scale(.9);
+            }
+            to {
+                opacity: .48;
+                transform: scale(1.1);
+            }
+        }
+
+        @keyframes orbitRotate {
+            from {
+                transform: rotate(0deg);
+            }
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* GENERAL SECTIONS */
 
         .section {
             padding: 85px 0;
@@ -242,6 +525,8 @@
             font-size: 14px;
         }
 
+        /* ABOUT */
+
         .about-content {
             display: grid;
             grid-template-columns: 1.2fr .8fr;
@@ -292,6 +577,8 @@
             font-weight: 700;
         }
 
+        /* CONTACT */
+
         .contact-box {
             text-align: center;
             padding: 55px 25px;
@@ -309,6 +596,8 @@
             color: #dbeafe;
             margin-bottom: 25px;
         }
+
+        /* FOOTER */
 
         footer {
             padding: 28px 0;
@@ -336,6 +625,29 @@
             color: #38bdf8;
         }
 
+        /* TABLET */
+
+        @media (max-width: 950px) {
+            .hero-layout {
+                grid-template-columns: 1fr 1fr;
+                gap: 20px;
+            }
+
+            .phone-showcase {
+                transform: scale(.9);
+            }
+
+            .float-web,
+            .float-code {
+                left: -15px;
+            }
+
+            .float-ai,
+            .float-digital {
+                right: -15px;
+            }
+        }
+
         @media (max-width: 850px) {
             .nav-links {
                 display: none;
@@ -348,6 +660,66 @@
 
             .about-content {
                 grid-template-columns: 1fr;
+            }
+        }
+
+        /* MOBILE */
+
+        @media (max-width: 650px) {
+            .hero {
+                padding: 65px 0 55px;
+            }
+
+            .hero-layout {
+                grid-template-columns: 1fr;
+                text-align: center;
+                gap: 10px;
+            }
+
+            .hero-content {
+                margin: auto;
+            }
+
+            .hero h1 {
+                font-size: clamp(36px, 10vw, 48px);
+                letter-spacing: -1.5px;
+            }
+
+            .hero p {
+                font-size: 16px;
+                margin-left: auto;
+                margin-right: auto;
+            }
+
+            .hero-buttons {
+                justify-content: center;
+            }
+
+            .phone-showcase {
+                min-height: 480px;
+                transform: scale(.88);
+                margin-top: -5px;
+            }
+
+            .phone-orbit {
+                width: 350px;
+                height: 350px;
+            }
+
+            .float-web {
+                left: 0;
+            }
+
+            .float-ai {
+                right: 0;
+            }
+
+            .float-code {
+                left: 0;
+            }
+
+            .float-digital {
+                right: 0;
             }
         }
 
@@ -365,14 +737,6 @@
                 font-size: 12px;
             }
 
-            .hero {
-                padding: 75px 0;
-            }
-
-            .hero p {
-                font-size: 16px;
-            }
-
             .services-grid,
             .projects-grid {
                 grid-template-columns: 1fr;
@@ -385,6 +749,31 @@
             .footer-content {
                 flex-direction: column;
                 text-align: center;
+            }
+        }
+
+        @media (max-width: 390px) {
+            .phone-showcase {
+                transform: scale(.78);
+                margin: -35px -20px;
+            }
+
+            .float-card {
+                padding: 8px 10px;
+                font-size: 10px;
+            }
+        }
+
+        /* ACCESSIBILITY: RESPECT REDUCED MOTION */
+
+        @media (prefers-reduced-motion: reduce) {
+            *,
+            *::before,
+            *::after {
+                scroll-behavior: auto !important;
+                animation-duration: .01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: .01ms !important;
             }
         }
     </style>
@@ -414,10 +803,17 @@
 </header>
 
 <main>
+
+    <!-- HERO SECTION WITH ANIMATED PHONE -->
+
     <section class="hero" id="home">
-        <div class="container">
+        <div class="container hero-layout">
+
             <div class="hero-content">
-                <span class="eyebrow">DIGITAL INNOVATION · SOFTWARE · TECHNOLOGY</span>
+
+                <span class="eyebrow">
+                    DIGITAL INNOVATION · SOFTWARE · TECHNOLOGY
+                </span>
 
                 <h1>
                     Building Digital Solutions for a
@@ -431,17 +827,87 @@
                 </p>
 
                 <div class="hero-buttons">
-                    <a href="#services" class="btn btn-primary">Explore Our Services</a>
-                    <a href="{{ url_for('contact') }}" class="btn btn-outline">Work With Us</a>
+                    <a href="#services" class="btn btn-primary">
+                        Explore Our Services
+                    </a>
+
+                    <a href="{{ url_for('contact') }}" class="btn btn-outline">
+                        Work With Us
+                    </a>
                 </div>
+
             </div>
+
+            <!-- ANIMATED SMARTPHONE -->
+
+            <div class="phone-showcase" aria-label="Pacifique Digital Services animated smartphone illustration">
+
+                <div class="phone-glow"></div>
+                <div class="phone-orbit"></div>
+
+                <div class="float-card float-web">
+                    <span class="float-icon">🌐</span>
+                    <span>Web Development</span>
+                </div>
+
+                <div class="float-card float-ai">
+                    <span class="float-icon">🤖</span>
+                    <span>AI Solutions</span>
+                </div>
+
+                <div class="float-card float-code">
+                    <span class="float-icon">💻</span>
+                    <span>Software</span>
+                </div>
+
+                <div class="float-card float-digital">
+                    <span class="float-icon">🚀</span>
+                    <span>Digital Innovation</span>
+                </div>
+
+                <div class="phone">
+
+                    <div class="phone-screen">
+
+                        <div class="phone-camera"></div>
+
+                        <div class="phone-logo">P</div>
+
+                        <h2>
+                            Pacifique
+                            <span>Digital Services</span>
+                        </h2>
+
+                        <p>
+                            Building digital solutions for a smarter,
+                            connected and innovative future.
+                        </p>
+
+                        <a href="#services" class="phone-screen-button">
+                            EXPLORE MORE
+                        </a>
+
+                        <div class="phone-screen-footer">
+                            INNOVATION · TECHNOLOGY
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
         </div>
     </section>
 
+    <!-- SERVICES -->
+
     <section class="section section-light" id="services">
         <div class="container">
+
             <div class="section-heading">
                 <h2>Our <span class="accent">Services</span></h2>
+
                 <p>
                     Practical technology solutions designed to help you
                     work smarter, serve customers better and grow your business.
@@ -449,6 +915,7 @@
             </div>
 
             <div class="services-grid">
+
                 <article class="service-card">
                     <div class="service-icon">🌐</div>
                     <h3>Website Design & Development</h3>
@@ -502,14 +969,19 @@
                         use and improve your digital tools.
                     </p>
                 </article>
+
             </div>
         </div>
     </section>
 
+    <!-- PROJECTS -->
+
     <section class="section" id="projects">
         <div class="container">
+
             <div class="section-heading">
                 <h2>Our <span class="accent">Projects</span></h2>
+
                 <p>
                     We turn ideas into practical digital products and
                     technology experiences.
@@ -517,6 +989,7 @@
             </div>
 
             <div class="projects-grid">
+
                 <article class="project-card">
                     <h3>StockManager</h3>
                     <p>
@@ -524,6 +997,7 @@
                         businesses manage products, stock movements, sales,
                         cash and reports.
                     </p>
+
                     <a class="project-tag"
                        href="https://stock-management-web-1s8j.onrender.com"
                        target="_blank" rel="noopener noreferrer">
@@ -537,6 +1011,7 @@
                         A digital platform project focused on providing
                         online financial service experiences.
                     </p>
+
                     <a class="project-tag"
                        href="https://koracash.onrender.com"
                        target="_blank" rel="noopener noreferrer">
@@ -550,27 +1025,38 @@
                         Our digital services platform, connecting customers
                         with technology services and job opportunities.
                     </p>
+
                     <a class="project-tag" href="{{ url_for('register') }}">
                         Get Started →
                     </a>
                 </article>
+
             </div>
         </div>
     </section>
 
+    <!-- ABOUT -->
+
     <section class="section section-light" id="about">
         <div class="container about-content">
+
             <div>
-                <h2>Technology That Works for <span class="accent">You.</span></h2>
+                <h2>
+                    Technology That Works for
+                    <span class="accent">You.</span>
+                </h2>
+
                 <p>
                     Pacifique Digital Services is focused on building useful,
                     accessible and modern digital solutions.
                 </p>
+
                 <p>
                     Our goal is to help businesses, entrepreneurs and
                     individuals use technology to solve problems, improve
                     productivity and discover new opportunities.
                 </p>
+
                 <a href="{{ url_for('about') }}" class="btn btn-primary">
                     Learn More About Us
                 </a>
@@ -578,6 +1064,7 @@
 
             <div class="about-panel">
                 <h3>Why Choose Us?</h3>
+
                 <ul>
                     <li>Solutions designed around your needs</li>
                     <li>Modern and responsive technology</li>
@@ -586,13 +1073,19 @@
                     <li>Commitment to digital innovation</li>
                 </ul>
             </div>
+
         </div>
     </section>
 
+    <!-- CONTACT -->
+
     <section class="section" id="contact">
         <div class="container">
+
             <div class="contact-box">
+
                 <h2>Have a Project in Mind?</h2>
+
                 <p>
                     Let's discuss how technology can help you achieve
                     your goals.
@@ -607,13 +1100,18 @@
                    target="_blank" rel="noopener noreferrer">
                     Chat on WhatsApp
                 </a>
+
             </div>
         </div>
     </section>
+
 </main>
+
+<!-- FOOTER -->
 
 <footer>
     <div class="container footer-content">
+
         <p>
             © Pacifique Digital Services. All rights reserved.
         </p>
@@ -624,6 +1122,7 @@
             <a href="{{ url_for('privacy_policy') }}">Privacy Policy</a>
             <a href="{{ url_for('login') }}">Login</a>
         </div>
+
     </div>
 </footer>
 
