@@ -10,7 +10,7 @@ from datetime import datetime
 from dotenv import load_dotenv
 from flask import (
     Flask, render_template, request, redirect, url_for,
-    flash, abort, send_from_directory
+    flash, abort, send_from_directory, Response
 )
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import (
