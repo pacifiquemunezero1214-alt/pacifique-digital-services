@@ -7,3 +7,4 @@ SQLAlchemy
 itsdangerous
 gunicorn
 psycopg2-binary
+resend

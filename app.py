@@ -695,53 +695,45 @@ def email_looks_valid(value):
     ) is not None
 
 
+
 def send_password_reset_email(user, reset_url):
-    required_settings = (
-        app.config["MAIL_SERVER"],
-        app.config["MAIL_USERNAME"],
-        app.config["MAIL_PASSWORD"],
-        app.config["MAIL_DEFAULT_SENDER"],
+    api_key = os.getenv("RESEND_API_KEY")
+    sender = os.getenv(
+        "RESEND_FROM_EMAIL",
+        "onboarding@resend.dev"
     )
 
-    if not all(required_settings):
-        app.logger.warning("SMTP settings are incomplete.")
+    if not api_key:
+        app.logger.error("RESEND_API_KEY is missing.")
         return False
 
-    message = EmailMessage()
-    message["Subject"] = "Reset your Pacifique Digital Services password"
-    message["From"] = app.config["MAIL_DEFAULT_SENDER"]
-    message["To"] = user.email
-
-    message.set_content(
-        f"Hello {user.full_name or user.username},\n\n"
-        "We received a request to reset your password.\n"
-        "Use this link to choose a new password. It expires in 1 hour.\n\n"
-        f"{reset_url}\n\n"
-        "If you did not request this, ignore this email.\n"
-    )
-
     try:
-        with smtplib.SMTP(
-            app.config["MAIL_SERVER"],
-            app.config["MAIL_PORT"],
-            timeout=20,
-        ) as smtp:
-            smtp.ehlo()
+        import resend
 
-            if app.config["MAIL_USE_TLS"]:
-                smtp.starttls()
-                smtp.ehlo()
+        resend.api_key = api_key
 
-            smtp.login(
-                app.config["MAIL_USERNAME"],
-                app.config["MAIL_PASSWORD"],
+        params = {
+            "from": sender,
+            "to": [user.email],
+            "subject": "Reset your Pacifique Digital Services password",
+            "text": (
+                f"Hello {user.full_name or user.username},\n\n"
+                "We received a request to reset your password.\n"
+                "Use the link below to choose a new password. "
+                "It expires in 1 hour.\n\n"
+                f"{reset_url}\n\n"
+                "If you did not request this, ignore this email.\n"
             )
-            smtp.send_message(message)
+        }
 
+        resend.Emails.send(params)
+        app.logger.info("Password reset email sent successfully.")
         return True
 
-    except (OSError, smtplib.SMTPException):
-        app.logger.exception("Could not send password reset email.")
+    except Exception:
+        app.logger.exception(
+            "Could not send password reset email through Resend."
+        )
         return False
 
 
