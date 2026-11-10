@@ -67,12 +67,19 @@
                             The examination period has ended.
                         </div>
 
-                    {% else %}
-                        <div class="alert alert-success small mb-0">
-                            <strong>Examination Available</strong><br>
-                            The examination is currently within its scheduled time.
-                        </div>
-                    {% endif %}
+
+{% else %}
+    <div class="alert alert-success small mb-3">
+        <strong>Examination Available</strong><br>
+        The examination is currently within its scheduled time.
+    </div>
+
+    <a href="{{ url_for('start_quiz', exam_id=exam.id) }}"
+       class="btn btn-primary w-100">
+        📝 Start Examination
+    </a>
+{% endif %}
+
 
                 </div>
             </div>
