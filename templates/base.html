@@ -541,7 +541,18 @@
                    href="{{ url_for('settings') }}">
                     <span class="nav-icon">⚙</span> Settings
                 </a>
-
+<a class="{% if request.endpoint in [
+    'manager_quizzes',
+    'create_quiz',
+    'publish_quiz',
+    'close_quiz',
+    'manage_quiz_questions',
+    'manager_quiz_attempts',
+    'review_quiz_attempt'
+] %}active{% endif %}"
+   href="{{ url_for('manager_quizzes') }}">
+    <span class="nav-icon">📝</span> Manage Online Quiz
+</a>
             {% else %}
 
                 <a class="{% if request.endpoint == 'user_dashboard' %}active{% endif %}"
@@ -577,6 +588,21 @@
 ] %}active{% endif %}"
    href="{{ url_for('job_connect') }}">
     <span class="nav-icon">💼</span> Job Connect
+</a>
+<!-- ONLINE QUIZ -->
+<a class="{% if request.endpoint in [
+    'available_quizzes',
+    'start_quiz',
+    'take_quiz',
+    'quiz_results'
+] %}active{% endif %}"
+   href="{{ url_for('available_quizzes') }}">
+    <span class="nav-icon">📝</span> Online Quiz
+</a>
+
+<a class="{% if request.endpoint == 'quiz_results' %}active{% endif %}"
+   href="{{ url_for('quiz_results') }}">
+    <span class="nav-icon">🏆</span> My Quiz Results
 </a>
 
                 <a class="{% if request.endpoint == 'contact' %}active{% endif %}"

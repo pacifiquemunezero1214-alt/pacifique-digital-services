@@ -1,0 +1,115 @@
+
+{% extends "base.html" %}
+
+{% block title %}Manage Quiz Questions - Pacifique Digital Services{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4">
+        <div>
+            <h2 class="fw-bold">Manage Quiz Questions</h2>
+            <p class="text-muted mb-0">{{ exam.title }}</p>
+        </div>
+        <a href="{{ url_for('manager_quizzes') }}" class="btn btn-outline-secondary">
+            Back to Quizzes
+        </a>
+    </div>
+
+    <div class="card shadow-sm border-0 mb-4">
+        <div class="card-body p-4">
+            <h4 class="mb-3">Add New Question</h4>
+
+            <form method="POST">
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Question</label>
+                    <textarea
+                        name="question_text"
+                        class="form-control"
+                        rows="3"
+                        maxlength="3000"
+                        required
+                        placeholder="Write your question here..."
+                    ></textarea>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Answer Options</label>
+
+                    {% for letter in ['A', 'B', 'C', 'D'] %}
+                    <div class="input-group mb-2">
+                        <span class="input-group-text">{{ letter }}</span>
+                        <input
+                            type="text"
+                            name="options"
+                            class="form-control"
+                            maxlength="1000"
+                            placeholder="Enter option {{ letter }}"
+                            {% if letter in ['A', 'B'] %}required{% endif %}
+                        >
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Correct Answer</label>
+                    <select name="correct_option" class="form-select" required>
+                        <option value="">Choose the correct option</option>
+                        <option value="0">Option A</option>
+                        <option value="1">Option B</option>
+                        <option value="2">Option C</option>
+                        <option value="3">Option D</option>
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Marks</label>
+                    <input
+                        type="number"
+                        name="marks"
+                        class="form-control"
+                        min="0.1"
+                        step="0.1"
+                        value="1"
+                        required
+                    >
+                </div>
+
+                <button type="submit" class="btn btn-primary px-4">
+                    Save Question
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <div class="card shadow-sm border-0">
+        <div class="card-body p-4">
+            <h4 class="mb-3">Questions Added ({{ exam.questions|length }})</h4>
+
+            {% for question in exam.questions|sort(attribute='position') %}
+            <div class="border rounded-3 p-3 mb-3">
+                <div class="d-flex justify-content-between">
+                    <strong>Question {{ loop.index }}</strong>
+                    <span class="badge bg-primary">{{ question.marks }} marks</span>
+                </div>
+
+                <p class="mt-2 mb-2">{{ question.question_text }}</p>
+
+                {% for option in question.options|sort(attribute='position') %}
+                <div class="small mb-1">
+                    {% if option.is_correct %}
+                    <span class="text-success fw-bold">
+                        ✓ {{ option.option_text }} (Correct answer)
+                    </span>
+                    {% else %}
+                    <span>{{ option.option_text }}</span>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <p class="text-muted">No questions have been added yet.</p>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

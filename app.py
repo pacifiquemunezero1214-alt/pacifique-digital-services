@@ -5,7 +5,7 @@ import uuid
 import smtplib
 from functools import wraps
 from email.message import EmailMessage
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from dotenv import load_dotenv
 from flask import (
@@ -408,6 +408,268 @@ class JobApplication(db.Model):
 
 
 
+
+# =========================================================
+# NEWSLETTER DATABASE MODELS
+# =========================================================
+
+class NewsletterSubscription(db.Model):
+    __tablename__ = "newsletter_subscriptions"
+
+    id = db.Column(db.Integer, primary_key=True)
+
+    user_id = db.Column(
+        db.Integer,
+        db.ForeignKey("user.id"),
+        nullable=False,
+        unique=True,
+        index=True
+    )
+
+    email = db.Column(db.String(120), nullable=False)
+    active = db.Column(db.Boolean, default=True, nullable=False)
+    unsubscribe_token = db.Column(
+        db.String(100),
+        unique=True,
+        nullable=False,
+        index=True
+    )
+
+    consent_at = db.Column(db.DateTime, default=datetime.utcnow)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(
+        db.DateTime,
+        default=datetime.utcnow,
+        onupdate=datetime.utcnow
+    )
+
+    user = db.relationship("User", backref="newsletter_subscription")
+
+
+class NewsletterIssue(db.Model):
+    __tablename__ = "newsletter_issues"
+
+    id = db.Column(db.Integer, primary_key=True)
+
+    issue_date = db.Column(
+        db.Date,
+        nullable=False,
+        unique=True,
+        index=True
+    )
+
+    title = db.Column(db.String(200), nullable=False)
+
+    company_updates = db.Column(db.Text, default="")
+    job_connect_alerts = db.Column(db.Text, default="")
+    business_technology_tips = db.Column(db.Text, default="")
+    important_announcements = db.Column(db.Text, default="")
+
+    status = db.Column(db.String(30), default="Draft", nullable=False)
+
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    published_at = db.Column(db.DateTime, nullable=True)
+
+
+class NewsletterDelivery(db.Model):
+    __tablename__ = "newsletter_deliveries"
+
+    id = db.Column(db.Integer, primary_key=True)
+
+    subscriber_id = db.Column(
+        db.Integer,
+        db.ForeignKey("newsletter_subscriptions.id"),
+        nullable=False,
+        index=True
+    )
+
+    issue_id = db.Column(
+        db.Integer,
+        db.ForeignKey("newsletter_issues.id"),
+        nullable=False,
+        index=True
+    )
+
+    status = db.Column(db.String(30), default="Pending", nullable=False)
+    sent_at = db.Column(db.DateTime, nullable=True)
+    error_message = db.Column(db.Text, default="")
+
+    subscriber = db.relationship("NewsletterSubscription")
+    issue = db.relationship("NewsletterIssue")
+
+    __table_args__ = (
+        db.UniqueConstraint(
+            "subscriber_id",
+            "issue_id",
+            name="unique_newsletter_delivery"
+        ),
+    )
+
+# ==========================================================
+# PACIFIQUE DIGITAL SERVICES - ONLINE QUIZ SYSTEM
+# ==========================================================
+
+class QuizExam(db.Model):
+    __tablename__ = "quiz_exams"
+
+    id = db.Column(db.Integer, primary_key=True)
+    creator_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
+    title = db.Column(db.String(200), nullable=False)
+    instructions = db.Column(db.Text)
+    password_hash = db.Column(db.String(255), nullable=False)
+    start_at = db.Column(db.DateTime, nullable=False)  # UTC
+    end_at = db.Column(db.DateTime, nullable=False)    # UTC
+    pass_mark = db.Column(db.Float, default=50)
+    status = db.Column(db.String(20), default="Draft")
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    questions = db.relationship(
+        "QuizQuestion",
+        backref="exam",
+        cascade="all, delete-orphan",
+        lazy=True
+    )
+
+
+class QuizQuestion(db.Model):
+    __tablename__ = "quiz_questions"
+
+    id = db.Column(db.Integer, primary_key=True)
+    exam_id = db.Column(db.Integer, db.ForeignKey("quiz_exams.id"), nullable=False)
+    question_text = db.Column(db.Text, nullable=False)
+    marks = db.Column(db.Float, default=1)
+    position = db.Column(db.Integer, default=0)
+
+    options = db.relationship(
+        "QuizOption",
+        backref="question",
+        cascade="all, delete-orphan",
+        lazy=True
+    )
+
+
+class QuizOption(db.Model):
+    __tablename__ = "quiz_options"
+
+    id = db.Column(db.Integer, primary_key=True)
+    question_id = db.Column(
+        db.Integer,
+        db.ForeignKey("quiz_questions.id"),
+        nullable=False
+    )
+    option_text = db.Column(db.Text, nullable=False)
+    is_correct = db.Column(db.Boolean, default=False)
+    position = db.Column(db.Integer, default=0)
+
+
+class QuizAttempt(db.Model):
+    __tablename__ = "quiz_attempts"
+
+    id = db.Column(db.Integer, primary_key=True)
+    exam_id = db.Column(db.Integer, db.ForeignKey("quiz_exams.id"), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
+    started_at = db.Column(db.DateTime)
+    submitted_at = db.Column(db.DateTime)
+    score = db.Column(db.Float, default=0)
+    status = db.Column(db.String(30), default="In Progress")
+    review_status = db.Column(db.String(20), default="Pending")
+    review_reason = db.Column(db.Text)
+
+    answers = db.relationship(
+        "QuizAnswer",
+        backref="attempt",
+        cascade="all, delete-orphan",
+        lazy=True
+    )
+events = db.relationship(
+    "QuizEvent",
+    backref="attempt",
+    cascade="all, delete-orphan",
+    lazy=True
+)
+
+class QuizAnswer(db.Model):
+    __tablename__ = "quiz_answers"
+
+    id = db.Column(db.Integer, primary_key=True)
+    attempt_id = db.Column(
+        db.Integer,
+        db.ForeignKey("quiz_attempts.id"),
+        nullable=False
+    )
+    question_id = db.Column(
+        db.Integer,
+        db.ForeignKey("quiz_questions.id"),
+        nullable=False
+    )
+    option_id = db.Column(db.Integer, db.ForeignKey("quiz_options.id"))
+    awarded_marks = db.Column(db.Float, default=0)
+
+
+class QuizEvent(db.Model):
+    __tablename__ = "quiz_events"
+
+    id = db.Column(db.Integer, primary_key=True)
+    attempt_id = db.Column(
+        db.Integer,
+        db.ForeignKey("quiz_attempts.id"),
+        nullable=False
+    )
+    event_type = db.Column(db.String(80), nullable=False)
+    details = db.Column(db.Text)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+# ==========================================================
+# ONLINE QUIZ - HELPER FUNCTIONS
+# ==========================================================
+
+def quiz_now_utc():
+    """Use UTC as the authoritative server time."""
+    return datetime.utcnow()
+
+
+def quiz_kigali_to_utc(value):
+    """Convert an Africa/Kigali local datetime input to UTC."""
+    local_time = datetime.fromisoformat(value)
+    return local_time - timedelta(hours=2)
+
+
+def quiz_utc_to_kigali(value):
+    """Convert a stored UTC datetime to Kigali local time."""
+    if not value:
+        return None
+    return value + timedelta(hours=2)
+
+
+def quiz_is_available(exam):
+    """An exam is available only during its configured time window."""
+    now = quiz_now_utc()
+    return (
+        exam.status == "Published"
+        and exam.start_at <= now < exam.end_at
+    )
+
+
+def quiz_has_ended(exam):
+    return quiz_now_utc() >= exam.end_at
+
+
+def quiz_total_marks(exam):
+    return sum(question.marks or 0 for question in exam.questions)
+
+
+def quiz_log_event(attempt_id, event_type, details=None):
+    event = QuizEvent(
+        attempt_id=attempt_id,
+        event_type=event_type,
+        details=details
+    )
+    db.session.add(event)
+    db.session.commit()
+
+
+
+
 # =========================================================
 # LOGIN MANAGER
 # =========================================================
@@ -736,6 +998,510 @@ def send_password_reset_email(user, reset_url):
         )
         return False
 
+# ==========================================================
+# ONLINE QUIZ - MANAGER ROUTES
+# ==========================================================
+
+@app.route("/manager/quizzes", methods=["GET"])
+@login_required
+@manager_required
+def manager_quizzes():
+    exams = QuizExam.query.order_by(QuizExam.created_at.desc()).all()
+    return render_template("manager_quizzes.html", exams=exams)
+
+
+@app.route("/manager/quizzes/create", methods=["GET", "POST"])
+@login_required
+@manager_required
+def create_quiz():
+    if request.method == "POST":
+        title = request.form.get("title", "").strip()
+        instructions = request.form.get("instructions", "").strip()
+        password = request.form.get("password", "")
+        start_value = request.form.get("start_at", "")
+        end_value = request.form.get("end_at", "")
+        pass_mark = request.form.get("pass_mark", "50")
+
+        if not all([title, password, start_value, end_value]):
+            flash("Please complete all required fields.", "danger")
+            return redirect(url_for("create_quiz"))
+
+        try:
+            start_at = quiz_kigali_to_utc(start_value)
+            end_at = quiz_kigali_to_utc(end_value)
+            pass_mark = float(pass_mark)
+        except (ValueError, TypeError):
+            flash("Please enter valid dates and pass mark.", "danger")
+            return redirect(url_for("create_quiz"))
+
+        if end_at <= start_at:
+            flash("Exam end time must be after its start time.", "danger")
+            return redirect(url_for("create_quiz"))
+
+        if not 0 <= pass_mark <= 100:
+            flash("Pass mark must be between 0 and 100.", "danger")
+            return redirect(url_for("create_quiz"))
+
+        exam = QuizExam(
+            creator_id=current_user.id,
+            title=title,
+            instructions=instructions,
+            password_hash=generate_password_hash(password),
+            start_at=start_at,
+            end_at=end_at,
+            pass_mark=pass_mark,
+            status="Draft"
+        )
+
+        db.session.add(exam)
+        db.session.commit()
+
+        flash("Quiz created successfully. Add questions before publishing.", "success")
+        return redirect(url_for("manager_quizzes"))
+
+    return render_template("create_quiz.html")
+
+
+@app.route("/manager/quizzes/<int:exam_id>/publish", methods=["POST"])
+@login_required
+@manager_required
+def publish_quiz(exam_id):
+    exam = QuizExam.query.get_or_404(exam_id)
+
+    if not exam.questions:
+        flash("Add at least one question before publishing.", "danger")
+        return redirect(url_for("manager_quizzes"))
+
+    if exam.end_at <= exam.start_at:
+        flash("The exam schedule is invalid.", "danger")
+        return redirect(url_for("manager_quizzes"))
+
+    exam.status = "Published"
+    db.session.commit()
+
+    flash("Quiz published successfully.", "success")
+    return redirect(url_for("manager_quizzes"))
+
+
+@app.route("/manager/quizzes/<int:exam_id>/close", methods=["POST"])
+@login_required
+@manager_required
+def close_quiz(exam_id):
+    exam = QuizExam.query.get_or_404(exam_id)
+    exam.status = "Closed"
+    db.session.commit()
+
+    flash("Quiz closed.", "success")
+    return redirect(url_for("manager_quizzes"))
+
+# ==========================================================
+# ONLINE QUIZ - ADD QUESTIONS
+# ==========================================================
+
+@app.route("/manager/quizzes/<int:exam_id>/questions", methods=["GET", "POST"])
+@login_required
+@manager_required
+def manage_quiz_questions(exam_id):
+    exam = QuizExam.query.get_or_404(exam_id)
+
+    if exam.status != "Draft":
+        flash("Questions can only be changed while the quiz is a draft.", "danger")
+        return redirect(url_for("manager_quizzes"))
+
+    if request.method == "POST":
+        question_text = request.form.get("question_text", "").strip()
+        options = [
+            value.strip()
+            for value in request.form.getlist("options")
+            if value.strip()
+        ]
+        correct_option = request.form.get("correct_option", "")
+        marks = request.form.get("marks", "1")
+
+        if not question_text or len(options) < 2:
+            flash("Enter a question and at least two options.", "danger")
+            return redirect(url_for("manage_quiz_questions", exam_id=exam.id))
+
+        try:
+            marks = float(marks)
+            correct_index = int(correct_option)
+
+            if marks <= 0 or not 0 <= correct_index < len(options):
+                raise ValueError
+        except (ValueError, TypeError):
+            flash("Enter valid marks and select the correct answer.", "danger")
+            return redirect(url_for("manage_quiz_questions", exam_id=exam.id))
+
+        question = QuizQuestion(
+            exam_id=exam.id,
+            question_text=question_text,
+            marks=marks,
+            position=len(exam.questions) + 1
+        )
+
+        db.session.add(question)
+        db.session.flush()
+
+        for index, option_text in enumerate(options):
+            option = QuizOption(
+                question_id=question.id,
+                option_text=option_text,
+                is_correct=(index == correct_index),
+                position=index + 1
+            )
+            db.session.add(option)
+
+        db.session.commit()
+
+        flash("Question added successfully.", "success")
+        return redirect(url_for("manage_quiz_questions", exam_id=exam.id))
+
+    return render_template(
+        "manage_quiz_questions.html",
+        exam=exam
+    )
+# =========================================================
+# USER ONLINE QUIZZES
+# =========================================================
+@app.route("/quizzes")
+@login_required
+def available_quizzes():
+    exams = QuizExam.query.filter(
+        QuizExam.status == "Published"
+    ).order_by(QuizExam.start_at.asc()).all()
+
+    now = quiz_now_utc()
+
+    return render_template(
+        "available_quizzes.html",
+        exams=exams,
+        now=now,
+        quiz_utc_to_kigali=quiz_utc_to_kigali
+    )
+
+# =========================================================
+# START ONLINE QUIZ
+# =========================================================
+
+@app.route("/quizzes/<int:exam_id>/start", methods=["GET", "POST"])
+@login_required
+def start_quiz(exam_id):
+    exam = QuizExam.query.get_or_404(exam_id)
+    now = quiz_now_utc()
+
+    if exam.status != "Published":
+        flash("This quiz is not available.", "danger")
+        return redirect(url_for("available_quizzes"))
+
+    if now < exam.start_at:
+        flash("This quiz has not started yet.", "warning")
+        return redirect(url_for("available_quizzes"))
+
+    if now >= exam.end_at:
+        flash("This quiz has already ended.", "danger")
+        return redirect(url_for("available_quizzes"))
+
+    existing_attempt = QuizAttempt.query.filter_by(
+        exam_id=exam.id,
+        user_id=current_user.id
+    ).first()
+
+    if existing_attempt:
+        if existing_attempt.status == "In Progress":
+            return redirect(
+                url_for("take_quiz", attempt_id=existing_attempt.id)
+            )
+
+        flash("You have already submitted this quiz.", "info")
+        return redirect(url_for("available_quizzes"))
+
+    if request.method == "POST":
+        password = request.form.get("password", "")
+
+        if not check_password_hash(exam.password_hash, password):
+            flash("Incorrect quiz password.", "danger")
+            return redirect(url_for("start_quiz", exam_id=exam.id))
+
+        attempt = QuizAttempt(
+            exam_id=exam.id,
+            user_id=current_user.id,
+            started_at=now,
+            status="In Progress",
+            review_status="Pending"
+        )
+
+        db.session.add(attempt)
+        db.session.commit()
+
+        return redirect(
+            url_for("take_quiz", attempt_id=attempt.id)
+        )
+
+    return render_template(
+    "start_quiz.html",
+    exam=exam,
+    quiz_utc_to_kigali=quiz_utc_to_kigali
+)
+
+
+# =========================================================
+# TAKE AND SUBMIT ONLINE QUIZ
+# =========================================================
+
+@app.route("/quizzes/attempt/<int:attempt_id>", methods=["GET", "POST"])
+@login_required
+def take_quiz(attempt_id):
+    attempt = QuizAttempt.query.get_or_404(attempt_id)
+
+    if attempt.user_id != current_user.id:
+        abort(403)
+
+    exam = QuizExam.query.get_or_404(attempt.exam_id)
+
+    if attempt.status != "In Progress":
+        flash("This quiz has already been submitted.", "info")
+        return redirect(url_for("available_quizzes"))
+
+    now = quiz_now_utc()
+
+    if now >= exam.end_at:
+        attempt.status = "Submitted"
+        attempt.submitted_at = exam.end_at
+        db.session.commit()
+        flash("The quiz time has ended.", "warning")
+        return redirect(url_for("available_quizzes"))
+
+    if request.method == "POST":
+        total_score = 0
+
+        for question in exam.questions:
+            selected_option_id = request.form.get(
+                f"question_{question.id}"
+            )
+
+            if not selected_option_id:
+                continue
+
+            selected_option = QuizOption.query.filter_by(
+                id=selected_option_id,
+                question_id=question.id
+            ).first()
+
+            if not selected_option:
+                continue
+
+            awarded_marks = (
+                question.marks if selected_option.is_correct else 0
+            )
+
+            answer = QuizAnswer(
+                attempt_id=attempt.id,
+                question_id=question.id,
+                option_id=selected_option.id,
+                awarded_marks=awarded_marks
+            )
+
+            db.session.add(answer)
+            total_score += awarded_marks
+
+        attempt.score = total_score
+        attempt.status = "Submitted"
+        attempt.submitted_at = quiz_now_utc()
+        attempt.review_status = "Pending"
+
+        db.session.commit()
+
+        flash(
+            f"Quiz submitted. Your score: "
+            f"{total_score} / {quiz_total_marks(exam)}. "
+            "Your result is awaiting review.",
+            "success"
+        )
+
+        return redirect(url_for("available_quizzes"))
+
+    questions = list(exam.questions)
+    questions.sort(key=lambda item: uuid.uuid4().hex)
+
+    quiz_items = []
+
+    for question in questions:
+        options = list(question.options)
+        options.sort(key=lambda item: uuid.uuid4().hex)
+
+        quiz_items.append({
+            "question": question,
+            "options": options
+        })
+
+    return render_template(
+        "take_quiz.html",
+        exam=exam,
+        attempt=attempt,
+        quiz_items=quiz_items,
+        total_marks=quiz_total_marks(exam),
+        quiz_utc_to_kigali=quiz_utc_to_kigali
+    )
+
+# =========================================================
+# ONLINE QUIZ - SECURITY EVENT LOGGING
+# =========================================================
+
+@app.route(
+    "/quizzes/attempt/<int:attempt_id>/event",
+    methods=["POST"]
+)
+@login_required
+def quiz_record_event(attempt_id):
+    attempt = QuizAttempt.query.get_or_404(attempt_id)
+
+    if attempt.user_id != current_user.id:
+        abort(403)
+
+    if attempt.status != "In Progress":
+        return {"success": False, "message": "Attempt closed"}, 400
+
+    exam = QuizExam.query.get_or_404(attempt.exam_id)
+
+    if quiz_now_utc() >= exam.end_at:
+        attempt.status = "Submitted"
+        attempt.submitted_at = exam.end_at
+        db.session.commit()
+        return {"success": False, "message": "Exam ended"}, 400
+
+    event_type = request.form.get("event_type", "unknown")
+    allowed_events = {
+        "tab_switch",
+        "fullscreen_exit",
+        "copy_attempt",
+        "paste_attempt",
+        "right_click"
+    }
+
+    if event_type not in allowed_events:
+        return {"success": False, "message": "Invalid event"}, 400
+
+    quiz_log_event(
+        attempt.id,
+        event_type,
+        "Candidate security event recorded"
+    )
+
+    return {"success": True}, 200
+
+# =========================================================
+# ONLINE QUIZ - STUDENT RESULTS
+# =========================================================
+
+@app.route("/quiz-results")
+@login_required
+def quiz_results():
+    attempts = QuizAttempt.query.filter_by(
+        user_id=current_user.id
+    ).order_by(QuizAttempt.started_at.desc()).all()
+
+    results = []
+
+    for attempt in attempts:
+        exam = QuizExam.query.get(attempt.exam_id)
+        if exam:
+            results.append({
+                "attempt": attempt,
+                "exam": exam,
+                "total_marks": quiz_total_marks(exam)
+            })
+
+    return render_template(
+        "quiz_results.html",
+        results=results
+    )
+
+
+# =========================================================
+# ONLINE QUIZ - MANAGER PARTICIPANTS AND REVIEW
+# =========================================================
+
+@app.route("/manager/quizzes/<int:exam_id>/attempts")
+@login_required
+@manager_required
+def manager_quiz_attempts(exam_id):
+    exam = QuizExam.query.get_or_404(exam_id)
+
+    attempts = QuizAttempt.query.filter_by(
+        exam_id=exam.id
+    ).order_by(QuizAttempt.started_at.desc()).all()
+
+    attempt_rows = []
+
+    for attempt in attempts:
+        student = db.session.get(User, attempt.user_id)
+        attempt_rows.append({
+            "attempt": attempt,
+            "student": student
+        })
+
+    return render_template(
+        "manager_quiz_attempts.html",
+        exam=exam,
+        attempt_rows=attempt_rows,
+        total_marks=quiz_total_marks(exam)
+    )
+
+
+@app.route(
+    "/manager/quizzes/attempt/<int:attempt_id>/review",
+    methods=["POST"]
+)
+@login_required
+@manager_required
+def review_quiz_attempt(attempt_id):
+    attempt = QuizAttempt.query.get_or_404(attempt_id)
+
+    if attempt.status != "Submitted":
+        flash("Only submitted attempts can be reviewed.", "danger")
+        return redirect(
+            url_for(
+                "manager_quiz_attempts",
+                exam_id=attempt.exam_id
+            )
+        )
+
+    decision = request.form.get("decision", "").strip()
+    reason = request.form.get("reason", "").strip()
+
+    if decision not in ("Approved", "Rejected"):
+        flash("Invalid review decision.", "danger")
+        return redirect(
+            url_for(
+                "manager_quiz_attempts",
+                exam_id=attempt.exam_id
+            )
+        )
+
+    if decision == "Rejected" and not reason:
+        flash("Please provide a reason for rejection.", "danger")
+        return redirect(
+            url_for(
+                "manager_quiz_attempts",
+                exam_id=attempt.exam_id
+            )
+        )
+
+    attempt.review_status = decision
+    attempt.review_reason = reason if decision == "Rejected" else ""
+
+    db.session.commit()
+
+    flash("Quiz result review saved successfully.", "success")
+    return redirect(
+        url_for(
+            "manager_quiz_attempts",
+            exam_id=attempt.exam_id
+        )
+    )
+
+
+
 
 # =========================================================
 # PUBLIC HOME / LANDING PAGE
@@ -972,6 +1738,22 @@ def register():
 
         try:
             db.session.add(new_user)
+            db.session.flush()
+
+            # Subscribe only when the user explicitly opts in.
+            newsletter_opt_in = (
+                request.form.get("newsletter_opt_in") == "on"
+            )
+
+            if newsletter_opt_in:
+                subscription = NewsletterSubscription(
+                    user_id=new_user.id,
+                    email=new_user.email,
+                    active=True,
+                    unsubscribe_token=uuid.uuid4().hex
+                )
+                db.session.add(subscription)
+
             db.session.commit()
 
             flash(

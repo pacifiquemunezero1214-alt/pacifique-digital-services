@@ -1,0 +1,123 @@
+
+{% extends "base.html" %}
+
+{% block title %}Manage Online Quizzes - Pacifique Digital Services{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
+        <div>
+            <h2 class="fw-bold mb-1">Online Quiz Management</h2>
+            <p class="text-muted mb-0">Create, manage and publish online examinations.</p>
+        </div>
+
+        <a href="{{ url_for('create_quiz') }}" class="btn btn-primary">
+            + Create New Quiz
+        </a>
+    </div>
+
+    {% if exams %}
+    <div class="row g-4">
+
+        {% for exam in exams %}
+        <div class="col-12 col-md-6 col-xl-4">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body p-4">
+
+                    <div class="d-flex justify-content-between align-items-start gap-2 mb-3">
+                        <h5 class="fw-bold mb-0">{{ exam.title }}</h5>
+
+                        {% if exam.status == "Published" %}
+                            <span class="badge bg-success">Published</span>
+                        {% elif exam.status == "Closed" %}
+                            <span class="badge bg-danger">Closed</span>
+                        {% else %}
+                            <span class="badge bg-secondary">Draft</span>
+                        {% endif %}
+                    </div>
+
+                    <p class="text-muted small">
+                        {{ exam.instructions or "No instructions provided." }}
+                    </p>
+
+                    <hr>
+
+                    <div class="small mb-2">
+                        <strong>Questions:</strong> {{ exam.questions|length }}
+                    </div>
+
+                    <div class="small mb-2">
+                        <strong>Total Marks:</strong> {{ exam.questions|sum(attribute='marks') }}
+                    </div>
+
+                    <div class="small mb-2">
+                        <strong>Pass Mark:</strong> {{ exam.pass_mark }}%
+                    </div>
+
+                    <div class="small mb-2">
+                        <strong>Starts:</strong>
+                        {{ exam.start_at.strftime('%Y-%m-%d %H:%M') }}
+                        <span class="text-muted">(Kigali time)</span>
+                    </div>
+
+                    <div class="small mb-3">
+                        <strong>Ends:</strong>
+                        {{ exam.end_at.strftime('%Y-%m-%d %H:%M') }}
+                        <span class="text-muted">(Kigali time)</span>
+                    </div>
+
+                    <div class="d-grid gap-2">
+
+                        {% if exam.status == "Draft" %}
+                        <a
+                            href="{{ url_for('manage_quiz_questions', exam_id=exam.id) }}"
+                            class="btn btn-outline-primary"
+                        >
+                            Manage Questions
+                        </a>
+
+                        <form
+                            method="POST"
+                            action="{{ url_for('publish_quiz', exam_id=exam.id) }}"
+                            onsubmit="return confirm('Are you sure you want to publish this quiz?');"
+                        >
+                            <button type="submit" class="btn btn-success w-100">
+                                Publish Quiz
+                            </button>
+                        </form>
+                        {% endif %}
+
+                        {% if exam.status == "Published" %}
+                        <form
+                            method="POST"
+                            action="{{ url_for('close_quiz', exam_id=exam.id) }}"
+                            onsubmit="return confirm('Are you sure you want to close this quiz?');"
+                        >
+                            <button type="submit" class="btn btn-danger w-100">
+                                Close Quiz
+                            </button>
+                        </form>
+                        {% endif %}
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+
+    </div>
+    {% else %}
+    <div class="card border-0 shadow-sm">
+        <div class="card-body text-center py-5">
+            <h4>No quizzes created yet</h4>
+            <p class="text-muted">Create your first online examination.</p>
+            <a href="{{ url_for('create_quiz') }}" class="btn btn-primary">
+                Create Your First Quiz
+            </a>
+        </div>
+    </div>
+    {% endif %}
+
+</div>
+{% endblock %}

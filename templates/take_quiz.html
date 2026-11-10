@@ -1,0 +1,104 @@
+
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <h2>{{ exam.title }}</h2>
+            <p>{{ exam.instructions }}</p>
+            <p><strong>Total Marks:</strong> {{ total_marks }}</p>
+            <p class="text-danger">
+                Submit before the official exam end time.
+            </p>
+            <div id="quiz-countdown" class="fw-bold fs-5"></div>
+        </div>
+    </div>
+
+    <form method="POST" id="quiz-form">
+        {% for item in quiz_items %}
+        <div class="card shadow-sm mb-3">
+            <div class="card-body">
+                <h5>
+                    {{ loop.index }}. {{ item.question.question_text }}
+                </h5>
+                <p class="text-muted">
+                    Marks: {{ item.question.marks }}
+                </p>
+
+                {% for option in item.options %}
+                <label class="d-block border rounded p-2 mb-2">
+                    <input type="radio"
+                           name="question_{{ item.question.id }}"
+                           value="{{ option.id }}">
+                    {{ option.option_text }}
+                </label>
+                {% endfor %}
+            </div>
+        </div>
+        {% endfor %}
+
+        <button type="submit" class="btn btn-success btn-lg w-100"
+                onclick="return confirm('Are you sure you want to submit your quiz?')">
+            Submit Quiz
+        </button>
+    </form>
+</div>
+
+<script>
+(function () {
+    const endTime = new Date(
+        "{{ quiz_utc_to_kigali(exam.end_at).strftime('%Y-%m-%dT%H:%M:%S') }}+02:00"
+    ).getTime();
+
+    const countdown = document.getElementById("quiz-countdown");
+    const form = document.getElementById("quiz-form");
+
+    function updateTimer() {
+        const remaining = endTime - Date.now();
+
+        if (remaining <= 0) {
+            countdown.textContent = "Time is over. Submitting...";
+            form.submit();
+            return;
+        }
+
+        const hours = Math.floor(remaining / 3600000);
+        const minutes = Math.floor((remaining % 3600000) / 60000);
+        const seconds = Math.floor((remaining % 60000) / 1000);
+
+        countdown.textContent =
+            "Time remaining: " +
+            String(hours).padStart(2, "0") + ":" +
+            String(minutes).padStart(2, "0") + ":" +
+            String(seconds).padStart(2, "0");
+    }
+
+    updateTimer();
+    setInterval(updateTimer, 1000);
+
+    document.addEventListener("contextmenu", function (event) {
+        event.preventDefault();
+    });
+
+    document.addEventListener("copy", function (event) {
+        event.preventDefault();
+    });
+
+    document.addEventListener("paste", function (event) {
+        event.preventDefault();
+    });
+
+    document.addEventListener("visibilitychange", function () {
+        if (document.hidden) {
+            const data = new FormData();
+            data.append("event_type", "tab_switch");
+            navigator.sendBeacon(
+                "/quizzes/attempt/{{ attempt.id }}/event",
+                data
+            );
+        }
+    });
+})();
+</script>
+{% endblock %}

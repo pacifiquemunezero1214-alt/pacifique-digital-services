@@ -1,0 +1,710 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Google Analytics 4 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-S1Q93X5LBB"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-S1Q93X5LBB');
+</script>
+<link rel="icon"
+      type="image/svg+xml"
+      href="{{ url_for('static', filename='images/logo.svg') }}">
+<link rel="icon" type="image/svg+xml"
+      href="{{ url_for('static', filename='images/favicon.svg') }}">
+<meta name="google-adsense-account" content="ca-pub-5757995608720452">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5757995608720452"
+     crossorigin="anonymous"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#172554">
+
+    <title>{% block title %}Pacifique Digital Services{% endblock %}</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #172554;
+            --secondary: #06b6d4;
+            --background: #f1f5f9;
+            --surface: #ffffff;
+            --text: #1e293b;
+            --muted: #64748b;
+            --border: #e2e8f0;
+            --success: #16a34a;
+            --danger: #dc2626;
+            --radius: 14px;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            font-family: "Segoe UI", Arial, sans-serif;
+            background: var(--background);
+            color: var(--text);
+        }
+
+        a { text-decoration: none; color: inherit; }
+
+        button, input, select, textarea { font: inherit; }
+
+        .app-layout {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 255px;
+            min-width: 255px;
+            background: linear-gradient(180deg, #172554, #1e3a8a);
+            color: white;
+            padding: 24px 16px;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 5px 8px 26px;
+            border-bottom: 1px solid rgba(255,255,255,.15);
+            margin-bottom: 25px;
+        }
+
+        .brand-icon {
+    width: 48px;
+    height: 48px;
+    min-width: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    border-radius: 13px;
+    background: #07152e;
+    border: 1px solid rgba(255,255,255,.15);
+}
+
+.brand-icon img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+        .brand-name {
+            font-size: 15px;
+            font-weight: 800;
+            line-height: 1.4;
+        }
+
+        .brand-subtitle {
+            display: block;
+            color: #bfdbfe;
+            font-size: 11px;
+            margin-top: 3px;
+            font-weight: 400;
+        }
+
+        .nav-label {
+            color: #93c5fd;
+            font-size: 10px;
+            letter-spacing: 1.5px;
+            font-weight: 800;
+            padding: 0 12px;
+            margin-bottom: 12px;
+        }
+
+        .navigation {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .navigation a {
+            display: flex;
+            align-items: center;
+            gap: 11px;
+            padding: 12px;
+            border-radius: 10px;
+            color: #dbeafe;
+            font-size: 13px;
+            transition: background .2s, transform .2s;
+        }
+
+        .navigation a:hover,
+        .navigation a.active {
+            background: rgba(255,255,255,.15);
+            color: white;
+            transform: translateX(2px);
+        }
+
+        .navigation a.active {
+            border-left: 3px solid #22d3ee;
+            font-weight: 700;
+        }
+
+        .nav-icon {
+            width: 23px;
+            text-align: center;
+            font-size: 17px;
+            flex-shrink: 0;
+        }
+
+        .sidebar-bottom {
+            margin-top: auto;
+            padding-top: 28px;
+        }
+
+        .help-card {
+            background: rgba(255,255,255,.10);
+            border: 1px solid rgba(255,255,255,.12);
+            border-radius: 13px;
+            padding: 15px;
+            margin-bottom: 16px;
+        }
+
+        .help-card h4 {
+            margin: 0 0 8px;
+            font-size: 13px;
+        }
+
+        .help-card p {
+            color: #dbeafe;
+            font-size: 12px;
+            line-height: 1.6;
+            margin: 0 0 12px;
+        }
+
+        .help-link {
+            display: block;
+            text-align: center;
+            padding: 10px;
+            background: #06b6d4;
+            color: #082f49;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 800;
+        }
+
+        .signout {
+            display: block;
+            padding: 12px;
+            text-align: center;
+            color: #fecaca;
+            border: 1px solid rgba(255,255,255,.16);
+            border-radius: 9px;
+            font-size: 13px;
+        }
+
+        .signout:hover {
+            background: rgba(220,38,38,.18);
+        }
+
+        .main-area {
+            min-width: 0;
+            flex: 1;
+        }
+
+        .topbar {
+            min-height: 76px;
+            padding: 15px 30px;
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+        }
+
+        .topbar h2 {
+            margin: 0;
+            font-size: 18px;
+        }
+
+        .topbar p {
+            color: var(--muted);
+            font-size: 12px;
+            margin: 5px 0 0;
+        }
+
+        .profile {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: grid;
+            place-items: center;
+            background: #dbeafe;
+            color: #1d4ed8;
+            font-weight: 800;
+            flex-shrink: 0;
+        }
+
+        .profile-name {
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .profile-role {
+            display: inline-block;
+            color: var(--muted);
+            font-size: 11px;
+            margin-top: 4px;
+        }
+
+        /* REQUESTED TEXT STYLING */
+        .topbar h2,
+        .topbar p,
+        .profile .avatar,
+        .profile-name,
+        .profile-role {
+            color: #111111 !important;
+            font-weight: 900 !important;
+        }
+
+        .page-content {
+            padding: 28px;
+            max-width: 1600px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .page-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            flex-wrap: wrap;
+            margin-bottom: 24px;
+        }
+
+        .page-header h1 {
+            margin: 0 0 8px;
+            font-size: 25px;
+        }
+
+        .page-header p {
+            color: var(--muted);
+            margin: 0;
+            font-size: 14px;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 11px 17px;
+            border: 0;
+            border-radius: 9px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover { background: #1d4ed8; }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 18px;
+            margin-bottom: 25px;
+        }
+
+        .stat-card, .content-card {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 22px;
+            box-shadow: 0 4px 14px rgba(15,23,42,.035);
+        }
+
+        .stat-card h3 {
+            color: var(--muted);
+            font-size: 13px;
+            font-weight: 600;
+            margin: 0 0 14px;
+        }
+
+        .stat-card h2 {
+            font-size: 28px;
+            margin: 0;
+            color: var(--primary-dark);
+        }
+
+        .content-card h2 {
+            font-size: 18px;
+            margin: 0 0 20px;
+        }
+
+        .table-responsive {
+            width: 100%;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+
+        th, td {
+            padding: 14px 12px;
+            border-bottom: 1px solid var(--border);
+            font-size: 13px;
+            white-space: nowrap;
+        }
+
+        th {
+            background: #f8fafc;
+            color: var(--muted);
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: .4px;
+        }
+
+        tbody tr:hover { background: #f8fafc; }
+
+        .flash-container { margin-bottom: 20px; }
+
+        .flash-message {
+            padding: 13px 16px;
+            margin-bottom: 10px;
+            border-radius: 9px;
+            font-size: 13px;
+            background: #dbeafe;
+            color: #1e40af;
+            border: 1px solid #bfdbfe;
+        }
+
+        .flash-message.success {
+            background: #dcfce7;
+            color: #166534;
+            border-color: #bbf7d0;
+        }
+
+        .flash-message.error,
+        .flash-message.danger {
+            background: #fee2e2;
+            color: #991b1b;
+            border-color: #fecaca;
+        }
+
+        .flash-message.warning {
+            background: #fef3c7;
+            color: #92400e;
+            border-color: #fde68a;
+        }
+
+        .mobile-menu-button {
+            display: none;
+            border: 0;
+            border-radius: 8px;
+            background: #dbeafe;
+            color: #1d4ed8;
+            padding: 9px 12px;
+            cursor: pointer;
+            font-size: 18px;
+        }
+
+        .site-footer {
+            padding: 20px 28px;
+            text-align: center;
+            color: var(--muted);
+            font-size: 11px;
+        }
+
+        @media (max-width: 1050px) {
+            .stats-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            .sidebar {
+                width: 230px;
+                min-width: 230px;
+            }
+        }
+
+        @media (max-width: 700px) {
+            .app-layout { display: block; }
+
+            .sidebar {
+                display: none;
+                width: 100%;
+                min-width: 0;
+                min-height: auto;
+            }
+
+            .sidebar.open { display: flex; }
+
+            .sidebar-bottom { margin-top: 25px; }
+
+            .mobile-menu-button { display: inline-block; }
+
+            .topbar { padding: 14px 16px; }
+
+            .topbar h2 { font-size: 15px; }
+
+            .page-content { padding: 18px 14px; }
+
+            .page-header h1 { font-size: 21px; }
+
+            .stats-grid { gap: 12px; }
+
+            .stat-card, .content-card { padding: 16px; }
+
+            .stat-card h2 { font-size: 23px; }
+
+            .profile-details { display: none; }
+        }
+    </style>
+
+    {% block head %}{% endblock %}
+</head>
+
+<body>
+<div class="app-layout">
+
+    <aside class="sidebar" id="sidebar">
+
+        <a class="brand" href="{{ url_for('dashboard') }}">
+            <div class="brand-icon">
+    <img src="{{ url_for('static', filename='images/logo.svg') }}"
+         alt="Pacifique Digital Services Logo">
+</div>
+            <div class="brand-name">
+                Pacifique Digital
+                <span class="brand-subtitle">SERVICES PLATFORM</span>
+            </div>
+        </a>
+
+        <div class="nav-label">WORKSPACE</div>
+
+        <nav class="navigation">
+
+            {% if current_user.role in ['manager', 'admin'] %}
+
+                <a class="{% if request.endpoint == 'dashboard' %}active{% endif %}"
+                   href="{{ url_for('dashboard') }}">
+                    <span class="nav-icon">▦</span> Dashboard
+                </a>
+
+                <a class="{% if request.endpoint in ['requests_page', 'request_detail'] %}active{% endif %}"
+                   href="{{ url_for('requests_page') }}">
+                    <span class="nav-icon">▤</span> Customer Requests
+                </a>
+
+                <a class="{% if request.endpoint == 'customers' %}active{% endif %}"
+                   href="{{ url_for('customers') }}">
+                    <span class="nav-icon">♙</span> Customers
+                </a>
+
+                <a class="{% if request.endpoint == 'user_management' %}active{% endif %}"
+                   href="{{ url_for('user_management') }}">
+                    <span class="nav-icon">👥</span> User Management
+                </a>
+
+                <a class="{% if request.endpoint == 'services' %}active{% endif %}"
+                   href="{{ url_for('services') }}">
+                    <span class="nav-icon">⚙</span> Services & Pricing
+                </a>
+
+                <a class="{% if request.endpoint == 'payments' %}active{% endif %}"
+                   href="{{ url_for('payments') }}">
+                    <span class="nav-icon">💳</span> Payments
+                </a>
+
+                <a class="{% if request.endpoint == 'reports' %}active{% endif %}"
+                   href="{{ url_for('reports') }}">
+                    <span class="nav-icon">▥</span> Reports
+                </a>
+
+                <a class="{% if request.endpoint == 'settings' %}active{% endif %}"
+                   href="{{ url_for('settings') }}">
+                    <span class="nav-icon">⚙</span> Settings
+                </a>
+
+            {% else %}
+
+                <a class="{% if request.endpoint == 'user_dashboard' %}active{% endif %}"
+                   href="{{ url_for('user_dashboard') }}">
+                    <span class="nav-icon">▦</span> My Dashboard
+                </a>
+
+                <a class="{% if request.endpoint == 'my_requests' %}active{% endif %}"
+                   href="{{ url_for('my_requests') }}">
+                    <span class="nav-icon">▤</span> My Requests
+                </a>
+
+                <!-- NEW: CUSTOMER RESULTS -->
+                <a class="{% if request.endpoint == 'my_results' %}active{% endif %}"
+                   href="/my-results">
+                    <span class="nav-icon">📁</span> My Results
+                </a>
+
+                <a class="{% if request.endpoint == 'new_request' %}active{% endif %}"
+                   href="{{ url_for('new_request') }}">
+                    <span class="nav-icon">＋</span> Request a Service
+                </a>
+<!-- JOB CONNECT -->
+<a class="{% if request.endpoint in [
+    'job_connect',
+    'job_details',
+    'job_seeker_profile',
+    'employer_profile',
+    'create_job',
+    'my_jobs',
+    'my_applications',
+    'employer_applications'
+] %}active{% endif %}"
+   href="{{ url_for('job_connect') }}">
+    <span class="nav-icon">💼</span> Job Connect
+</a>
+
+                <a class="{% if request.endpoint == 'contact' %}active{% endif %}"
+                   href="{{ url_for('contact') }}">
+                    <span class="nav-icon">✉</span> Contact Us
+                </a>
+
+                <a class="{% if request.endpoint == 'about' %}active{% endif %}"
+                   href="{{ url_for('about') }}">
+                    <span class="nav-icon">ℹ</span> About Us
+                </a>
+
+                <a class="{% if request.endpoint == 'privacy_policy' %}active{% endif %}"
+                   href="{{ url_for('privacy_policy') }}">
+                    <span class="nav-icon">🔒</span> Privacy Policy
+                </a>
+
+                        {% endif %}
+        </nav>
+
+        <div class="sidebar-bottom">
+            <div class="help-card">
+                {% if current_user.role in ['manager', 'admin'] %}
+                    <h4>Manage Your Business</h4>
+                    <p>Review requests and manage your digital services.</p>
+                    <a class="help-link" href="{{ url_for('requests_page') }}">
+                        View Requests
+                    </a>
+                {% else %}
+                    <h4>Need a Digital Service?</h4>
+                    <p>Submit a request and track its progress here.</p>
+                    <a class="help-link" href="{{ url_for('new_request') }}">
+                        Get Started
+                    </a>
+                {% endif %}
+            </div>
+
+            <a class="signout" href="{{ url_for('logout') }}">
+                ↪ Sign Out
+            </a>
+        </div>
+
+    </aside>
+
+    <main class="main-area">
+
+        <header class="topbar">
+            <div style="display:flex; align-items:center; gap:12px;">
+                <button class="mobile-menu-button"
+                        type="button"
+                        onclick="toggleSidebar()"
+                        aria-label="Toggle navigation"
+                        aria-expanded="false">
+                    ☰
+                </button>
+
+                <div>
+                    <h2>{% block page_heading %}Pacifique Digital Services{% endblock %}</h2>
+                    <p>Digital solutions. Better opportunities.</p>
+                </div>
+            </div>
+
+            <div class="profile">
+                <div class="avatar">
+                    {{ (current_user.username or 'U')[0]|upper }}
+                </div>
+
+                <div class="profile-details">
+                    <div class="profile-name">{{ current_user.username }}</div>
+                    <span class="profile-role">{{ current_user.role|title }}</span>
+                </div>
+            </div>
+        </header>
+
+        <section class="page-content">
+
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    <div class="flash-container">
+                        {% for category, message in messages %}
+                            <div class="flash-message {{ category }}">
+                                {{ message }}
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            {% endwith %}
+
+            {% block content %}{% endblock %}
+
+        </section>
+
+        <footer class="site-footer">
+            &copy; 2026 Pacifique Digital Services. All rights reserved.
+        </footer>
+
+    </main>
+</div>
+
+<script>
+    function toggleSidebar() {
+        const sidebar = document.getElementById('sidebar');
+        const button = document.querySelector('.mobile-menu-button');
+        const isOpen = sidebar.classList.toggle('open');
+
+        if (button) {
+            button.setAttribute('aria-expanded', String(isOpen));
+        }
+    }
+
+    document.addEventListener('click', function(event) {
+        const sidebar = document.getElementById('sidebar');
+        const button = document.querySelector('.mobile-menu-button');
+
+        if (
+            window.innerWidth <= 700 &&
+            sidebar &&
+            sidebar.classList.contains('open') &&
+            !sidebar.contains(event.target) &&
+            button &&
+            !button.contains(event.target)
+        ) {
+            sidebar.classList.remove('open');
+            button.setAttribute('aria-expanded', 'false');
+        }
+    });
+</script>
+
+{% block scripts %}{% endblock %}
+</body>
+</html>

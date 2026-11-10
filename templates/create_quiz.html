@@ -1,0 +1,135 @@
+
+{% extends "base.html" %}
+
+{% block title %}Create Online Quiz - Pacifique Digital Services{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+
+    <div class="mb-4">
+        <a href="{{ url_for('manager_quizzes') }}" class="text-decoration-none">
+            ← Back to Quiz Management
+        </a>
+        <h2 class="fw-bold mt-3">Create Online Examination</h2>
+        <p class="text-muted">
+            Configure your examination before adding questions and publishing it.
+        </p>
+    </div>
+
+    <div class="card border-0 shadow-sm">
+        <div class="card-body p-4 p-md-5">
+
+            <form method="POST">
+
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Exam Title *</label>
+                    <input
+                        type="text"
+                        name="title"
+                        class="form-control"
+                        maxlength="200"
+                        placeholder="e.g. Computer Skills Examination"
+                        required
+                    >
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Instructions</label>
+                    <textarea
+                        name="instructions"
+                        class="form-control"
+                        rows="4"
+                        maxlength="5000"
+                        placeholder="Write the instructions candidates must follow..."
+                    ></textarea>
+                </div>
+
+                <div class="mb-4">
+                    <label class="form-label fw-semibold">Exam Password *</label>
+                    <input
+                        type="password"
+                        name="password"
+                        class="form-control"
+                        minlength="6"
+                        required
+                        placeholder="Create a password for candidates"
+                    >
+                    <small class="text-muted">
+                        Candidates will need this password to begin the examination.
+                    </small>
+                </div>
+
+                <hr class="my-4">
+
+                <h5 class="fw-bold mb-3">Examination Schedule</h5>
+
+                <div class="alert alert-info">
+                    <strong>Important:</strong> All candidates will use the same
+                    start and end times. Times are entered using Rwanda time
+                    (Africa/Kigali, UTC+2).
+                </div>
+
+                <div class="row g-3">
+
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold">Start Date & Time *</label>
+                        <input
+                            type="datetime-local"
+                            name="start_at"
+                            class="form-control"
+                            required
+                        >
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold">End Date & Time *</label>
+                        <input
+                            type="datetime-local"
+                            name="end_at"
+                            class="form-control"
+                            required
+                        >
+                    </div>
+
+                </div>
+
+                <div class="mt-4 mb-3">
+                    <label class="form-label fw-semibold">Pass Mark (%) *</label>
+                    <input
+                        type="number"
+                        name="pass_mark"
+                        class="form-control"
+                        min="0"
+                        max="100"
+                        step="0.1"
+                        value="50"
+                        required
+                    >
+                    <small class="text-muted">
+                        Example: 50 means candidates need at least 50% to pass.
+                    </small>
+                </div>
+
+                <div class="alert alert-warning mt-4">
+                    This examination will initially be saved as a Draft.
+                    You must add questions before publishing it.
+                </div>
+
+                <div class="d-flex flex-wrap gap-2">
+                    <button type="submit" class="btn btn-primary px-4">
+                        Save Examination
+                    </button>
+
+                    <a href="{{ url_for('manager_quizzes') }}"
+                       class="btn btn-outline-secondary">
+                        Cancel
+                    </a>
+                </div>
+
+            </form>
+
+        </div>
+    </div>
+
+</div>
+{% endblock %}

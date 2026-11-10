@@ -1,0 +1,355 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Account | Pacifique Digital Services</title>
+
+    <style>
+        :root {
+            --navy: #090D1F;
+            --cyan: #00F5D4;
+            --purple: #7B61FF;
+            --white: #F4F7FF;
+            --muted: #AAB4D0;
+            --red: #ff647c;
+            --green: #31e99b;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            padding: 24px 14px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: Arial, sans-serif;
+            color: var(--white);
+            background:
+                radial-gradient(circle at top left, #20265c, transparent 45%),
+                radial-gradient(circle at bottom right, #33205f, transparent 45%),
+                var(--navy);
+        }
+
+        .card {
+            width: 100%;
+            max-width: 480px;
+            padding: 32px;
+            border: 1px solid rgba(0,245,212,.25);
+            border-radius: 22px;
+            background: rgba(15, 21, 47, .94);
+            box-shadow: 0 20px 60px rgba(0,0,0,.35);
+        }
+
+        .logo {
+            text-align: center;
+            font-size: 28px;
+            font-weight: 800;
+            color: var(--cyan);
+            margin-bottom: 8px;
+        }
+
+        h1 {
+            text-align: center;
+            margin: 10px 0;
+            font-size: 25px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: var(--muted);
+            margin-bottom: 25px;
+            line-height: 1.5;
+        }
+
+        label {
+            display: block;
+            margin: 15px 0 7px;
+            font-weight: 700;
+            font-size: 14px;
+        }
+
+        input {
+            width: 100%;
+            padding: 13px 14px;
+            color: var(--white);
+            background: #090f27;
+            border: 1px solid #343e67;
+            border-radius: 10px;
+            outline: none;
+            font-size: 15px;
+        }
+
+        input:focus {
+            border-color: var(--cyan);
+            box-shadow: 0 0 0 3px rgba(0,245,212,.10);
+        }
+
+        .password-status {
+            min-height: 22px;
+            margin-top: 8px;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        .valid { color: var(--green); }
+        .invalid { color: var(--red); }
+        .neutral { color: var(--muted); }
+
+        .rules {
+            margin: 9px 0 0;
+            padding: 12px 14px;
+            background: rgba(255,255,255,.035);
+            border-radius: 10px;
+            font-size: 13px;
+            line-height: 1.9;
+        }
+
+        .rule {
+            color: var(--red);
+        }
+
+        .rule.ok {
+            color: var(--green);
+        }
+
+        .match-status {
+            min-height: 20px;
+            margin-top: 7px;
+            font-size: 13px;
+        }
+
+        .btn {
+            width: 100%;
+            margin-top: 22px;
+            padding: 14px;
+            border: none;
+            border-radius: 10px;
+            background: linear-gradient(100deg, var(--cyan), #79ffe9);
+            color: #061525;
+            font-weight: 800;
+            font-size: 15px;
+            cursor: pointer;
+        }
+
+        .btn:disabled {
+            opacity: .45;
+            cursor: not-allowed;
+        }
+
+        .links {
+            margin-top: 20px;
+            text-align: center;
+            color: var(--muted);
+            font-size: 14px;
+            line-height: 1.9;
+        }
+
+        a {
+            color: var(--cyan);
+            text-decoration: none;
+        }
+
+        a:hover { text-decoration: underline; }
+
+        .flash {
+            padding: 11px;
+            margin: 10px 0;
+            border-radius: 9px;
+            background: rgba(255,100,124,.12);
+            color: #ff9cab;
+            font-size: 14px;
+        }
+
+        @media (max-width: 480px) {
+            .card { padding: 23px 18px; }
+        }
+    </style>
+</head>
+
+<body>
+    <main class="card">
+        <div class="logo">PDS<span style="color:#7B61FF">.</span></div>
+        <h1>Create your account</h1>
+        <p class="subtitle">
+            Join Pacifique Digital Services and manage your service requests.
+        </p>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% for category, message in messages %}
+                <div class="flash">{{ message }}</div>
+            {% endfor %}
+        {% endwith %}
+
+        <form method="POST" action="{{ url_for('register') }}" id="registerForm">
+            <label for="full_name">Full Name</label>
+            <input
+                type="text"
+                id="full_name"
+                name="full_name"
+                maxlength="120"
+                autocomplete="name"
+                placeholder="Enter your full name"
+                required
+            >
+
+            <label for="phone">Phone Number</label>
+            <input
+                type="tel"
+                id="phone"
+                name="phone"
+                autocomplete="tel"
+                placeholder="e.g. 0780000000"
+                minlength="7"
+                maxlength="30"
+                required
+            >
+
+            <label for="email">Email Address</label>
+            <input
+                type="email"
+                id="email"
+                name="email"
+                autocomplete="email"
+                placeholder="you@example.com"
+                maxlength="120"
+                required
+            >
+
+            <label for="password">Password</label>
+            <input
+                type="password"
+                id="password"
+                name="password"
+                autocomplete="new-password"
+                placeholder="Create a strong password"
+                required
+                aria-describedby="passwordStatus passwordRules"
+            >
+
+            <div id="passwordStatus" class="password-status neutral" aria-live="polite">
+                Start typing to check your password.
+            </div>
+
+            <div class="rules" id="passwordRules">
+                <div id="ruleLength" class="rule">✗ At least 8 characters</div>
+                <div id="ruleUpper" class="rule">✗ At least one uppercase letter (A–Z)</div>
+                <div id="ruleSpecial" class="rule">✗ At least one special character (@, !, #, etc.)</div>
+            </div>
+
+            <label for="confirm_password">Confirm Password</label>
+            <input
+                type="password"
+                id="confirm_password"
+                name="confirm_password"
+                autocomplete="new-password"
+                placeholder="Type the same password again"
+                required
+            >
+
+            <div id="matchStatus" class="match-status neutral" aria-live="polite">
+                Re-enter your password to confirm it.
+            </div>
+
+            <button type="submit" class="btn" id="submitBtn" disabled>
+                Create Account
+            </button>
+        </form>
+
+        <div class="links">
+            Already have an account?
+            <a href="{{ url_for('login') }}">Sign in</a>
+        </div>
+    </main>
+
+    <script>
+        const passwordInput = document.getElementById("password");
+        const confirmInput = document.getElementById("confirm_password");
+        const status = document.getElementById("passwordStatus");
+        const matchStatus = document.getElementById("matchStatus");
+        const submitBtn = document.getElementById("submitBtn");
+
+        const ruleLength = document.getElementById("ruleLength");
+        const ruleUpper = document.getElementById("ruleUpper");
+        const ruleSpecial = document.getElementById("ruleSpecial");
+
+        function setRule(element, passed, text) {
+            element.classList.toggle("ok", passed);
+            element.classList.toggle("rule", !passed);
+            element.textContent = (passed ? "✓ " : "✗ ") + text;
+        }
+
+        function checkPassword() {
+            const password = passwordInput.value;
+
+            const hasLength = password.length >= 8;
+            const hasUpper = /[A-Z]/.test(password);
+            const hasSpecial = /[^A-Za-z0-9]/.test(password);
+
+            setRule(ruleLength, hasLength, "At least 8 characters");
+            setRule(ruleUpper, hasUpper, "At least one uppercase letter (A–Z)");
+            setRule(
+                ruleSpecial,
+                hasSpecial,
+                "At least one special character (@, !, #, etc.)"
+            );
+
+            const valid = hasLength && hasUpper && hasSpecial;
+
+            if (!password) {
+                status.textContent = "Start typing to check your password.";
+                status.className = "password-status neutral";
+            } else if (valid) {
+                status.textContent = "✓ Password is correct and meets all requirements.";
+                status.className = "password-status valid";
+            } else {
+                status.textContent = "✗ Password is not valid yet. Complete the rules above.";
+                status.className = "password-status invalid";
+            }
+
+            checkMatch();
+        }
+
+        function checkMatch() {
+            const password = passwordInput.value;
+            const confirm = confirmInput.value;
+
+            let matches = false;
+
+            if (!confirm) {
+                matchStatus.textContent = "Re-enter your password to confirm it.";
+                matchStatus.className = "match-status neutral";
+            } else if (password === confirm) {
+                matches = true;
+                matchStatus.textContent = "✓ Passwords match.";
+                matchStatus.className = "match-status valid";
+            } else {
+                matchStatus.textContent = "✗ Passwords do not match.";
+                matchStatus.className = "match-status invalid";
+            }
+
+            const strong =
+                password.length >= 8 &&
+                /[A-Z]/.test(password) &&
+                /[^A-Za-z0-9]/.test(password);
+
+            submitBtn.disabled = !(strong && matches);
+        }
+
+        passwordInput.addEventListener("input", checkPassword);
+        confirmInput.addEventListener("input", checkMatch);
+
+        document.getElementById("registerForm").addEventListener("submit", function(event) {
+            checkPassword();
+            checkMatch();
+
+            if (submitBtn.disabled) {
+                event.preventDefault();
+            }
+        });
+    </script>
+</body>
+</html>

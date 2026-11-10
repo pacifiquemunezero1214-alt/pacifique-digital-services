@@ -1,0 +1,57 @@
+
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-4">
+    <h2>My Quiz Results</h2>
+    <p>View your submitted exams and manager review decisions.</p>
+
+    {% for row in results %}
+    <div class="card shadow-sm mb-3">
+        <div class="card-body">
+            <h5>{{ row.exam.title }}</h5>
+
+            <p>
+                <strong>Score:</strong>
+                {{ row.attempt.score or 0 }} / {{ row.total_marks }}
+            </p>
+
+            <p>
+                <strong>Submission:</strong>
+                {{ row.attempt.status }}
+            </p>
+
+            <p>
+                <strong>Manager Review:</strong>
+                {% if row.attempt.review_status == "Approved" %}
+                    <span class="badge bg-success">Approved</span>
+                {% elif row.attempt.review_status == "Rejected" %}
+                    <span class="badge bg-danger">Rejected</span>
+                {% else %}
+                    <span class="badge bg-warning text-dark">Pending</span>
+                {% endif %}
+            </p>
+
+            {% if row.attempt.review_reason %}
+            <div class="alert alert-danger">
+                <strong>Manager's reason:</strong>
+                {{ row.attempt.review_reason }}
+            </div>
+            {% endif %}
+
+            {% if row.attempt.status == "Submitted" %}
+                {% if row.attempt.score >= (row.exam.pass_mark * row.total_marks / 100) %}
+                    <p class="text-success fw-bold">Score meets the pass mark.</p>
+                {% else %}
+                    <p class="text-danger fw-bold">Score is below the pass mark.</p>
+                {% endif %}
+            {% endif %}
+        </div>
+    </div>
+    {% else %}
+        <div class="alert alert-info">
+            You have not submitted any quiz yet.
+        </div>
+    {% endfor %}
+</div>
+{% endblock %}

@@ -1,0 +1,67 @@
+
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-4">
+    <h2>{{ exam.title }} - Participants</h2>
+    <p>Total marks: {{ total_marks }}</p>
+
+    {% for row in attempt_rows %}
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <h5>{{ row.student.full_name or row.student.username if row.student else "Unknown Student" }}</h5>
+
+            <p>
+                Score: <strong>{{ row.attempt.score or 0 }} / {{ total_marks }}</strong>
+                <br>
+                Status: {{ row.attempt.status }}
+                <br>
+                Review: {{ row.attempt.review_status }}
+                <br>
+                Started: {{ row.attempt.started_at }}
+                <br>
+                Submitted: {{ row.attempt.submitted_at or "Not submitted" }}
+            </p>
+
+            {% if row.attempt.review_reason %}
+            <p class="text-danger">
+                Rejection reason: {{ row.attempt.review_reason }}
+            </p>
+            {% endif %}
+
+            <h6>Security Events</h6>
+            <ul>
+                {% for event in row.attempt.events %}
+                <li>{{ event.event_type }} - {{ event.created_at }}</li>
+                {% else %}
+                <li>No security events recorded.</li>
+                {% endfor %}
+            </ul>
+
+            {% if row.attempt.status == "Submitted" %}
+            <form method="POST"
+                  action="{{ url_for('review_quiz_attempt', attempt_id=row.attempt.id) }}">
+
+                <label class="form-label">Review decision</label>
+                <select name="decision" class="form-select mb-2" required>
+                    <option value="">Choose decision</option>
+                    <option value="Approved">Approve result</option>
+                    <option value="Rejected">Reject result</option>
+                </select>
+
+                <label class="form-label">Reason (required when rejecting)</label>
+                <textarea name="reason" class="form-control mb-2"
+                          placeholder="Explain why the result is rejected"></textarea>
+
+                <button type="submit" class="btn btn-primary">
+                    Save Review
+                </button>
+            </form>
+            {% endif %}
+        </div>
+    </div>
+    {% else %}
+    <p>No participants have attempted this quiz yet.</p>
+    {% endfor %}
+</div>
+{% endblock %}

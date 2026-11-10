@@ -1,0 +1,31 @@
+
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="card shadow mx-auto" style="max-width:600px;">
+        <div class="card-body p-4">
+            <h2>{{ exam.title }}</h2>
+            <p>{{ exam.instructions }}</p>
+
+            <p><strong>Start:</strong>
+                {{ quiz_utc_to_kigali(exam.start_at).strftime('%d/%m/%Y %H:%M') }}
+            </p>
+            <p><strong>End:</strong>
+                {{ quiz_utc_to_kigali(exam.end_at).strftime('%d/%m/%Y %H:%M') }}
+            </p>
+
+            <form method="POST">
+                <label class="form-label">Exam Password</label>
+                <input type="password" name="password"
+                       class="form-control mb-3"
+                       required autocomplete="off">
+
+                <button type="submit" class="btn btn-primary w-100">
+                    Start Quiz
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
