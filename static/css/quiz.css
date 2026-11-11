@@ -1,0 +1,268 @@
+
+/* =====================================================
+   PACIFIQUE DIGITAL SERVICES
+   PROFESSIONAL ONLINE EXAMINATION DESIGN
+===================================================== */
+
+.quiz-page {
+    --quiz-primary: #4338ca;
+    --quiz-secondary: #7c3aed;
+    --quiz-dark: #172554;
+    --quiz-muted: #64748b;
+    padding-top: 25px;
+    padding-bottom: 55px;
+    color: #1e293b;
+}
+
+/* PAGE HEADER */
+.quiz-header {
+    position: relative;
+    overflow: hidden;
+    padding: 35px;
+    margin-bottom: 35px;
+    border-radius: 22px;
+    color: white;
+    background: linear-gradient(125deg, #172554, #4338ca, #7c3aed);
+    box-shadow: 0 12px 35px rgba(67, 56, 202, .20);
+}
+
+.quiz-header::after {
+    content: "✦";
+    position: absolute;
+    right: 35px;
+    top: -30px;
+    font-size: 150px;
+    opacity: .10;
+}
+
+.quiz-header h2 {
+    position: relative;
+    z-index: 1;
+    font-size: clamp(25px, 4vw, 34px);
+    font-weight: 800;
+    margin-bottom: 10px;
+}
+
+.quiz-header p {
+    position: relative;
+    z-index: 1;
+    color: #e0e7ff !important;
+    margin: 0;
+    font-size: 15px;
+}
+
+/* EXAM GRID */
+.quiz-grid {
+    row-gap: 25px;
+}
+
+/* EXAM CARDS */
+.quiz-card {
+    height: 100%;
+    overflow: hidden;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 20px;
+    box-shadow: 0 5px 20px rgba(15, 23, 42, .055);
+    transition: transform .25s ease, box-shadow .25s ease;
+}
+
+.quiz-card:hover {
+    transform: translateY(-7px);
+    box-shadow: 0 16px 35px rgba(67, 56, 202, .14);
+    border-color: #c7d2fe;
+}
+
+.quiz-card .card-body {
+    padding: 25px !important;
+}
+
+.quiz-card h5 {
+    font-size: 20px;
+    font-weight: 800;
+    color: #172554;
+    line-height: 1.4;
+    overflow-wrap: anywhere;
+}
+
+.quiz-description {
+    color: #64748b;
+    font-size: 14px;
+    line-height: 1.7;
+    min-height: 45px;
+}
+
+.quiz-card hr {
+    border-color: #e2e8f0;
+    opacity: 1;
+    margin: 20px 0;
+}
+
+/* EXAM INFORMATION */
+.quiz-info {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 11px 13px;
+    margin-bottom: 9px;
+    border-radius: 10px;
+    background: #f8fafc;
+    font-size: 13px;
+}
+
+.quiz-info strong {
+    color: #334155;
+    font-weight: 700;
+}
+
+.quiz-info span {
+    color: #4338ca;
+    font-weight: 700;
+    text-align: right;
+}
+
+/* SCHEDULE INFORMATION */
+.quiz-schedule {
+    margin-top: 16px;
+    padding: 14px;
+    border-radius: 12px;
+    background: #f1f5f9;
+}
+
+.quiz-schedule div {
+    font-size: 12px;
+    line-height: 1.7;
+    color: #475569;
+    margin-bottom: 7px;
+}
+
+.quiz-schedule div:last-child {
+    margin-bottom: 0;
+}
+
+.quiz-schedule strong {
+    color: #172554;
+}
+
+/* STATUS ALERTS */
+.quiz-card .alert {
+    border: none;
+    border-radius: 12px;
+    padding: 15px;
+    line-height: 1.6;
+    font-size: 13px;
+}
+
+.quiz-card .alert-info {
+    background: #eff6ff;
+    color: #1d4ed8;
+    border-left: 4px solid #3b82f6;
+}
+
+.quiz-card .alert-secondary {
+    background: #f1f5f9;
+    color: #475569;
+    border-left: 4px solid #94a3b8;
+}
+
+.quiz-card .alert-success {
+    background: #ecfdf5;
+    color: #047857;
+    border-left: 4px solid #10b981;
+}
+
+/* START EXAMINATION BUTTON */
+.quiz-start-btn {
+    display: block;
+    width: 100%;
+    padding: 14px 18px;
+    border: none;
+    border-radius: 12px;
+    background: linear-gradient(110deg, #4338ca, #7c3aed);
+    color: #ffffff !important;
+    text-align: center;
+    font-size: 15px;
+    font-weight: 700;
+    text-decoration: none;
+    box-shadow: 0 5px 15px rgba(67, 56, 202, .20);
+    transition: all .25s ease;
+}
+
+.quiz-start-btn:hover {
+    color: white !important;
+    transform: translateY(-2px);
+    background: linear-gradient(110deg, #312e81, #6d28d9);
+    box-shadow: 0 9px 20px rgba(67, 56, 202, .30);
+}
+
+/* EMPTY EXAMINATIONS */
+.quiz-empty {
+    padding: 55px 25px;
+    border: 1px dashed #c7d2fe;
+    border-radius: 20px;
+    background: linear-gradient(135deg, #f8faff, #f5f3ff);
+    text-align: center;
+}
+
+.quiz-empty h4 {
+    color: #172554;
+    font-weight: 800;
+    margin-bottom: 12px;
+}
+
+.quiz-empty p {
+    color: #64748b;
+    font-size: 14px;
+}
+
+/* RESPONSIVE DESIGN */
+@media (max-width: 767px) {
+    .quiz-page {
+        padding-top: 15px;
+    }
+
+    .quiz-header {
+        padding: 25px 20px;
+        border-radius: 17px;
+        margin-bottom: 25px;
+    }
+
+    .quiz-header::after {
+        font-size: 100px;
+        right: 10px;
+        top: -10px;
+    }
+
+    .quiz-card {
+        border-radius: 16px;
+    }
+
+    .quiz-card .card-body {
+        padding: 20px !important;
+    }
+
+    .quiz-card h5 {
+        font-size: 18px;
+    }
+
+    .quiz-info {
+        font-size: 12px;
+    }
+
+    .quiz-start-btn {
+        padding: 13px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .quiz-card,
+    .quiz-start-btn {
+        transition: none;
+    }
+
+    .quiz-card:hover,
+    .quiz-start-btn:hover {
+        transform: none;
+    }
+}
