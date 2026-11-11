@@ -76,6 +76,17 @@
                style="background:#0891b2;">
                 Download
             </a>
+            <form method="POST"
+                  action="{{ url_for('hide_learning_material', material_id=item.id) }}"
+                  onsubmit="return confirm('Remove this material from your Learning Center?');">
+
+                <button type="submit"
+                        class="btn-primary"
+                        style="background:#dc2626;">
+                    Remove
+                </button>
+
+            </form>
 
         </div>
     </div>

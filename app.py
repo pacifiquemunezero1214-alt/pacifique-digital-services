@@ -660,6 +660,30 @@ class LearningMaterial(db.Model):
     )
 
     uploader = db.relationship("User")
+# ==========================================================
+# USER HIDDEN LEARNING MATERIALS
+# ==========================================================
+
+class UserHiddenLearningMaterial(db.Model):
+    __tablename__ = "user_hidden_learning_materials"
+
+    user_id = db.Column(
+        db.Integer,
+        db.ForeignKey("user.id", ondelete="CASCADE"),
+        primary_key=True
+    )
+
+    material_id = db.Column(
+        db.Integer,
+        db.ForeignKey("learning_materials.id", ondelete="CASCADE"),
+        primary_key=True
+    )
+
+    hidden_at = db.Column(
+        db.DateTime,
+        default=datetime.utcnow,
+        nullable=False
+    )
 
 # ==========================================================
 # ONLINE QUIZ - HELPER FUNCTIONS
@@ -1162,7 +1186,31 @@ def manager_learning_materials():
         "manager_learning_materials.html",
         materials=materials
     )
+@app.route("/learning-materials/<int:material_id>/hide", methods=["POST"])
+@login_required
+def hide_learning_material(material_id):
 
+    material = LearningMaterial.query.get_or_404(material_id)
+
+    if not material.is_published and not is_manager():
+        abort(404)
+
+    already_hidden = UserHiddenLearningMaterial.query.filter_by(
+        user_id=current_user.id,
+        material_id=material.id
+    ).first()
+
+    if not already_hidden:
+        hidden_item = UserHiddenLearningMaterial(
+            user_id=current_user.id,
+            material_id=material.id
+        )
+        db.session.add(hidden_item)
+        db.session.commit()
+
+    flash("Material removed from your Learning Center.", "success")
+
+    return redirect(url_for("learning_center"))
 
 @app.route("/learning-center")
 @login_required
@@ -1171,7 +1219,16 @@ def learning_center():
     search = request.args.get("search", "").strip()
     material_type = request.args.get("type", "").strip()
 
-    query = LearningMaterial.query.filter_by(is_published=True)
+    hidden_material_ids = db.session.query(
+        UserHiddenLearningMaterial.material_id
+    ).filter_by(
+        user_id=current_user.id
+    ).subquery()
+
+    query = LearningMaterial.query.filter(
+        LearningMaterial.is_published == True,
+        ~LearningMaterial.id.in_(hidden_material_ids)
+    )
 
     if search:
         query = query.filter(
@@ -1196,7 +1253,6 @@ def learning_center():
         selected_type=material_type
     )
 
-
 @app.route("/learning-materials/<int:material_id>/view")
 @login_required
 def view_learning_material(material_id):
@@ -1205,6 +1261,14 @@ def view_learning_material(material_id):
 
     if not material.is_published and not is_manager():
         abort(404)
+    if not is_manager():
+        hidden_item = UserHiddenLearningMaterial.query.filter_by(
+            user_id=current_user.id,
+            material_id=material.id
+        ).first()
+
+        if hidden_item:
+            abort(404)
 
     if material.mimetype not in (
         "application/pdf",
@@ -1237,6 +1301,14 @@ def download_learning_material(material_id):
 
     if not material.is_published and not is_manager():
         abort(404)
+    if not is_manager():
+        hidden_item = UserHiddenLearningMaterial.query.filter_by(
+            user_id=current_user.id,
+            material_id=material.id
+        ).first()
+
+        if hidden_item:
+            abort(404)
 
     response = send_file(
         io.BytesIO(material.file_data),
