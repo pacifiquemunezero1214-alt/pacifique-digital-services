@@ -3,6 +3,8 @@ import os
 import re
 import uuid
 import smtplib
+import io
+import mimetypes
 from functools import wraps
 from email.message import EmailMessage
 from datetime import datetime, timedelta
@@ -10,7 +12,7 @@ from datetime import datetime, timedelta
 from dotenv import load_dotenv
 from flask import (
     Flask, render_template, request, redirect, url_for,
-    flash, abort, send_from_directory, Response
+        flash, abort, send_from_directory, Response, send_file
 )
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import (
@@ -618,6 +620,46 @@ class QuizEvent(db.Model):
     event_type = db.Column(db.String(80), nullable=False)
     details = db.Column(db.Text)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+# ==========================================================
+# PACIFIQUE DIGITAL SERVICES - LEARNING CENTER
+# ==========================================================
+
+class LearningMaterial(db.Model):
+    __tablename__ = "learning_materials"
+
+    id = db.Column(db.Integer, primary_key=True)
+
+    title = db.Column(db.String(200), nullable=False)
+    description = db.Column(db.Text, default="")
+    subject = db.Column(db.String(120), default="")
+    material_type = db.Column(db.String(50), default="Notes")
+
+    original_filename = db.Column(db.String(255), nullable=False)
+    stored_filename = db.Column(db.String(255), nullable=False)
+    mimetype = db.Column(db.String(120), nullable=False)
+    file_size = db.Column(db.Integer, nullable=False)
+
+    file_data = db.Column(db.LargeBinary, nullable=False)
+
+    uploaded_by = db.Column(
+        db.Integer,
+        db.ForeignKey("user.id"),
+        nullable=False
+    )
+
+    is_published = db.Column(
+        db.Boolean,
+        default=True,
+        nullable=False
+    )
+
+    created_at = db.Column(
+        db.DateTime,
+        default=datetime.utcnow,
+        nullable=False
+    )
+
+    uploader = db.relationship("User")
 
 # ==========================================================
 # ONLINE QUIZ - HELPER FUNCTIONS
@@ -997,6 +1039,215 @@ def send_password_reset_email(user, reset_url):
             "Could not send password reset email through Resend."
         )
         return False
+
+# ==========================================================
+# LEARNING CENTER - MANAGER AND USER ROUTES
+# ==========================================================
+
+ALLOWED_LEARNING_EXTENSIONS = {
+    "pdf", "doc", "docx", "ppt", "pptx",
+    "xls", "xlsx", "txt", "csv",
+    "jpg", "jpeg", "png", "webp"
+}
+
+MAX_LEARNING_FILE_SIZE = 10 * 1024 * 1024  # 10 MB per file
+
+
+def allowed_learning_file(filename):
+    return (
+        "." in filename
+        and filename.rsplit(".", 1)[1].lower()
+        in ALLOWED_LEARNING_EXTENSIONS
+    )
+
+
+@app.route("/manager/learning-materials", methods=["GET", "POST"])
+@login_required
+@manager_required
+def manager_learning_materials():
+
+    if request.method == "POST":
+        title = request.form.get("title", "").strip()
+        description = request.form.get("description", "").strip()
+        subject = request.form.get("subject", "").strip()
+        material_type = request.form.get("material_type", "Notes").strip()
+
+        files = request.files.getlist("files")
+
+        if not title:
+            flash("Please enter a title for these materials.", "danger")
+            return redirect(url_for("manager_learning_materials"))
+
+        files = [f for f in files if f and f.filename]
+
+        if not files:
+            flash("Please select at least one file.", "danger")
+            return redirect(url_for("manager_learning_materials"))
+
+        if len(files) > 20:
+            flash("You can upload a maximum of 20 files at once.", "danger")
+            return redirect(url_for("manager_learning_materials"))
+
+        materials_to_save = []
+
+        for uploaded_file in files:
+            original_filename = secure_filename(uploaded_file.filename)
+
+            if not original_filename or not allowed_learning_file(original_filename):
+                flash(
+                    f"Unsupported file type: {uploaded_file.filename}",
+                    "danger"
+                )
+                return redirect(url_for("manager_learning_materials"))
+
+            file_data = uploaded_file.read()
+
+            if not file_data:
+                flash(f"{original_filename} is empty.", "danger")
+                return redirect(url_for("manager_learning_materials"))
+
+            if len(file_data) > MAX_LEARNING_FILE_SIZE:
+                flash(
+                    f"{original_filename} exceeds the 10 MB limit.",
+                    "danger"
+                )
+                return redirect(url_for("manager_learning_materials"))
+
+            extension = original_filename.rsplit(".", 1)[1].lower()
+            stored_filename = f"{uuid.uuid4().hex}.{extension}"
+
+            mimetype = (
+                uploaded_file.mimetype
+                or mimetypes.guess_type(original_filename)[0]
+                or "application/octet-stream"
+            )
+
+            material = LearningMaterial(
+                title=title,
+                description=description,
+                subject=subject,
+                material_type=material_type,
+                original_filename=original_filename,
+                stored_filename=stored_filename,
+                mimetype=mimetype,
+                file_size=len(file_data),
+                file_data=file_data,
+                uploaded_by=current_user.id,
+                is_published=True
+            )
+
+            materials_to_save.append(material)
+
+        try:
+            db.session.add_all(materials_to_save)
+            db.session.commit()
+
+            flash(
+                f"Successfully published {len(materials_to_save)} file(s).",
+                "success"
+            )
+
+        except Exception:
+            db.session.rollback()
+            app.logger.exception("Learning materials upload failed.")
+            flash("Upload failed. Please try again.", "danger")
+
+        return redirect(url_for("manager_learning_materials"))
+
+    materials = LearningMaterial.query.order_by(
+        LearningMaterial.created_at.desc()
+    ).all()
+
+    return render_template(
+        "manager_learning_materials.html",
+        materials=materials
+    )
+
+
+@app.route("/learning-center")
+@login_required
+def learning_center():
+
+    search = request.args.get("search", "").strip()
+    material_type = request.args.get("type", "").strip()
+
+    query = LearningMaterial.query.filter_by(is_published=True)
+
+    if search:
+        query = query.filter(
+            or_(
+                LearningMaterial.title.ilike(f"%{search}%"),
+                LearningMaterial.subject.ilike(f"%{search}%"),
+                LearningMaterial.description.ilike(f"%{search}%")
+            )
+        )
+
+    if material_type:
+        query = query.filter_by(material_type=material_type)
+
+    materials = query.order_by(
+        LearningMaterial.created_at.desc()
+    ).all()
+
+    return render_template(
+        "learning_center.html",
+        materials=materials,
+        search=search,
+        selected_type=material_type
+    )
+
+
+@app.route("/learning-materials/<int:material_id>/view")
+@login_required
+def view_learning_material(material_id):
+
+    material = LearningMaterial.query.get_or_404(material_id)
+
+    if not material.is_published and not is_manager():
+        abort(404)
+
+    if material.mimetype not in (
+        "application/pdf",
+        "image/jpeg",
+        "image/png",
+        "image/webp"
+    ):
+        return redirect(
+            url_for("download_learning_material", material_id=material.id)
+        )
+
+    response = send_file(
+        io.BytesIO(material.file_data),
+        mimetype=material.mimetype,
+        as_attachment=False,
+        download_name=material.original_filename
+    )
+
+    response.headers["X-Content-Type-Options"] = "nosniff"
+    response.headers["Content-Security-Policy"] = "default-src 'none'; sandbox"
+
+    return response
+
+
+@app.route("/learning-materials/<int:material_id>/download")
+@login_required
+def download_learning_material(material_id):
+
+    material = LearningMaterial.query.get_or_404(material_id)
+
+    if not material.is_published and not is_manager():
+        abort(404)
+
+    response = send_file(
+        io.BytesIO(material.file_data),
+        mimetype="application/octet-stream",
+        as_attachment=True,
+        download_name=material.original_filename
+    )
+
+    response.headers["X-Content-Type-Options"] = "nosniff"
+
+    return response
 
 # ==========================================================
 # ONLINE QUIZ - MANAGER ROUTES

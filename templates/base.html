@@ -551,8 +551,14 @@
     'review_quiz_attempt'
 ] %}active{% endif %}"
    href="{{ url_for('manager_quizzes') }}">
-    <span class="nav-icon">📝</span> Manage Online Quiz
+        <span class="nav-icon">ðŸ“</span> Manage Online Quiz
 </a>
+
+<a class="{% if request.endpoint == 'manager_learning_materials' %}active{% endif %}"
+   href="{{ url_for('manager_learning_materials') }}">
+    <span class="nav-icon">📚</span> Manage Learning Materials
+</a>
+
             {% else %}
 
                 <a class="{% if request.endpoint == 'user_dashboard' %}active{% endif %}"
@@ -598,6 +604,15 @@
 ] %}active{% endif %}"
    href="{{ url_for('available_quizzes') }}">
     <span class="nav-icon">📝</span> Online Quiz
+</a>
+<!-- LEARNING CENTER -->
+<a class="{% if request.endpoint in [
+    'learning_center',
+    'view_learning_material',
+    'download_learning_material'
+] %}active{% endif %}"
+   href="{{ url_for('learning_center') }}">
+    <span class="nav-icon">📚</span> Learning Center
 </a>
 
 <a class="{% if request.endpoint == 'quiz_results' %}active{% endif %}"

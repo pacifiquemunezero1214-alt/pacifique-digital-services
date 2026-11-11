@@ -1,0 +1,90 @@
+
+{% extends "base.html" %}
+
+{% block title %}Learning Center{% endblock %}
+{% block page_heading %}Learning Center{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1>Learning Center</h1>
+        <p>Access notes, past papers, examinations and study resources.</p>
+    </div>
+</div>
+
+<div class="content-card" style="margin-bottom:22px;">
+    <form method="GET" action="{{ url_for('learning_center') }}"
+          style="display:flex;gap:12px;flex-wrap:wrap;">
+
+        <input type="text"
+               name="search"
+               value="{{ search }}"
+               placeholder="Search title, subject or description..."
+               style="flex:1;min-width:200px;padding:12px;">
+
+        <select name="type" style="padding:12px;">
+            <option value="">All Materials</option>
+            {% for kind in ['Notes', 'Past Paper', 'Study Guide', 'Examination', 'Quiz Resource', 'Other'] %}
+            <option value="{{ kind }}"
+                {% if selected_type == kind %}selected{% endif %}>
+                {{ kind }}
+            </option>
+            {% endfor %}
+        </select>
+
+        <button type="submit" class="btn-primary">Search</button>
+    </form>
+</div>
+
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px;">
+
+    {% for item in materials %}
+    <div class="content-card" style="display:flex;flex-direction:column;">
+
+        <div style="font-size:13px;color:#2563eb;font-weight:700;">
+            {{ item.material_type }}
+        </div>
+
+        <h3 style="margin:12px 0 6px;">
+            {{ item.title }}
+        </h3>
+
+        <p style="color:#64748b;font-size:14px;">
+            {{ item.subject or 'General learning resource' }}
+        </p>
+
+        {% if item.description %}
+        <p style="line-height:1.6;">
+            {{ item.description }}
+        </p>
+        {% endif %}
+
+        <p style="font-size:12px;color:#64748b;margin-top:auto;">
+            {{ item.original_filename }}
+            · {{ "%.2f"|format(item.file_size / 1048576) }} MB
+        </p>
+
+        <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:15px;">
+
+            <a href="{{ url_for('view_learning_material', material_id=item.id) }}"
+               class="btn-primary">
+                View / Open
+            </a>
+
+            <a href="{{ url_for('download_learning_material', material_id=item.id) }}"
+               class="btn-primary"
+               style="background:#0891b2;">
+                Download
+            </a>
+
+        </div>
+    </div>
+    {% else %}
+    <div class="content-card">
+        <h3>No materials found</h3>
+        <p>Learning materials will appear here when they are published.</p>
+    </div>
+    {% endfor %}
+
+</div>
+{% endblock %}
