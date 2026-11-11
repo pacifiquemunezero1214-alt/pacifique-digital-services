@@ -1,0 +1,85 @@
+
+{% extends "base.html" %}
+
+{% block title %}Manage Announcements{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+
+    <div class="mb-4">
+        <h2>📢 Manage Announcements</h2>
+        <p class="text-muted">Create and publish announcements for all users.</p>
+    </div>
+
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <h4 class="mb-3">Create New Announcement</h4>
+
+            <form method="POST"
+                  enctype="multipart/form-data">
+
+                <div class="mb-3">
+                    <label class="form-label">Announcement Title</label>
+                    <input type="text"
+                           name="title"
+                           class="form-control"
+                           maxlength="200"
+                           placeholder="Enter announcement title"
+                           required>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Message</label>
+                    <textarea name="message"
+                              class="form-control"
+                              rows="5"
+                              placeholder="Write your announcement here..."></textarea>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Attach Document (Optional)</label>
+                    <input type="file"
+                           name="file"
+                           class="form-control"
+                           accept=".pdf,.doc,.docx,.txt">
+                    <small class="text-muted">
+                        PDF, DOC, DOCX or TXT. Maximum size: 10 MB.
+                    </small>
+                </div>
+
+                <button type="submit" class="btn btn-primary">
+                    📢 Publish Announcement
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <h4 class="mb-3">Published Announcements</h4>
+
+            {% for item in announcements %}
+                <div class="border rounded p-3 mb-3">
+                    <h5>{{ item.title }}</h5>
+
+                    <p>{{ item.message }}</p>
+
+                    {% if item.original_filename %}
+                        <p>
+                            📎 {{ item.original_filename }}
+                        </p>
+                    {% endif %}
+
+                    <small class="text-muted">
+                        Published:
+                        {{ item.created_at.strftime('%d %b %Y, %H:%M') }}
+                    </small>
+                </div>
+            {% else %}
+                <p class="text-muted">No announcements published yet.</p>
+            {% endfor %}
+        </div>
+    </div>
+
+</div>
+{% endblock %}

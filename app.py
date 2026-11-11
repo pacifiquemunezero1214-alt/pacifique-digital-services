@@ -686,6 +686,66 @@ class UserHiddenLearningMaterial(db.Model):
     )
 
 # ==========================================================
+# ANNOUNCEMENTS
+# ==========================================================
+
+class Announcement(db.Model):
+    __tablename__ = "announcements"
+
+    id = db.Column(db.Integer, primary_key=True)
+
+    title = db.Column(db.String(200), nullable=False)
+    message = db.Column(db.Text, default="", nullable=False)
+
+    original_filename = db.Column(db.String(255), default="")
+    mimetype = db.Column(db.String(120), default="")
+    file_data = db.Column(db.LargeBinary, nullable=True)
+    file_size = db.Column(db.Integer, default=0)
+
+    created_by = db.Column(
+        db.Integer,
+        db.ForeignKey("user.id"),
+        nullable=False
+    )
+
+    created_at = db.Column(
+        db.DateTime,
+        default=datetime.utcnow,
+        nullable=False
+    )
+
+    is_published = db.Column(
+        db.Boolean,
+        default=True,
+        nullable=False
+    )
+
+    creator = db.relationship("User")
+
+
+class AnnouncementRead(db.Model):
+    __tablename__ = "announcement_reads"
+
+    user_id = db.Column(
+        db.Integer,
+        db.ForeignKey("user.id", ondelete="CASCADE"),
+        primary_key=True
+    )
+
+    announcement_id = db.Column(
+        db.Integer,
+        db.ForeignKey("announcements.id", ondelete="CASCADE"),
+        primary_key=True
+    )
+
+    read_at = db.Column(
+        db.DateTime,
+        default=datetime.utcnow,
+        nullable=False
+    )
+
+
+# ==========================================================
 # ONLINE QUIZ - HELPER FUNCTIONS
 # ==========================================================
 
@@ -1211,6 +1271,205 @@ def hide_learning_material(material_id):
     flash("Material removed from your Learning Center.", "success")
 
     return redirect(url_for("learning_center"))
+
+# ==========================================================
+# ANNOUNCEMENTS - MANAGER AND USER ROUTES
+# ==========================================================
+
+ALLOWED_ANNOUNCEMENT_EXTENSIONS = {
+    "pdf", "doc", "docx", "txt"
+}
+
+MAX_ANNOUNCEMENT_FILE_SIZE = 10 * 1024 * 1024
+
+
+@app.route("/manager/announcements", methods=["GET", "POST"])
+@login_required
+@manager_required
+def manager_announcements():
+
+    if request.method == "POST":
+        title = request.form.get("title", "").strip()
+        message = request.form.get("message", "").strip()
+        uploaded_file = request.files.get("file")
+
+        if not title:
+            flash("Please enter an announcement title.", "danger")
+            return redirect(url_for("manager_announcements"))
+
+        file_data = None
+        original_filename = ""
+        mimetype = ""
+        file_size = 0
+
+        if uploaded_file and uploaded_file.filename:
+            original_filename = secure_filename(uploaded_file.filename)
+
+            extension = (
+                original_filename.rsplit(".", 1)[1].lower()
+                if "." in original_filename else ""
+            )
+
+            if extension not in ALLOWED_ANNOUNCEMENT_EXTENSIONS:
+                flash("Only PDF, DOC, DOCX and TXT files are allowed.", "danger")
+                return redirect(url_for("manager_announcements"))
+
+            file_data = uploaded_file.read()
+
+            if not file_data:
+                flash("The selected file is empty.", "danger")
+                return redirect(url_for("manager_announcements"))
+
+            if len(file_data) > MAX_ANNOUNCEMENT_FILE_SIZE:
+                flash("The announcement file must not exceed 10 MB.", "danger")
+                return redirect(url_for("manager_announcements"))
+
+            mimetype = (
+                uploaded_file.mimetype
+                or mimetypes.guess_type(original_filename)[0]
+                or "application/octet-stream"
+            )
+
+            file_size = len(file_data)
+
+        if not message and not file_data:
+            flash("Enter a message or attach a document.", "danger")
+            return redirect(url_for("manager_announcements"))
+
+        announcement = Announcement(
+            title=title,
+            message=message,
+            original_filename=original_filename,
+            mimetype=mimetype,
+            file_data=file_data,
+            file_size=file_size,
+            created_by=current_user.id,
+            is_published=True
+        )
+
+        try:
+            db.session.add(announcement)
+            db.session.commit()
+            flash("Announcement published successfully.", "success")
+
+        except Exception:
+            db.session.rollback()
+            app.logger.exception("Announcement publishing failed.")
+            flash("Could not publish announcement.", "danger")
+
+        return redirect(url_for("manager_announcements"))
+
+    announcements = Announcement.query.order_by(
+        Announcement.created_at.desc()
+    ).all()
+
+    return render_template(
+        "manager_announcements.html",
+        announcements=announcements
+    )
+
+
+@app.route("/announcements")
+@login_required
+def announcements():
+
+    all_announcements = Announcement.query.filter_by(
+        is_published=True
+    ).order_by(
+        Announcement.created_at.desc()
+    ).all()
+
+    read_ids = db.session.query(
+        AnnouncementRead.announcement_id
+    ).filter_by(
+        user_id=current_user.id
+    ).all()
+
+    read_ids = {item[0] for item in read_ids}
+
+    return render_template(
+        "announcements.html",
+        announcements=all_announcements,
+        read_ids=read_ids
+    )
+
+
+@app.route("/announcements/<int:announcement_id>/read", methods=["POST"])
+@login_required
+def read_announcement(announcement_id):
+
+    announcement = Announcement.query.filter_by(
+        id=announcement_id,
+        is_published=True
+    ).first_or_404()
+
+    existing_read = AnnouncementRead.query.filter_by(
+        user_id=current_user.id,
+        announcement_id=announcement.id
+    ).first()
+
+    if not existing_read:
+        db.session.add(
+            AnnouncementRead(
+                user_id=current_user.id,
+                announcement_id=announcement.id
+            )
+        )
+        db.session.commit()
+
+    return redirect(url_for("announcements"))
+
+
+@app.route("/announcements/<int:announcement_id>/download")
+@login_required
+def download_announcement(announcement_id):
+
+    announcement = Announcement.query.filter_by(
+        id=announcement_id,
+        is_published=True
+    ).first_or_404()
+
+    if not announcement.file_data:
+        abort(404)
+
+    response = send_file(
+        io.BytesIO(announcement.file_data),
+        mimetype="application/octet-stream",
+        as_attachment=True,
+        download_name=announcement.original_filename
+    )
+
+    response.headers["X-Content-Type-Options"] = "nosniff"
+
+    return response
+
+# ==========================================================
+# UNREAD ANNOUNCEMENTS COUNTER
+# ==========================================================
+
+@app.context_processor
+def inject_unread_announcement_count():
+
+    unread_count = 0
+
+    if current_user.is_authenticated and not is_manager():
+
+        read_ids = db.session.query(
+            AnnouncementRead.announcement_id
+        ).filter_by(
+            user_id=current_user.id
+        ).subquery()
+
+        unread_count = Announcement.query.filter(
+            Announcement.is_published == True,
+            ~Announcement.id.in_(read_ids)
+        ).count()
+
+    return {
+        "unread_announcement_count": unread_count
+    }
+
+
 
 @app.route("/learning-center")
 @login_required
